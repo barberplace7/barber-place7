@@ -67,7 +67,8 @@ export default function KasirDashboard() {
     customerPhone: '',
     products: [] as {id: string, quantity: number}[],
     paymentMethod: 'CASH',
-    completedBy: ''
+    completedBy: '',
+    recommendedBy: ''
   });
   const [showExpense, setShowExpense] = useState(false);
   const [expenseData, setExpenseData] = useState({
@@ -161,7 +162,7 @@ export default function KasirDashboard() {
       const sessionKasir = kasirList.find(k => k.name === branchInfo.kasirName);
       if (sessionKasir) {
         setCompletedBy(sessionKasir.id);
-        setProductSaleData(prev => ({...prev, completedBy: sessionKasir.id}));
+        setProductSaleData(prev => ({...prev, completedBy: sessionKasir.id, recommendedBy: sessionKasir.id}));
       }
     }
   }, [branchInfo.kasirName, kasirList]);
@@ -430,7 +431,7 @@ export default function KasirDashboard() {
                       if (!productSaleData.completedBy && branchInfo.kasirName) {
                         const sessionKasir = kasirList.find(k => k.name === branchInfo.kasirName);
                         if (sessionKasir) {
-                          setProductSaleData(prev => ({...prev, completedBy: sessionKasir.id}));
+                          setProductSaleData(prev => ({...prev, completedBy: sessionKasir.id, recommendedBy: sessionKasir.id}));
                         }
                       }
                     }}
@@ -690,67 +691,7 @@ export default function KasirDashboard() {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Products Section */}
-                    <div>
-                      <label className="block text-sm font-medium text-stone-700 mb-3">Add Products (Optional)</label>
-                      <div className="space-y-2 max-h-96 overflow-y-auto">
-                        {products.map((product) => {
-                          const selectedProduct = selectedProducts.find(p => p.id === product.id);
-                          const isSelected = !!selectedProduct;
-                          const quantity = selectedProduct?.quantity || 0;
-                          
-                          return (
-                            <div key={product.id} className="flex items-center justify-between p-3 border border-stone-200 rounded-lg bg-white">
-                              <div className="flex items-center space-x-3">
-                                <input
-                                  type="checkbox"
-                                  checked={isSelected}
-                                  onChange={(e) => {
-                                    if (e.target.checked) {
-                                      setSelectedProducts(prev => [...prev, {id: product.id, quantity: 1}]);
-                                    } else {
-                                      setSelectedProducts(prev => prev.filter(p => p.id !== product.id));
-                                    }
-                                  }}
-                                  className="rounded border-stone-300 text-stone-800"
-                                />
-                                <div>
-                                  <div className="font-medium text-stone-800">{product.name}</div>
-                                  <div className="text-sm text-stone-500">Rp {product.basePrice.toLocaleString()}</div>
-                                </div>
-                              </div>
-                              {isSelected && (
-                                <div className="flex items-center space-x-2">
-                                  <button
-                                    onClick={() => {
-                                      setSelectedProducts(prev => 
-                                        prev.map(p => p.id === product.id ? {...p, quantity: Math.max(1, p.quantity - 1)} : p)
-                                      );
-                                    }}
-                                    className="w-8 h-8 bg-stone-200 hover:bg-stone-300 rounded-lg flex items-center justify-center text-stone-700 font-bold"
-                                  >
-                                    -
-                                  </button>
-                                  <span className="w-8 text-center font-medium text-stone-800">{quantity}</span>
-                                  <button
-                                    onClick={() => {
-                                      setSelectedProducts(prev => 
-                                        prev.map(p => p.id === product.id ? {...p, quantity: p.quantity + 1} : p)
-                                      );
-                                    }}
-                                    className="w-8 h-8 bg-stone-200 hover:bg-stone-300 rounded-lg flex items-center justify-center text-stone-700 font-bold"
-                                  >
-                                    +
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
+                  <div className="max-w-md mx-auto">
                     {/* Payment & Completion */}
                     <div className="space-y-4">
                       {/* Total Calculation */}
@@ -763,29 +704,12 @@ export default function KasirDashboard() {
                               <span className="font-medium text-stone-800">Rp {vs.service.basePrice.toLocaleString()}</span>
                             </div>
                           ))}
-                          {selectedProducts.map((selectedProduct) => {
-                            const product = products.find(p => p.id === selectedProduct.id);
-                            if (!product) return null;
-                            const subtotal = product.basePrice * selectedProduct.quantity;
-                            return (
-                              <div key={selectedProduct.id} className="flex justify-between text-sm">
-                                <span className="text-stone-600">{product.name} x{selectedProduct.quantity}</span>
-                                <span className="font-medium text-stone-800">Rp {subtotal.toLocaleString()}</span>
-                              </div>
-                            );
-                          })}
+
                           <div className="border-t border-stone-200 pt-2 mt-2">
                             <div className="flex justify-between font-bold text-lg">
                               <span className="text-stone-800">TOTAL</span>
                               <span className="text-stone-900">
-                                Rp {(() => {
-                                  const servicePrice = completingCustomer.visitServices?.reduce((sum, vs) => sum + vs.service.basePrice, 0) || 0;
-                                  const productsTotal = selectedProducts.reduce((total, selectedProduct) => {
-                                    const product = products.find(p => p.id === selectedProduct.id);
-                                    return total + (product ? product.basePrice * selectedProduct.quantity : 0);
-                                  }, 0);
-                                  return (servicePrice + productsTotal).toLocaleString();
-                                })()}
+Rp {(completingCustomer.visitServices?.reduce((sum, vs) => sum + vs.service.basePrice, 0) || 0).toLocaleString()}
                               </span>
                             </div>
                           </div>
@@ -805,7 +729,7 @@ export default function KasirDashboard() {
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-stone-700 mb-2">Completed By</label>
+                        <label className="block text-sm font-medium text-stone-700 mb-2">Transaction Responsible</label>
                         <select
                           value={completedBy}
                           onChange={(e) => setCompletedBy(e.target.value)}
@@ -827,14 +751,7 @@ export default function KasirDashboard() {
                           onClick={async () => {
                             if (isSubmitting) return;
                             
-                            const total = (() => {
-                              const servicePrice = completingCustomer.visitServices?.reduce((sum, vs) => sum + vs.service.basePrice, 0) || 0;
-                              const productsTotal = selectedProducts.reduce((total, selectedProduct) => {
-                                const product = products.find(p => p.id === selectedProduct.id);
-                                return total + (product ? product.basePrice * selectedProduct.quantity : 0);
-                              }, 0);
-                              return servicePrice + productsTotal;
-                            })();
+const total = completingCustomer.visitServices?.reduce((sum, vs) => sum + vs.service.basePrice, 0) || 0;
                             
                             setConfirmModal({
                               show: true,
@@ -847,9 +764,9 @@ export default function KasirDashboard() {
                                   const response = await fetch('/api/kasir/complete', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
+body: JSON.stringify({
                                       visitId: completingCustomer.id,
-                                      products: selectedProducts,
+                                      products: [],
                                       paymentMethod,
                                       completedBy
                                     })
@@ -1225,7 +1142,7 @@ export default function KasirDashboard() {
                   </div>
                 </div>
                 <button 
-                  onClick={() => {setShowProductSale(false); setProductSaleData({ customerName: '', customerPhone: '', products: [], paymentMethod: 'CASH', completedBy: '' })}}
+                  onClick={() => {setShowProductSale(false); setProductSaleData({ customerName: '', customerPhone: '', products: [], paymentMethod: 'CASH', completedBy: '', recommendedBy: '' })}}
                   className="text-stone-400 hover:text-stone-600 text-2xl w-8 h-8 flex items-center justify-center"
                 >
                   ×
@@ -1352,44 +1269,65 @@ export default function KasirDashboard() {
                   <span className="w-6 h-6 bg-stone-600 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3">3</span>
                   Payment Details
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-2">Recommended By</label>
+                    <label className="block text-sm font-medium text-stone-700 mb-2">Recommend By</label>
+                    <select
+                      value={productSaleData.recommendedBy}
+                      onChange={(e) => setProductSaleData({...productSaleData, recommendedBy: e.target.value})}
+                      className="w-full border border-stone-300 rounded-lg px-4 py-3 focus:border-stone-500 focus:ring-2 focus:ring-stone-200 focus:outline-none bg-white text-stone-800 transition-all"
+                    >
+                      <option value="">Select recommender</option>
+                      {[...capsters, ...kasirList].map((person) => {
+                        const isCurrentUser = person.name === branchInfo.kasirName;
+                        return (
+                          <option key={person.id} value={person.id}>
+                            {person.name}{isCurrentUser ? ' (You)' : ''}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-stone-700 mb-2">Transaction Responsible</label>
                     <select
                       value={productSaleData.completedBy}
                       onChange={(e) => setProductSaleData({...productSaleData, completedBy: e.target.value})}
                       className="w-full border border-stone-300 rounded-lg px-4 py-3 focus:border-stone-500 focus:ring-2 focus:ring-stone-200 focus:outline-none bg-white text-stone-800 transition-all"
                     >
-                      <option value="">Select capster/kasir</option>
-                      {[...capsters, ...kasirList].map((person) => (
-                        <option key={person.id} value={person.id}>
-                          {person.name}{person.id === currentKasir ? ' (Current operator)' : ''}
-                        </option>
-                      ))}
+                      <option value="">Select responsible person</option>
+                      {[...capsters, ...kasirList].map((person) => {
+                        const isCurrentUser = person.name === branchInfo.kasirName;
+                        return (
+                          <option key={person.id} value={person.id}>
+                            {person.name}{isCurrentUser ? ' (You)' : ''}
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-3">Payment Method</label>
-                    <div className="space-y-2">
-                      {['CASH', 'QRIS'].map((method) => (
-                        <label key={method} className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer transition-all ${
-                          productSaleData.paymentMethod === method ? 'border-stone-500 bg-stone-100 ring-2 ring-stone-200' : 'border-stone-300 hover:border-stone-400 hover:bg-stone-50'
-                        }`}>
-                          <input
-                            type="radio"
-                            name="payment"
-                            value={method}
-                            checked={productSaleData.paymentMethod === method}
-                            onChange={(e) => setProductSaleData({...productSaleData, paymentMethod: e.target.value})}
-                            className="text-stone-600"
-                          />
-                          <div>
-                            <div className="font-medium text-stone-800">{method}</div>
-                            <div className="text-sm text-stone-500">{method === 'CASH' ? 'Cash payment' : 'Digital payment'}</div>
-                          </div>
-                        </label>
-                      ))}
-                    </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-stone-700 mb-3">Payment Method</label>
+                  <div className="space-y-2">
+                    {['CASH', 'QRIS'].map((method) => (
+                      <label key={method} className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer transition-all ${
+                        productSaleData.paymentMethod === method ? 'border-stone-500 bg-stone-100 ring-2 ring-stone-200' : 'border-stone-300 hover:border-stone-400 hover:bg-stone-50'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="payment"
+                          value={method}
+                          checked={productSaleData.paymentMethod === method}
+                          onChange={(e) => setProductSaleData({...productSaleData, paymentMethod: e.target.value})}
+                          className="text-stone-600"
+                        />
+                        <div>
+                          <div className="font-medium text-stone-800">{method}</div>
+                          <div className="text-sm text-stone-500">{method === 'CASH' ? 'Cash payment' : 'Digital payment'}</div>
+                        </div>
+                      </label>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -1428,7 +1366,7 @@ export default function KasirDashboard() {
             <div className="sticky bottom-0 bg-white border-t border-stone-200 px-8 py-6 rounded-b-2xl">
               <div className="flex gap-4">
                 <button 
-                  onClick={() => {setShowProductSale(false); setProductSaleData({ customerName: '', customerPhone: '', products: [], paymentMethod: 'CASH', completedBy: '' })}}
+                  onClick={() => {setShowProductSale(false); setProductSaleData({ customerName: '', customerPhone: '', products: [], paymentMethod: 'CASH', completedBy: '', recommendedBy: '' })}}
                   className="flex-1 text-stone-600 hover:text-stone-800 px-6 py-3 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors font-medium"
                 >
                   Cancel
@@ -1451,7 +1389,7 @@ export default function KasirDashboard() {
                       });
                       
                       if (response.ok) {
-                        setProductSaleData({ customerName: '', customerPhone: '', products: [], paymentMethod: 'CASH', completedBy: '' });
+                        setProductSaleData({ customerName: '', customerPhone: '', products: [], paymentMethod: 'CASH', completedBy: '', recommendedBy: '' });
                         setShowProductSale(false);
                       }
                     } catch (error) {
@@ -1835,8 +1773,7 @@ export default function KasirDashboard() {
                         }`}>
                           <div className="flex items-center space-x-3">
                             <input
-                              type="radio"
-                              name="haircut"
+                              type="checkbox"
                               checked={newCustomer.services.includes(service.id)}
                               onChange={(e) => {
                                 if (e.target.checked) {
@@ -1846,9 +1783,12 @@ export default function KasirDashboard() {
                                     return existingService?.category !== 'HAIRCUT';
                                   });
                                   setNewCustomer({...newCustomer, services: [...nonHaircutServices, service.id]});
+                                } else {
+                                  // Remove this haircut service
+                                  setNewCustomer({...newCustomer, services: newCustomer.services.filter(id => id !== service.id)});
                                 }
                               }}
-                              className="text-stone-800"
+                              className="rounded border-stone-300 text-stone-800"
                             />
                             <div>
                               <div className="font-medium text-stone-800">{service.name}</div>
