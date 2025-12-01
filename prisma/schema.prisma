@@ -1,0 +1,211 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model BarberBranch {
+  id                  String               @id @default(uuid())
+  name                String
+  address             String
+  createdAt           DateTime             @default(now())
+  expenses            BranchExpense[]
+  visits              CustomerVisit[]
+  productTransactions ProductTransaction[]
+  serviceTransactions ServiceTransaction[]
+  users               User[]
+
+  @@map("barber_branches")
+}
+
+model CapsterMaster {
+  id        String          @id @default(uuid())
+  name      String
+  phone     String?
+  createdAt DateTime        @default(now())
+  visits    CustomerVisit[]
+
+  @@map("capster_masters")
+}
+
+model CashierMaster {
+  id        String          @id @default(uuid())
+  name      String
+  phone     String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  expenses  BranchExpense[]
+
+  @@map("cashier_masters")
+}
+
+model ServicePackage {
+  id             String          @id @default(uuid())
+  name           String
+  basePrice      Int
+  commissionRate Float
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  category       ServiceCategory @default(HAIRCUT)
+  visitServices  VisitService[]
+
+  @@map("service_packages")
+}
+
+model CustomerVisit {
+  id                  String               @id @default(uuid())
+  cabangId            String
+  customerName        String
+  customerPhone       String?
+  capsterId           String
+  jamMasuk            DateTime             @default(now())
+  jamSelesai          DateTime?
+  status              VisitStatus          @default(ONGOING)
+  createdAt           DateTime             @default(now())
+  cabang              BarberBranch         @relation(fields: [cabangId], references: [id])
+  capster             CapsterMaster        @relation(fields: [capsterId], references: [id])
+  productTransactions ProductTransaction[]
+  serviceTransactions ServiceTransaction[]
+  visitServices       VisitService[]
+
+  @@map("customer_visits")
+}
+
+model VisitService {
+  id        String         @id @default(uuid())
+  visitId   String
+  serviceId String
+  createdAt DateTime       @default(now())
+  visit     CustomerVisit  @relation(fields: [visitId], references: [id], onDelete: Cascade)
+  service   ServicePackage @relation(fields: [serviceId], references: [id])
+
+  @@map("visit_services")
+}
+
+model ServiceTransaction {
+  id                    String        @id @default(uuid())
+  visitId               String
+  cabangId              String
+  capsterId             String
+  paketName             String
+  priceFinal            Int
+  commissionRate        Float
+  commissionAmount      Int
+  closingById           String
+  closingByRole         String
+  closingByNameSnapshot String
+  paymentMethod         String
+  createdAt             DateTime      @default(now())
+  cabang                BarberBranch  @relation(fields: [cabangId], references: [id])
+  visit                 CustomerVisit @relation(fields: [visitId], references: [id])
+
+  @@map("service_transactions")
+}
+
+model BarberProduct {
+  id                  String               @id @default(uuid())
+  name                String
+  basePrice           Int
+  commissionPerUnit   Int
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  productTransactions ProductTransaction[]
+
+  @@map("barber_products")
+}
+
+model ProductTransaction {
+  id                        String          @id @default(uuid())
+  visitId                   String?
+  cabangId                  String
+  customerName              String
+  customerPhone             String?
+  productId                 String
+  productNameSnapshot       String
+  quantity                  Int
+  pricePerUnitSnapshot      Int
+  totalPrice                Int
+  recommenderId             String
+  recommenderRole           RecommenderRole
+  commissionPerUnitSnapshot Int
+  commissionAmount          Int
+  closingById               String
+  closingByRole             String
+  closingByNameSnapshot     String
+  paymentMethod             String
+  createdAt                 DateTime        @default(now())
+  cabang                    BarberBranch    @relation(fields: [cabangId], references: [id])
+  product                   BarberProduct   @relation(fields: [productId], references: [id])
+  visit                     CustomerVisit?  @relation(fields: [visitId], references: [id])
+
+  @@map("product_transactions")
+}
+
+model BranchExpense {
+  id        String          @id @default(uuid())
+  cabangId  String
+  kasirId   String?
+  nominal   Int
+  category  ExpenseCategory
+  note      String?
+  createdAt DateTime        @default(now())
+  cabang    BarberBranch    @relation(fields: [cabangId], references: [id])
+  kasir     CashierMaster?  @relation(fields: [kasirId], references: [id])
+
+  @@map("branch_expenses")
+}
+
+model User {
+  id        String        @id @default(uuid())
+  username  String        @unique
+  password  String
+  role      UserRole
+  cabangId  String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  cabang    BarberBranch? @relation(fields: [cabangId], references: [id])
+
+  @@map("users")
+}
+
+model GalleryImage {
+  id        String   @id @default(uuid())
+  url       String
+  filename  String
+  position  Int      @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("gallery_images")
+}
+
+enum ServiceCategory {
+  HAIRCUT
+  TREATMENT
+}
+
+enum VisitStatus {
+  ONGOING
+  DONE
+  CANCELED
+}
+
+enum RecommenderRole {
+  CAPSTER
+  KASIR
+}
+
+enum ExpenseCategory {
+  OPERASIONAL
+  TAMBAHAN
+  LAINNYA
+}
+
+enum UserRole {
+  ADMIN
+  KASIR
+}

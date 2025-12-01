@@ -5,12 +5,12 @@ export default function BarbershopLanding() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const galleryImages = [
+  const [galleryImages, setGalleryImages] = useState([
     "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=400&fit=crop",
     "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&h=400&fit=crop",
     "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&h=400&fit=crop",
     "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=400&h=400&fit=crop"
-  ];
+  ]);
 
 
   useEffect(() => {
@@ -29,6 +29,22 @@ export default function BarbershopLanding() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const response = await fetch('/api/gallery');
+        const images = await response.json();
+        if (images.length > 0) {
+          setGalleryImages(images);
+        }
+      } catch (error) {
+        console.error('Failed to fetch gallery:', error);
+      }
+    };
+
+    fetchGallery();
+  }, []);
 
   return (
     <div className="min-h-screen bg-black text-white font-sans">
