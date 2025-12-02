@@ -27,6 +27,11 @@ export async function GET(request: NextRequest) {
     startDate.setHours(0, 0, 0, 0);
     endDate.setHours(23, 59, 59, 999);
 
+    // Get all staff for lookup
+    const allCapsters = await prisma.capsterMaster.findMany();
+    const allKasirs = await prisma.cashierMaster.findMany();
+    const allStaff = [...allCapsters, ...allKasirs];
+
     // Get completed visits with service transactions
     const visits = await prisma.customerVisit.findMany({
       where: { 
@@ -52,7 +57,7 @@ export async function GET(request: NextRequest) {
       orderBy: { jamSelesai: 'desc' }
     });
 
-    // Get product-only transactions (last 7 days)
+    // Get product-only transactions
     const productSales = await prisma.productTransaction.findMany({
       where: { 
         visitId: null,
@@ -66,7 +71,7 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
 
-    // Get expenses (last 7 days)
+    // Get expenses
     const expenses = await prisma.branchExpense.findMany({
       where: {
         cabangId: branchId,
@@ -81,7 +86,7 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
 
-    return NextResponse.json({ visits, productSales, expenses });
+    return NextResponse.json({ visits, productSales, expenses, allStaff });
   } catch (error) {
     console.error('History fetch error:', error);
     return NextResponse.json({ error: 'Failed to fetch history' }, { status: 500 });

@@ -81,12 +81,15 @@ export default function KasirDashboard() {
   const [completedToday, setCompletedToday] = useState<any[]>([]);
   const [productTransactions, setProductTransactions] = useState<any[]>([]);
   const [dailySummary, setDailySummary] = useState({total: 0, cash: 0, qris: 0});
-  const [history, setHistory] = useState<{visits: any[], productSales: any[], expenses: any[]}>({visits: [], productSales: [], expenses: []});
+  const [history, setHistory] = useState<{visits: any[], productSales: any[], expenses: any[], allStaff?: any[]}>({visits: [], productSales: [], expenses: []});
   const [historyFilters, setHistoryFilters] = useState({
     dateFrom: '',
     dateTo: '',
-    type: 'ALL' // ALL, SERVICE, PRODUCT
+    type: 'ALL' // ALL, SERVICE, PRODUCT, EXPENSES
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+  const [datePreset, setDatePreset] = useState('7days');
   const [currentTime, setCurrentTime] = useState(new Date());
   const [isClient, setIsClient] = useState(false);
   const [branchInfo, setBranchInfo] = useState({ name: '', kasirName: '' });
@@ -126,6 +129,34 @@ export default function KasirDashboard() {
       fetchHistory();
     }
   }, [historyFilters]);
+
+  const handleDatePresetChange = (preset: string) => {
+    setDatePreset(preset);
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    
+    let dateFrom = '';
+    
+    switch (preset) {
+      case 'today':
+        dateFrom = today;
+        break;
+      case '7days':
+        dateFrom = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        break;
+      case '30days':
+        dateFrom = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+        break;
+      case 'custom':
+        return; // Don't change dates for custom
+    }
+    
+    setHistoryFilters(prev => ({
+      ...prev,
+      dateFrom,
+      dateTo: today
+    }));
+  };
 
   // Client-side hydration fix and sync dates
   useEffect(() => {
@@ -237,9 +268,11 @@ export default function KasirDashboard() {
         dateFrom: historyFilters.dateFrom,
         dateTo: historyFilters.dateTo
       });
+      
       const response = await fetch(`/api/kasir/history?${params}`);
       const data = await response.json();
       setHistory(data);
+      setCurrentPage(1); // Reset to first page when filters change
     } catch (error) {
       console.error('Failed to fetch history:', error);
       setHistory({visits: [], productSales: [], expenses: []});
@@ -824,14 +857,43 @@ body: JSON.stringify({
 
               {/* Filters */}
               <div className="bg-stone-50 rounded-xl p-6 mb-8">
+                {/* Date Presets */}
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-stone-700 mb-2">Date Range</label>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { id: 'today', name: 'Today' },
+                      { id: '7days', name: 'Last 7 Days' },
+                      { id: '30days', name: 'Last 30 Days' },
+                      { id: 'custom', name: 'Custom Range' }
+                    ].map((preset) => (
+                      <button
+                        key={preset.id}
+                        onClick={() => handleDatePresetChange(preset.id)}
+                        className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                          datePreset === preset.id
+                            ? 'bg-stone-800 text-white'
+                            : 'bg-white text-stone-700 border border-stone-300 hover:bg-stone-50'
+                        }`}
+                      >
+                        {preset.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-2">From Date</label>
                     <input
                       type="date"
                       value={historyFilters.dateFrom}
-                      onChange={(e) => setHistoryFilters({...historyFilters, dateFrom: e.target.value})}
-                      className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:border-stone-500 focus:outline-none bg-white text-stone-800"
+                      onChange={(e) => {
+                        setHistoryFilters({...historyFilters, dateFrom: e.target.value});
+                        setDatePreset('custom');
+                      }}
+                      disabled={datePreset !== 'custom'}
+                      className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:border-stone-500 focus:outline-none bg-white text-stone-800 disabled:bg-stone-100 disabled:cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -839,8 +901,12 @@ body: JSON.stringify({
                     <input
                       type="date"
                       value={historyFilters.dateTo}
-                      onChange={(e) => setHistoryFilters({...historyFilters, dateTo: e.target.value})}
-                      className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:border-stone-500 focus:outline-none bg-white text-stone-800"
+                      onChange={(e) => {
+                        setHistoryFilters({...historyFilters, dateTo: e.target.value});
+                        setDatePreset('custom');
+                      }}
+                      disabled={datePreset !== 'custom'}
+                      className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:border-stone-500 focus:outline-none bg-white text-stone-800 disabled:bg-stone-100 disabled:cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -972,7 +1038,7 @@ body: JSON.stringify({
                       <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Date</th>
                       <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Customer</th>
                       <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Service/Product</th>
-                      <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Staff</th>
+                      <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Submitted By</th>
                       <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Amount</th>
                       <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Payment</th>
                     </tr>
@@ -998,7 +1064,15 @@ body: JSON.stringify({
                             date: visit.jamSelesai,
                             amount: serviceAmount,
                             paymentMethod: visit.serviceTransactions?.length > 0 ? visit.serviceTransactions[0].paymentMethod : 'CASH',
-                            staff: visit.capster.name,
+                            staff: (() => {
+                              if (visit.serviceTransactions?.length > 0) {
+                                const st = visit.serviceTransactions[0];
+                                const responsibleStaff = history.allStaff?.find(s => s.id === st.closingById);
+                                return responsibleStaff?.name || 'Unknown';
+                              }
+                              return visit.capster.name;
+                            })(),
+                            staffId: visit.serviceTransactions?.length > 0 ? visit.serviceTransactions[0].closingById : visit.capster.id,
                             itemName: serviceName,
                             customerName: visit.customerName,
                             customerPhone: visit.customerPhone
@@ -1018,7 +1092,15 @@ body: JSON.stringify({
                               customerPhone: visit.customerPhone,
                               amount: pt.totalPrice,
                               paymentMethod: visit.serviceTransactions?.length > 0 ? visit.serviceTransactions[0].paymentMethod : 'CASH',
-                              staff: visit.capster.name,
+                              staff: (() => {
+                                if (visit.serviceTransactions?.length > 0) {
+                                  const st = visit.serviceTransactions[0];
+                                  const responsibleStaff = history.allStaff?.find(s => s.id === st.closingById);
+                                  return responsibleStaff?.name || 'Unknown';
+                                }
+                                return visit.capster.name;
+                              })(),
+                              staffId: visit.serviceTransactions?.length > 0 ? visit.serviceTransactions[0].closingById : visit.capster.id,
                               itemName: `${pt.product.name} (x${pt.quantity})`
                             });
                           });
@@ -1026,13 +1108,14 @@ body: JSON.stringify({
                         
                         // Add standalone product sales
                         history.productSales.forEach(sale => {
-                          const recommender = [...kasirList, ...capsters].find(p => p.id === sale.recommenderId);
+                          const responsibleStaff = history.allStaff?.find(s => s.id === sale.closingById);
                           allTransactions.push({
                             ...sale,
                             type: 'PRODUCT',
                             date: sale.createdAt,
                             amount: sale.totalPrice,
-                            staff: recommender ? recommender.name : 'Unknown',
+                            staff: responsibleStaff?.name || 'Unknown',
+                            staffId: sale.closingById,
                             itemName: `${sale.productNameSnapshot} (x${sale.quantity})`
                           });
                         });
@@ -1048,6 +1131,7 @@ body: JSON.stringify({
                             amount: expense.nominal,
                             paymentMethod: 'CASH',
                             staff: expense.kasir?.name || 'Unknown',
+                            staffId: expense.kasirId,
                             itemName: `${expense.category}${expense.note ? ` - ${expense.note}` : ''}`,
                             customerName: 'Business Expense',
                             customerPhone: ''
@@ -1058,7 +1142,12 @@ body: JSON.stringify({
                       // Sort by date (newest first)
                       allTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
                       
-                      if (allTransactions.length === 0) {
+                      // Pagination
+                      const startIndex = (currentPage - 1) * itemsPerPage;
+                      const endIndex = startIndex + itemsPerPage;
+                      const paginatedTransactions = allTransactions.slice(startIndex, endIndex);
+                      
+                      if (paginatedTransactions.length === 0) {
                         return (
                           <tr>
                             <td colSpan={6} className="px-6 py-16 text-center text-stone-500">
@@ -1070,8 +1159,8 @@ body: JSON.stringify({
                         );
                       }
                       
-                      return allTransactions.map((transaction, index) => (
-                        <tr key={`${transaction.type}-${transaction.id}`} className="hover:bg-stone-50">
+                      return paginatedTransactions.map((transaction, index) => (
+                        <tr key={`${transaction.type}-${transaction.id}-${startIndex + index}`} className="hover:bg-stone-50">
                           <td className="px-6 py-5 text-stone-500 text-sm">
                             {new Date(transaction.date).toLocaleDateString('id-ID')}
                             <div className="text-xs text-stone-400">
@@ -1118,6 +1207,102 @@ body: JSON.stringify({
                   </tbody>
                 </table>
               </div>
+
+              {/* Pagination */}
+              {(() => {
+                const allTransactions = [];
+                
+                // Rebuild transaction list for pagination count
+                if (historyFilters.type === 'ALL' || historyFilters.type === 'REVENUE' || historyFilters.type === 'SERVICE') {
+                  history.visits.forEach(visit => {
+                    allTransactions.push(visit);
+                  });
+                }
+                
+                if (historyFilters.type === 'ALL' || historyFilters.type === 'REVENUE' || historyFilters.type === 'PRODUCT') {
+                  history.visits.forEach(visit => {
+                    visit.productTransactions.forEach(pt => {
+                      allTransactions.push(pt);
+                    });
+                  });
+                  
+                  history.productSales.forEach(sale => {
+                    allTransactions.push(sale);
+                  });
+                }
+                
+                if (historyFilters.type === 'ALL' || historyFilters.type === 'EXPENSES') {
+                  history.expenses.forEach(expense => {
+                    allTransactions.push(expense);
+                  });
+                }
+                
+                const totalTransactions = allTransactions.length;
+                const totalPages = Math.ceil(totalTransactions / itemsPerPage);
+                
+                if (totalTransactions > itemsPerPage) {
+                  return (
+                    <div className="mt-6 flex items-center justify-between">
+                      <div className="text-sm text-stone-700">
+                        Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalTransactions)} of {totalTransactions} transactions
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                          disabled={currentPage === 1}
+                          className="px-3 py-2 text-sm font-medium text-stone-500 bg-white border border-stone-300 rounded-md hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Previous
+                        </button>
+                        {Array.from({ length: totalPages }, (_, i) => i + 1)
+                          .filter(page => {
+                            return page === 1 || page === totalPages || Math.abs(page - currentPage) <= 2;
+                          })
+                          .map((page, index, array) => {
+                            if (index > 0 && array[index - 1] !== page - 1) {
+                              return [
+                                <span key={`ellipsis-${page}`} className="px-3 py-2 text-sm text-stone-500">...</span>,
+                                <button
+                                  key={page}
+                                  onClick={() => setCurrentPage(page)}
+                                  className={`px-3 py-2 text-sm font-medium rounded-md ${
+                                    currentPage === page
+                                      ? 'bg-stone-800 text-white'
+                                      : 'text-stone-700 bg-white border border-stone-300 hover:bg-stone-50'
+                                  }`}
+                                >
+                                  {page}
+                                </button>
+                              ];
+                            }
+                            return (
+                              <button
+                                key={page}
+                                onClick={() => setCurrentPage(page)}
+                                className={`px-3 py-2 text-sm font-medium rounded-md ${
+                                  currentPage === page
+                                    ? 'bg-stone-800 text-white'
+                                    : 'text-stone-700 bg-white border border-stone-300 hover:bg-stone-50'
+                                }`}
+                              >
+                                {page}
+                              </button>
+                            );
+                          })}
+                        <button
+                          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                          disabled={currentPage === totalPages}
+                          className="px-3 py-2 text-sm font-medium text-stone-500 bg-white border border-stone-300 rounded-md hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
+                
+                return null;
+              })()}
             </div>
           )}
         </div>
