@@ -14,6 +14,8 @@ export default function LoginPage() {
   const [kasirList, setKasirList] = useState<Kasir[]>([]);
   const [showKasirSelect, setShowKasirSelect] = useState(false);
   const [branchData, setBranchData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isStartingSession, setIsStartingSession] = useState(false);
 
   const fetchKasirList = async () => {
     try {
@@ -31,6 +33,7 @@ export default function LoginPage() {
 
   const handleBranchLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
     try {
       const response = await fetch('/api/auth/login', {
@@ -55,6 +58,8 @@ export default function LoginPage() {
       }
     } catch (error) {
       alert('Login error');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -162,22 +167,27 @@ export default function LoginPage() {
               {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full bg-white text-black py-3 px-6 rounded-lg font-medium hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black"
+                  disabled={isLoading}
+                  className="w-full bg-white text-black py-3 px-6 rounded-lg font-medium hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
-                  Login to Branch
+                  {isLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black mr-2"></div>
+                      Logging in...
+                    </>
+                  ) : (
+                    'Login to Branch'
+                  )}
                 </button>
               </form>
             ) : (
               <div className="space-y-6">
                 <div className="text-center">
-                  <h3 className="text-lg font-medium mb-2">Select Kasir</h3>
-                  <p className="text-sm text-gray-300">Branch: {branchData?.user?.cabangName}</p>
+                  <h3 className="text-lg font-medium mb-2">Pilih Akun Kasir Anda</h3>
+                  <p className="text-sm text-gray-300">Cabang: {branchData?.user?.cabangName}</p>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Choose Kasir for this session
-                  </label>
                   <select
                     value={selectedKasir}
                     onChange={(e) => setSelectedKasir(e.target.value)}
@@ -206,6 +216,8 @@ export default function LoginPage() {
                         return;
                       }
                       
+                      setIsStartingSession(true);
+                      
                       // Update session with selected kasir
                       try {
                         const response = await fetch('/api/auth/kasir-select', {
@@ -224,12 +236,21 @@ export default function LoginPage() {
                         }
                       } catch (error) {
                         alert('Network error');
+                      } finally {
+                        setIsStartingSession(false);
                       }
                     }}
-                    disabled={!selectedKasir}
-                    className="flex-1 bg-white text-black py-3 px-4 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                    disabled={!selectedKasir || isStartingSession}
+                    className="flex-1 bg-white text-black py-3 px-4 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center"
                   >
-                    Start Session
+                    {isStartingSession ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black mr-2"></div>
+                        Starting...
+                      </>
+                    ) : (
+                      'Start Session'
+                    )}
                   </button>
                 </div>
               </div>

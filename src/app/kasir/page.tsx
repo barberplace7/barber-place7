@@ -1,5 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { Montserrat } from 'next/font/google';
+
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+  display: 'swap',
+});
 
 interface Customer {
   id: string;
@@ -96,6 +103,8 @@ export default function KasirDashboard() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [confirmModal, setConfirmModal] = useState<{show: boolean, title: string, message: string, onConfirm: () => void} | null>(null);
   const [globalLoading, setGlobalLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const fetchSessionInfo = async () => {
     try {
@@ -109,26 +118,26 @@ export default function KasirDashboard() {
     }
   };
 
-  useEffect(() => {
-    fetchCustomers();
-    fetchServices();
-    fetchCapsters();
-    fetchKasir();
-    fetchProducts();
-    fetchSessionInfo();
-    if (activeTab === 'transactions') {
-      if (customerView === 'completed') {
-        fetchCompletedToday();
-      }
-    }
-    if (activeTab === 'history') fetchHistory();
-  }, [activeTab, customerView]);
+  // useEffect(() => {
+  //   fetchCustomers();
+  //   fetchServices();
+  //   fetchCapsters();
+  //   fetchKasir();
+  //   fetchProducts();
+  //   fetchSessionInfo();
+  //   if (activeTab === 'transactions') {
+  //     if (customerView === 'completed') {
+  //       fetchCompletedToday();
+  //     }
+  //   }
+  //   if (activeTab === 'history') fetchHistory();
+  // }, [activeTab, customerView]);
 
-  useEffect(() => {
-    if (activeTab === 'history') {
-      fetchHistory();
-    }
-  }, [historyFilters]);
+  // useEffect(() => {
+  //   if (activeTab === 'history') {
+  //     fetchHistory();
+  //   }
+  // }, [historyFilters]);
 
   const handleDatePresetChange = (preset: string) => {
     setDatePreset(preset);
@@ -341,6 +350,10 @@ export default function KasirDashboard() {
   };
 
   const handleLogout = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
     document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     window.location.href = '/login';
   };
@@ -349,74 +362,134 @@ export default function KasirDashboard() {
   const treatmentServices = services.filter(s => s.category === 'TREATMENT');
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      {/* Header */}
-      <div className="bg-white border-b border-stone-200">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex justify-between items-center py-5">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-stone-800 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-lg">✂</span>
-              </div>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <div className={`fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out`}>
+        <div className="px-4 py-4 border-b border-gray-200">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center space-x-3">
+              <img 
+                src="/logo_barberplace.png" 
+                alt="Barber Place Logo" 
+                className="w-8 h-8 object-contain"
+              />
               <div>
-                <h1 className="text-2xl font-bold text-stone-800">Kasir Dashboard</h1>
-                <div className="flex flex-col space-y-1">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-stone-500">Branch:</span>
-                    <span className="text-sm font-medium text-stone-700">{branchInfo.name || 'Loading...'}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-stone-500">Logged as:</span>
-                    <span className="text-sm font-medium text-stone-700">{branchInfo.kasirName || 'Loading...'}</span>
-                  </div>
-
-                </div>
+                <h1 className={`text-lg font-bold text-gray-900 ${montserrat.className}`}>Barber Place</h1>
               </div>
             </div>
-            <button 
-              onClick={handleLogout}
-              className="text-stone-600 hover:text-stone-800 px-4 py-2 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors"
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
             >
-              Logout
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
             </button>
           </div>
+          <div className="text-center text-gray-600">
+            <span className="text-sm font-medium">Sistem Manajemen Kasir</span>
+          </div>
+          <div className="mt-3 text-center">
+            <div className="text-xs text-gray-500">Cabang: {branchInfo.name || 'Loading...'}</div>
+            <div className="text-xs text-gray-500">Kasir: {branchInfo.kasirName || 'Loading...'}</div>
+          </div>
+        </div>
+        
+        <nav className="mt-4 px-4">
+          <div className="mb-4 px-3">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Menu Kasir</h2>
+          </div>
+          <button
+            onClick={() => setActiveTab('transactions')}
+            className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors mb-2 ${
+              activeTab === 'transactions'
+                ? 'bg-stone-800 text-white'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+            }`}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+            <span className={`font-medium ${montserrat.className}`}>Live Transactions</span>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('history')}
+            className={`w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors mb-2 ${
+              activeTab === 'history'
+                ? 'bg-stone-800 text-white'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+            }`}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <span className={`font-medium ${montserrat.className}`}>Transaction History</span>
+          </button>
+        </nav>
+        
+        <div className="absolute bottom-4 left-4 right-4">
+          <button 
+            onClick={handleLogout}
+            className="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center space-x-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            <span>Logout</span>
+          </button>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto py-8 px-6">
-        {/* Navigation */}
-        <div className="mb-8">
-          <div className="bg-stone-100 p-1 rounded-2xl inline-flex">
-            {[
-              { id: 'transactions', name: '🏪 Live Transactions', desc: 'Manage ongoing services' },
-              { id: 'history', name: '📊 Transaction History', desc: 'View past transactions' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`relative px-6 py-4 rounded-xl font-medium text-sm transition-all duration-200 min-w-48 ${
-                  activeTab === tab.id
-                    ? 'bg-white text-stone-800 shadow-sm'
-                    : 'text-stone-600 hover:text-stone-800'
-                }`}
-              >
-                <div className="text-left">
-                  <div className="font-semibold">{tab.name}</div>
-                  <div className="text-xs text-stone-500 mt-1">{tab.desc}</div>
+      {/* Main Content */}
+      <div className={`flex-1 transition-all duration-300 ${sidebarOpen ? 'ml-72' : 'ml-0'}`}>
+        {/* Header */}
+        <div className="bg-white border-b border-gray-300 shadow-md">
+          <div className="px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-7">
+              <div className="flex items-center space-x-3">
+                {!sidebarOpen && (
+                  <button 
+                    onClick={() => setSidebarOpen(true)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                  </button>
+                )}
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">
+                    {[
+                      { id: 'transactions', name: 'Live Transactions' },
+                      { id: 'history', name: 'Transaction History' }
+                    ].find(tab => tab.id === activeTab)?.name || 'Live Transactions'}
+                  </h1>
+                  <p className="text-sm text-gray-500">Sistem Manajemen Kasir</p>
+                  <div className="text-sm text-gray-600 mt-1">
+                    {isClient ? currentTime.toLocaleDateString('id-ID', { 
+                      weekday: 'long', 
+                      day: 'numeric', 
+                      month: 'long' 
+                    }) : 'Loading...'} - 
+                    {isClient ? `${currentTime.toLocaleTimeString('en-US', { hour12: false, hour: 'numeric', minute: '2-digit', second: '2-digit' })} WIB` : '--:--:-- WIB'}
+                  </div>
                 </div>
-              </button>
-            ))}
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Content */}
-        <div className="bg-white rounded-xl border border-stone-200 p-8">
+        <div className="p-6 mt-2">
+
+          {/* Content */}
+          <div className="bg-white rounded-lg shadow-md p-6 border border-gray-300">
           {activeTab === 'transactions' && (
             <div>
               <div className="flex justify-between items-center mb-8">
                 <div>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
-                    <h2 className="text-xl sm:text-2xl font-bold text-stone-800">Transactions</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-stone-800">Transaksi</h2>
                     <div className="text-stone-600">
                       <div className="text-sm sm:text-lg font-medium">
                         {isClient ? currentTime.toLocaleDateString('id-ID', { 
@@ -433,8 +506,8 @@ export default function KasirDashboard() {
                   </div>
                   <div className="flex space-x-0 bg-white rounded-xl border border-stone-200">
                     {[
-                      { id: 'ongoing', name: 'Ongoing Services' },
-                      { id: 'completed', name: 'Completed Today' }
+                      { id: 'ongoing', name: 'Layanan Berlangsung' },
+                      { id: 'completed', name: 'Selesai Hari Ini' }
                     ].map((view) => (
                       <button
                         key={view.id}
@@ -455,7 +528,7 @@ export default function KasirDashboard() {
                     onClick={() => setShowAddService(true)}
                     className="bg-stone-800 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-stone-900 transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
                   >
-                    <span>✂</span> <span className="hidden sm:inline">Add Service</span><span className="sm:hidden">Service</span>
+                    <span>✂</span> <span className="hidden sm:inline">Tambah Layanan</span><span className="sm:hidden">Layanan</span>
                   </button>
                   <button 
                     onClick={() => {
@@ -470,26 +543,26 @@ export default function KasirDashboard() {
                     }}
                     className="bg-stone-600 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-stone-700 transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
                   >
-                    <span>📦</span> <span className="hidden sm:inline">Add Product</span><span className="sm:hidden">Product</span>
+                    <span>📦</span> <span className="hidden sm:inline">Tambah Produk</span><span className="sm:hidden">Produk</span>
                   </button>
                   <button 
                     onClick={() => setShowExpense(true)}
                     className="bg-stone-500 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-stone-600 transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
                   >
-                    <span>💸</span> <span className="hidden sm:inline">Add Expense</span><span className="sm:hidden">Expense</span>
+                    <span>💸</span> <span className="hidden sm:inline">Tambah Pengeluaran</span><span className="sm:hidden">Pengeluaran</span>
                   </button>
                 </div>
               </div>
 
               {customerView === 'completed' && (
                 <div className="mb-8 p-6 bg-stone-50 rounded-xl border border-stone-200">
-                  <h3 className="font-bold text-stone-800 mb-4">Today's Revenue Summary</h3>
+                  <h3 className="font-bold text-stone-800 mb-4">Ringkasan Pendapatan Hari Ini</h3>
                   <div className="grid grid-cols-3 gap-4">
                     <div className="text-center">
                       <div className="text-2xl font-bold text-stone-800">
                         Rp {(dailySummary?.total || 0).toLocaleString()}
                       </div>
-                      <div className="text-sm text-stone-600">Total Revenue</div>
+                      <div className="text-sm text-stone-600">Total Pendapatan</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-green-600">
@@ -528,8 +601,8 @@ export default function KasirDashboard() {
                         <tr>
                           <td colSpan={6} className="px-6 py-16 text-center text-stone-500">
                             <div className="text-4xl mb-4">✂</div>
-                            <div>No active customers</div>
-                            <div className="text-sm mt-1">Add a new customer to get started</div>
+                            <div>Tidak ada pelanggan aktif</div>
+                            <div className="text-sm mt-1">Tambahkan pelanggan baru untuk memulai</div>
                           </td>
                         </tr>
                       ) : (
@@ -619,8 +692,8 @@ export default function KasirDashboard() {
                         <tr>
                           <td colSpan={6} className="px-6 py-16 text-center text-stone-500">
                             <div className="text-4xl mb-4">✂</div>
-                            <div>No completed transactions today</div>
-                            <div className="text-sm mt-1">Completed transactions will appear here</div>
+                            <div>Tidak ada transaksi selesai hari ini</div>
+                            <div className="text-sm mt-1">Transaksi yang selesai akan muncul di sini</div>
                           </td>
                         </tr>
                       ) : (
@@ -707,7 +780,7 @@ export default function KasirDashboard() {
                   <div className="flex justify-between items-start mb-6">
                     <div>
                       <h3 className="text-lg font-bold text-stone-800 mb-2">
-                        Complete Service - {completingCustomer.customerName}
+                        Selesaikan Layanan - {completingCustomer.customerName}
                       </h3>
                       <div className="text-sm text-stone-600">
                         <span className="font-medium">{completingCustomer.visitServices?.map(vs => vs.service.name).join(' + ') || 'No services'}</span> by {completingCustomer.capster.name}
@@ -729,7 +802,7 @@ export default function KasirDashboard() {
                     <div className="space-y-4">
                       {/* Total Calculation */}
                       <div className="p-4 bg-white rounded-lg border border-stone-300">
-                        <h4 className="font-medium text-stone-800 mb-3">Bill Summary</h4>
+                        <h4 className="font-medium text-stone-800 mb-3">Ringkasan Tagihan</h4>
                         <div className="space-y-2">
                           {completingCustomer.visitServices?.map((vs, index) => (
                             <div key={index} className="flex justify-between text-sm">
@@ -750,7 +823,7 @@ Rp {(completingCustomer.visitServices?.reduce((sum, vs) => sum + vs.service.base
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-stone-700 mb-2">Payment Method</label>
+                        <label className="block text-sm font-medium text-stone-700 mb-2">Metode Pembayaran</label>
                         <select
                           value={paymentMethod}
                           onChange={(e) => setPaymentMethod(e.target.value)}
@@ -762,7 +835,7 @@ Rp {(completingCustomer.visitServices?.reduce((sum, vs) => sum + vs.service.base
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-stone-700 mb-2">Transaction Responsible</label>
+                        <label className="block text-sm font-medium text-stone-700 mb-2">Penanggung Jawab Transaksi</label>
                         <select
                           value={completedBy}
                           onChange={(e) => setCompletedBy(e.target.value)}
@@ -823,7 +896,7 @@ body: JSON.stringify({
                           disabled={isSubmitting}
                           className="flex-1 bg-stone-800 text-white px-6 py-3 rounded-lg hover:bg-stone-900 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          {isSubmitting ? 'Processing...' : 'Complete Transaction'}
+                          {isSubmitting ? 'Memproses...' : 'Selesaikan Transaksi'}
                         </button>
                         <button 
                           onClick={() => {
@@ -832,7 +905,7 @@ body: JSON.stringify({
                           }}
                           className="px-6 py-3 text-stone-600 hover:text-stone-800 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors"
                         >
-                          Cancel
+                          Batal
                         </button>
                       </div>
                     </div>
@@ -850,8 +923,8 @@ body: JSON.stringify({
             <div>
               <div className="flex justify-between items-center mb-8">
                 <div>
-                  <h2 className="text-2xl font-bold text-stone-800">Transaction History</h2>
-                  <p className="text-stone-500 text-sm mt-1">Filter and view transaction history</p>
+                  <h2 className="text-2xl font-bold text-stone-800">Riwayat Transaksi</h2>
+                  <p className="text-stone-500 text-sm mt-1">Filter dan lihat riwayat transaksi</p>
                 </div>
               </div>
 
@@ -1305,9 +1378,8 @@ body: JSON.stringify({
               })()}
             </div>
           )}
+          </div>
         </div>
-
-
       </div>
 
       {/* Product Sale Modal */}
@@ -2166,10 +2238,41 @@ body: JSON.stringify({
         </div>
       )}
 
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg w-96 p-6 shadow-2xl border border-gray-200">
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Konfirmasi Logout</h3>
+              <p className="text-gray-600 mb-6">Apakah Anda yakin ingin logout dari panel kasir?</p>
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => setShowLogoutModal(false)}
+                  className="px-6 py-2 bg-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={confirmLogout}
+                  className="px-6 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Global Loading Spinner */}
       {globalLoading && (
         <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-          <div className="w-12 h-12 border-4 border-stone-300 border-t-stone-800 rounded-full animate-spin bg-white shadow-lg"></div>
+          <div className="w-12 h-12 border-4 border-gray-300 border-t-stone-800 rounded-full animate-spin bg-white shadow-lg"></div>
         </div>
       )}
     </div>

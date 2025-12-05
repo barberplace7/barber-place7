@@ -4,7 +4,9 @@ import { Montserrat } from 'next/font/google';
 import Services from '@/components/landing/Services';
 import Pricelist from '@/components/landing/Pricelist';
 import Gallery from '@/components/landing/Gallery';
+import AboutUs from '@/components/landing/AboutUs';
 import LocationMaps from '@/components/landing/LocationMaps';
+import FAQ from '@/components/landing/FAQ';
 import SectionHeader from '@/components/ui/SectionHeader';
 import DecorativeLine from '@/components/ui/DecorativeLine';
 import Icon from '@/components/ui/Icon';
@@ -20,6 +22,7 @@ export default function BarbershopLanding() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [showBlur, setShowBlur] = useState(false);
 
 
   useEffect(() => {
@@ -28,8 +31,13 @@ export default function BarbershopLanding() {
       
       if (currentScrollY <= 50) {
         setIsNavVisible(true);
+        setShowBlur(false);
+      } else if (currentScrollY < lastScrollY) {
+        setIsNavVisible(true);
+        setShowBlur(true);
       } else {
         setIsNavVisible(false);
+        setShowBlur(false);
       }
       
       setLastScrollY(currentScrollY);
@@ -44,22 +52,25 @@ export default function BarbershopLanding() {
   return (
     <div className="min-h-screen text-white font-sans">
       {/* Navigation */}
-      <nav className={`fixed top-4 left-4 right-4 z-40 px-8 py-4 flex items-center justify-between transition-transform duration-300 rounded-2xl ${isNavVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+      {/* Background blur overlay */}
+      <div className={`fixed top-0 left-0 right-0 z-30 transition-all duration-300 ${showBlur ? 'backdrop-blur-md bg-black/20 h-24' : 'h-0'}`}></div>
+      
+      <nav className={`fixed top-4 left-0 right-0 z-40 px-8 py-3 flex items-center justify-between transition-all duration-300 ${isNavVisible ? 'translate-y-0' : '-translate-y-full'}`}>
         {/* Logo */}
-        <div className="flex items-center gap-3 ml-16">
-          <div className="relative">
+        <div className="flex items-center gap-2 sm:gap-3 ml-4 sm:ml-8 md:ml-16">
+          <a href="#home" className="relative">
             <img 
               src="/logo_barberplace.png" 
               alt="Logo" 
-              className="w-22 h-22 rounded-full object-cover shadow-2xl"
+              className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full object-cover shadow-2xl hover:scale-105 transition-transform duration-200 cursor-pointer"
             />
-          </div>
+          </a>
         </div>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8 mr-8">
+        <div className="hidden md:flex items-center gap-4 lg:gap-6 xl:gap-8 mr-4 sm:mr-6 md:mr-8">
           {NAVIGATION_ITEMS.map((item, index) => (
-            <a key={index} href={item.href} className="text-white hover:text-gray-300 transition text-lg font-medium tracking-wide">
+            <a key={index} href={item.href} className="text-white hover:text-gray-300 transition text-sm md:text-base lg:text-lg font-medium tracking-wide">
               {item.label}
             </a>
           ))}
@@ -96,44 +107,44 @@ export default function BarbershopLanding() {
       {/* Hero Section */}
       <div id="home" className="relative min-h-screen flex items-center">
         {/* Top Border - full width white with colored pattern in center */}
-        <div className="absolute top-0 left-0 right-0 bg-white z-50" style={{height: '1.3rem'}}>
+        <div className="absolute top-0 left-0 right-0 bg-white z-50 h-4 sm:h-5 md:h-6">
           <div className="absolute left-1/2 transform -translate-x-1/2 h-full flex" style={{width: 'min(21rem, 90vw)'}}>
-            <div className="w-8 sm:w-10 md:w-12 bg-red-600"></div>
-            <div className="w-8 sm:w-10 md:w-12 bg-white"></div>
-            <div className="w-8 sm:w-10 md:w-12 bg-blue-700"></div>
-            <div className="w-8 sm:w-10 md:w-12 bg-white"></div>
-            <div className="w-8 sm:w-10 md:w-12 bg-red-600"></div>
-            <div className="w-8 sm:w-10 md:w-12 bg-white"></div>
-            <div className="w-8 sm:w-10 md:w-12 bg-blue-700"></div>
+            <div className="flex-1 bg-red-600"></div>
+            <div className="flex-1 bg-white"></div>
+            <div className="flex-1 bg-blue-700"></div>
+            <div className="flex-1 bg-white"></div>
+            <div className="flex-1 bg-red-600"></div>
+            <div className="flex-1 bg-white"></div>
+            <div className="flex-1 bg-blue-700"></div>
           </div>
         </div>
         
         {/* Bottom Border - full width white only */}
-        <div className="absolute bottom-0 left-0 right-0 bg-white z-50" style={{height: '1.3rem'}}></div>
+        <div className="absolute bottom-0 left-0 right-0 bg-white z-50 h-4 sm:h-5 md:h-6"></div>
         
         {/* Left Border - full height white with colored pattern in center */}
-        <div className="absolute left-0 top-0 bottom-0 bg-white z-50" style={{width: '1.3rem'}}>
+        <div className="absolute left-0 top-0 bottom-0 bg-white z-50 w-4 sm:w-5 md:w-6">
           <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex flex-col" style={{height: 'min(21rem, 70vh)'}}>
-            <div className="h-8 sm:h-10 md:h-12 bg-red-600"></div>
-            <div className="h-8 sm:h-10 md:h-12 bg-white"></div>
-            <div className="h-8 sm:h-10 md:h-12 bg-blue-700"></div>
-            <div className="h-8 sm:h-10 md:h-12 bg-white"></div>
-            <div className="h-8 sm:h-10 md:h-12 bg-red-600"></div>
-            <div className="h-8 sm:h-10 md:h-12 bg-white"></div>
-            <div className="h-8 sm:h-10 md:h-12 bg-blue-700"></div>
+            <div className="flex-1 bg-red-600"></div>
+            <div className="flex-1 bg-white"></div>
+            <div className="flex-1 bg-blue-700"></div>
+            <div className="flex-1 bg-white"></div>
+            <div className="flex-1 bg-red-600"></div>
+            <div className="flex-1 bg-white"></div>
+            <div className="flex-1 bg-blue-700"></div>
           </div>
         </div>
         
         {/* Right Border - full height white with colored pattern in center */}
-        <div className="absolute right-0 top-0 bottom-0 bg-white z-50" style={{width: '1.3rem'}}>
+        <div className="absolute right-0 top-0 bottom-0 bg-white z-50 w-4 sm:w-5 md:w-6">
           <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex flex-col" style={{height: 'min(21rem, 70vh)'}}>
-            <div className="h-8 sm:h-10 md:h-12 bg-red-600"></div>
-            <div className="h-8 sm:h-10 md:h-12 bg-white"></div>
-            <div className="h-8 sm:h-10 md:h-12 bg-blue-700"></div>
-            <div className="h-8 sm:h-10 md:h-12 bg-white"></div>
-            <div className="h-8 sm:h-10 md:h-12 bg-red-600"></div>
-            <div className="h-8 sm:h-10 md:h-12 bg-white"></div>
-            <div className="h-8 sm:h-10 md:h-12 bg-blue-700"></div>
+            <div className="flex-1 bg-red-600"></div>
+            <div className="flex-1 bg-white"></div>
+            <div className="flex-1 bg-blue-700"></div>
+            <div className="flex-1 bg-white"></div>
+            <div className="flex-1 bg-red-600"></div>
+            <div className="flex-1 bg-white"></div>
+            <div className="flex-1 bg-blue-700"></div>
           </div>
         </div>
         
@@ -150,21 +161,18 @@ export default function BarbershopLanding() {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 w-full px-4 md:px-8 pt-80 md:pt-96 pb-16">
-          <div className="max-w-2xl ml-8 md:ml-16">
-            <h1 className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 sm:mb-8 leading-tight text-left ${montserrat.className}`}>
-              Barber Place
-            </h1>
-            <p className={`text-gray-300 text-sm sm:text-base mb-10 sm:mb-12 leading-relaxed max-w-xl text-left ${montserrat.className}`}>
+        <div className="relative z-10 w-full px-4 sm:px-6 md:px-8 pt-60 sm:pt-72 md:pt-80 lg:pt-96 pb-12 sm:pb-16">
+          <div className="max-w-xs sm:max-w-md md:max-w-lg lg:max-w-2xl ml-4 sm:ml-6 md:ml-8 lg:ml-16">
+            <p className={`text-gray-300 text-sm sm:text-base md:text-lg lg:text-xl mb-4 sm:mb-6 md:mb-8 leading-relaxed text-left ${montserrat.className}`}>
               Berbagai layanan lengkap untuk kebutuhan grooming dan perawatan rambut Anda dengan standar profesional tertinggi
             </p>
-            <div className="flex justify-start">
-              <button className={`group relative px-6 sm:px-8 py-3 sm:py-4 border-2 border-white rounded-full text-white font-medium tracking-wider hover:bg-white hover:text-black transition-all duration-300 flex items-center gap-2 shadow-2xl hover:shadow-white/20 ${montserrat.className}`}>
+            <div className="flex justify-start mt-4 sm:mt-6 md:mt-8">
+              <a href="https://wa.me/6282287443345?text=Halo,%20saya%20mau%20booking%20Barber%20Place%20dengan%20detail%20berikut:%0ANama:%0APaket:%0ATanggal%20%26%20Jam:%0ACabang%20:" target="_blank" rel="noopener noreferrer" className={`group relative px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 border-2 border-white rounded-full text-white text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-all duration-300 flex items-center gap-2 shadow-2xl hover:shadow-white/20 ${montserrat.className}`}>
                 Book Now
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -181,110 +189,70 @@ export default function BarbershopLanding() {
       {/* Pricelist Section */}
       <Pricelist />
 
+
+
       {/* Spacer */}
-      <div className="bg-gray-50 py-16"></div>
+      <div className="bg-gray-50 py-8"></div>
 
       {/* Gallery Section */}
       <Gallery />
 
-      {/* Location & Contact Section */}
-      <div id="location" className="bg-gray-50 py-48 px-4 sm:px-8">
-        <div className="max-w-full mx-auto px-8">
-          <SectionHeader title="About Us" />
-          
-          {/* About Content */}
-          <div className="mb-12">
-            <h3 className={`text-2xl font-bold text-black mb-4 ${montserrat.className}`}>About Barberplace</h3>
-            <p className={`text-black text-base mb-8 ${montserrat.className}`}>Barberplace since 2021 commite to give service all customer</p>
-            
-            {/* Operational Hours */}
-            <div className="mb-6">
-              <h4 className={`text-lg font-bold text-black mb-3 ${montserrat.className}`}>Operational Hours</h4>
-              <div className="flex items-center gap-2">
-                <Icon name="clock" className="w-4 h-4 text-gray-600" />
-                <span className={`text-sm text-black ${montserrat.className}`}>Open Everyday, 10.00-22.00 WIB</span>
-              </div>
-            </div>
-            
-            {/* Contact */}
-            <div>
-              <h4 className={`text-lg font-bold text-black mb-3 ${montserrat.className}`}>Contact</h4>
-              <div className="space-y-2">
-                <a href={CONTACT_INFO.whatsapp.url} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-2 text-black hover:text-green-600 transition-colors ${montserrat.className}`}>
-                  <Icon name="whatsapp" className="w-4 h-4" />
-                  <span className="text-sm">WA</span>
-                </a>
-                <a href={CONTACT_INFO.instagram.url} target="_blank" rel="noopener noreferrer" className={`flex items-center gap-2 text-black hover:text-pink-600 transition-colors ${montserrat.className}`}>
-                  <Icon name="instagram" className="w-4 h-4" />
-                  <span className="text-sm">Instagram</span>
-                </a>
-              </div>
-            </div>
-          </div>
+      {/* About Us Section */}
+      <AboutUs />
 
-
-          
-          {/* Location Maps */}
-          <LocationMaps />
-        </div>
-      </div>
+      {/* FAQ Section */}
+      <FAQ />
 
       {/* Footer */}
-      <footer className="bg-gray-50 text-black py-12 px-4 sm:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
+      <footer className="bg-gray-800 text-white py-8 sm:py-12 px-4 sm:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 items-start">
             {/* Company Info */}
-            <div className="self-start">
-              <h3 className="text-lg font-bold">BARBER PLACE</h3>
+            <div className="sm:col-span-2 md:col-span-1">
+              <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">BARBER PLACE</h3>
+              <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
+                Barbershop profesional dengan layanan grooming terbaik untuk kebutuhan perawatan rambut dan penampilan Anda.
+              </p>
+            </div>
+
+            {/* Quick Links */}
+            <div className="flex justify-start sm:justify-center md:justify-center">
+              <div>
+                <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Quick Links</h3>
+                <div className="space-y-1 sm:space-y-2">
+                  <a href="#home" className="block text-gray-300 hover:text-white transition-colors text-xs sm:text-sm">Home</a>
+                  <a href="#about" className="block text-gray-300 hover:text-white transition-colors text-xs sm:text-sm">Service</a>
+                  <a href="#service" className="block text-gray-300 hover:text-white transition-colors text-xs sm:text-sm">Pricelist</a>
+                  <a href="#location" className="block text-gray-300 hover:text-white transition-colors text-xs sm:text-sm">About Us</a>
+                </div>
+              </div>
             </div>
 
             {/* Contact Info */}
-            <div className="self-start">
-              <h3 className="text-lg font-bold mb-3">Contact</h3>
-              <div className="space-y-3">
-                <a href={CONTACT_INFO.whatsapp.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-green-600 hover:underline hover:decoration-gray-400 transition-all duration-200">
-                  <Icon name="whatsapp" className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-800 text-sm">{CONTACT_INFO.whatsapp.number}</span>
-                </a>
-                <a href={CONTACT_INFO.instagram.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-pink-600 hover:underline hover:decoration-gray-400 transition-all duration-200">
-                  <Icon name="instagram" className="w-5 h-5 text-gray-600" />
-                  <span className="text-gray-800 text-sm">{CONTACT_INFO.instagram.handle}</span>
-                </a>
-              </div>
-            </div>
-
-            {/* Operating Hours */}
-            <div className="self-start">
-              <h3 className="text-lg font-bold mb-3">Operational Hours</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Icon name="calendar" className="w-5 h-5 text-gray-600" />
-                  <p className="text-gray-700 text-sm">Open Everyday</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Icon name="clock" className="w-5 h-5 text-gray-600" />
-                  <p className="text-gray-700 text-sm font-medium">{CONTACT_INFO.hours}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Location */}
-            <div className="self-start">
-              <h3 className="text-lg font-bold mb-3">Location</h3>
-              <div className="space-y-3">
-                {CONTACT_INFO.locations.map((location, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <Icon name="location" className="w-5 h-5 text-gray-600" />
-                    <span className="text-gray-800 text-sm">{location}</span>
+            <div className="flex justify-start sm:justify-end md:justify-end">
+              <div>
+                <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Contact Info</h3>
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Icon name="whatsapp" className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                    <span className="text-gray-300 text-xs sm:text-sm">{CONTACT_INFO.whatsapp.number}</span>
                   </div>
-                ))}
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Icon name="instagram" className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                    <span className="text-gray-300 text-xs sm:text-sm">{CONTACT_INFO.instagram.handle}</span>
+                  </div>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <Icon name="clock" className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                    <span className="text-gray-300 text-xs sm:text-sm">10.00 - 22.00 WIB</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-8 pt-8 text-center relative">
-            <DecorativeLine className="mb-2" />
-            <p className="text-gray-700 text-sm mt-2 mb-4">&copy; 2024 Barber Place. All rights reserved.</p>
+          {/* Bottom Section */}
+          <div className="border-t border-gray-700 mt-6 sm:mt-8 pt-4 sm:pt-6 text-center">
+            <p className="text-gray-400 text-xs sm:text-sm">&copy; 2024 Barber Place. All rights reserved.</p>
           </div>
         </div>
       </footer>
