@@ -1,5 +1,10 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Overview from './components/dashboard/Overview';
+import TransactionMonitor from './components/transactions/TransactionMonitor';
+import Sidebar from './components/layout/Sidebar';
+import CapsterManager from './components/users/CapsterManager';
+import KasirManager from './components/users/KasirManager';
 
 interface Kasir {
   id: string;
@@ -37,6 +42,9 @@ interface Product {
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [expandedMenus, setExpandedMenus] = useState<{[key: string]: boolean}>({});
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [kasirList, setKasirList] = useState<Kasir[]>([]);
   const [capsterList, setCapsterList] = useState<Capster[]>([]);
   const [showKasirForm, setShowKasirForm] = useState(false);
@@ -116,186 +124,56 @@ export default function AdminDashboard() {
   }, [overviewPeriod, chartPeriod, branchPeriod]);
 
   const fetchKasir = async () => {
-    try {
-      setGlobalLoading(true);
-      const response = await fetch('/api/admin/kasir');
-      const data = await response.json();
-      setKasirList(data);
-    } catch (error) {
-      console.error('Failed to fetch kasir:', error);
-    } finally {
-      setGlobalLoading(false);
-    }
+    console.log('API call disabled: fetchKasir');
+    setKasirList([]);
   };
 
   const fetchCapster = async () => {
-    try {
-      setGlobalLoading(true);
-      const response = await fetch('/api/admin/capster');
-      const data = await response.json();
-      setCapsterList(data);
-    } catch (error) {
-      console.error('Failed to fetch capster:', error);
-    } finally {
-      setGlobalLoading(false);
-    }
+    console.log('API call disabled: fetchCapster');
+    setCapsterList([]);
   };
 
   const handleAddKasir = async () => {
-    try {
-      const response = await fetch('/api/admin/kasir', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newKasir)
-      });
-      
-      if (response.ok) {
-        setNewKasir({ name: '', phone: '' });
-        setShowKasirForm(false);
-        fetchKasir();
-      }
-    } catch (error) {
-      console.error('Failed to add kasir:', error);
-    }
+    console.log('API call disabled: handleAddKasir');
   };
 
   const handleAddCapster = async () => {
-    try {
-      const response = await fetch('/api/admin/capster', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newCapster)
-      });
-      
-      if (response.ok) {
-        setNewCapster({ name: '', phone: '' });
-        setShowCapsterForm(false);
-        fetchCapster();
-      }
-    } catch (error) {
-      console.error('Failed to add capster:', error);
-    }
+    console.log('API call disabled: handleAddCapster');
   };
 
   const handleDeleteKasir = async (id: string) => {
-    if (confirm('Are you sure you want to delete this kasir?')) {
-      try {
-        const response = await fetch(`/api/admin/kasir?id=${id}`, {
-          method: 'DELETE'
-        });
-        
-        if (response.ok) {
-          fetchKasir();
-        }
-      } catch (error) {
-        console.error('Failed to delete kasir:', error);
-      }
-    }
+    console.log('API call disabled: handleDeleteKasir');
   };
 
   const handleDeleteCapster = async (id: string) => {
-    if (confirm('Are you sure you want to delete this capster?')) {
-      try {
-        const response = await fetch(`/api/admin/capster?id=${id}`, {
-          method: 'DELETE'
-        });
-        
-        if (response.ok) {
-          fetchCapster();
-        }
-      } catch (error) {
-        console.error('Failed to delete capster:', error);
-      }
-    }
+    console.log('API call disabled: handleDeleteCapster');
   };
 
   const fetchGallery = async () => {
-    try {
-      const response = await fetch('/api/admin/gallery');
-      const data = await response.json();
-      setGalleryList(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Failed to fetch gallery:', error);
-      setGalleryList([]);
-    }
+    console.log('API call disabled: fetchGallery');
+    setGalleryList([]);
   };
 
   const handleUploadImage = async (position: number, file: File) => {
-    setUploadingSlot(position);
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('position', position.toString());
-
-      const response = await fetch('/api/admin/gallery', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (response.ok) {
-        fetchGallery();
-      }
-    } catch (error) {
-      console.error('Failed to upload image:', error);
-    } finally {
-      setUploadingSlot(null);
-    }
+    console.log('API call disabled: handleUploadImage');
   };
 
   const handleDeleteImage = async (position: number) => {
-    if (confirm('Are you sure you want to delete this image?')) {
-      try {
-        const response = await fetch(`/api/admin/gallery?position=${position}`, {
-          method: 'DELETE'
-        });
-        
-        if (response.ok) {
-          fetchGallery();
-        }
-      } catch (error) {
-        console.error('Failed to delete image:', error);
-      }
-    }
+    console.log('API call disabled: handleDeleteImage');
   };
 
   const fetchServices = async () => {
-    try {
-      const response = await fetch('/api/admin/services');
-      const data = await response.json();
-      setServiceList(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Failed to fetch services:', error);
-      setServiceList([]);
-    }
+    console.log('API call disabled: fetchServices');
+    setServiceList([]);
   };
 
   const fetchProducts = async () => {
-    try {
-      const response = await fetch('/api/admin/products');
-      const data = await response.json();
-      setProductList(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Failed to fetch products:', error);
-      setProductList([]);
-    }
+    console.log('API call disabled: fetchProducts');
+    setProductList([]);
   };
 
   const handleAddService = async () => {
-    try {
-      const response = await fetch('/api/admin/services', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newService)
-      });
-      
-      if (response.ok) {
-        setNewService({ name: '', category: 'HAIRCUT', basePrice: '', commissionRate: '' });
-        setShowServiceForm(false);
-        fetchServices();
-      }
-    } catch (error) {
-      console.error('Failed to add service:', error);
-    }
+    console.log('API call disabled: handleAddService');
   };
 
   const handleEditService = (service: Service) => {
@@ -310,42 +188,11 @@ export default function AdminDashboard() {
   };
 
   const handleUpdateService = async () => {
-    if (!editingService) return;
-    
-    try {
-      const response = await fetch('/api/admin/services', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: editingService.id, ...newService })
-      });
-      
-      if (response.ok) {
-        setNewService({ name: '', category: 'HAIRCUT', basePrice: '', commissionRate: '' });
-        setEditingService(null);
-        setShowServiceForm(false);
-        fetchServices();
-      }
-    } catch (error) {
-      console.error('Failed to update service:', error);
-    }
+    console.log('API call disabled: handleUpdateService');
   };
 
   const handleAddProduct = async () => {
-    try {
-      const response = await fetch('/api/admin/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newProduct)
-      });
-      
-      if (response.ok) {
-        setNewProduct({ name: '', basePrice: '', commissionPerUnit: '' });
-        setShowProductForm(false);
-        fetchProducts();
-      }
-    } catch (error) {
-      console.error('Failed to add product:', error);
-    }
+    console.log('API call disabled: handleAddProduct');
   };
 
   const handleEditProduct = (product: Product) => {
@@ -359,181 +206,53 @@ export default function AdminDashboard() {
   };
 
   const handleUpdateProduct = async () => {
-    if (!editingProduct) return;
-    
-    try {
-      const response = await fetch('/api/admin/products', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: editingProduct.id, ...newProduct })
-      });
-      
-      if (response.ok) {
-        setNewProduct({ name: '', basePrice: '', commissionPerUnit: '' });
-        setEditingProduct(null);
-        setShowProductForm(false);
-        fetchProducts();
-      }
-    } catch (error) {
-      console.error('Failed to update product:', error);
-    }
+    console.log('API call disabled: handleUpdateProduct');
   };
 
   const handleDeleteService = async (id: string) => {
-    if (confirm('Are you sure you want to delete this service?')) {
-      try {
-        const response = await fetch(`/api/admin/services?id=${id}`, {
-          method: 'DELETE'
-        });
-        
-        if (response.ok) {
-          fetchServices();
-        }
-      } catch (error) {
-        console.error('Failed to delete service:', error);
-      }
-    }
+    console.log('API call disabled: handleDeleteService');
   };
 
   const handleDeleteProduct = async (id: string) => {
-    if (confirm('Are you sure you want to delete this product?')) {
-      try {
-        const response = await fetch(`/api/admin/products?id=${id}`, {
-          method: 'DELETE'
-        });
-        
-        if (response.ok) {
-          fetchProducts();
-        }
-      } catch (error) {
-        console.error('Failed to delete product:', error);
-      }
-    }
+    console.log('API call disabled: handleDeleteProduct');
   };
 
   const fetchBranches = async () => {
-    try {
-      const loginResponse = await fetch('/api/admin/branch-logins');
-      const loginAccounts = await loginResponse.json();
-      setBranchList(Array.isArray(loginAccounts) ? loginAccounts : []);
-    } catch (error) {
-      console.error('Failed to fetch branches:', error);
-    }
+    console.log('API call disabled: fetchBranches');
+    setBranchList([]);
   };
 
   const fetchCabangList = async () => {
-    try {
-      const response = await fetch('/api/admin/cabang');
-      const data = await response.json();
-      setCabangList(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Failed to fetch cabang:', error);
-    }
+    console.log('API call disabled: fetchCabangList');
+    setCabangList([]);
   };
 
   const handleAddBranch = async () => {
-    try {
-      const response = await fetch('/api/admin/branch-logins', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newBranch)
-      });
-      
-      if (response.ok) {
-        setNewBranch({ cabangId: '', username: '', password: '' });
-        setShowBranchForm(false);
-        fetchBranches();
-      }
-    } catch (error) {
-      console.error('Failed to add branch login:', error);
-    }
+    console.log('API call disabled: handleAddBranch');
   };
 
   const handleDeleteBranch = async (id: string) => {
-    if (confirm('Are you sure you want to delete this login account?')) {
-      try {
-        const response = await fetch(`/api/admin/branch-logins?id=${id}`, {
-          method: 'DELETE'
-        });
-        
-        if (response.ok) {
-          fetchBranches();
-        }
-      } catch (error) {
-        console.error('Failed to delete branch login:', error);
-      }
-    }
+    console.log('API call disabled: handleDeleteBranch');
   };
 
   const fetchCommissionData = async () => {
-    try {
-      setGlobalLoading(true);
-      const params = new URLSearchParams();
-      if (commissionFilters.dateFrom) params.append('dateFrom', commissionFilters.dateFrom);
-      if (commissionFilters.dateTo) params.append('dateTo', commissionFilters.dateTo);
-      if (commissionFilters.capsterId) params.append('capsterId', commissionFilters.capsterId);
-      if (commissionFilters.branchId) params.append('branchId', commissionFilters.branchId);
-      
-      const response = await fetch(`/api/admin/commission?${params}`);
-      const data = await response.json();
-      setCommissionData(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Failed to fetch commission data:', error);
-      setCommissionData([]);
-    } finally {
-      setGlobalLoading(false);
-    }
+    console.log('API call disabled: fetchCommissionData');
+    setCommissionData([]);
   };
 
   const fetchStaffTransactionDetails = async (staff: any) => {
-    try {
-      const params = new URLSearchParams();
-      if (commissionFilters.dateFrom) params.append('dateFrom', commissionFilters.dateFrom);
-      if (commissionFilters.dateTo) params.append('dateTo', commissionFilters.dateTo);
-      params.append('staffId', staff.staffId || '');
-      
-      const response = await fetch(`/api/admin/commission-details?${params}`);
-      const data = await response.json();
-      setStaffTransactions(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error('Failed to fetch staff transaction details:', error);
-      setStaffTransactions([]);
-    }
+    console.log('API call disabled: fetchStaffTransactionDetails');
+    setStaffTransactions([]);
   };
 
   const fetchTransactionHistory = async () => {
-    try {
-      setGlobalLoading(true);
-      const params = new URLSearchParams();
-      if (transactionFilters.dateFrom) params.append('dateFrom', transactionFilters.dateFrom);
-      if (transactionFilters.dateTo) params.append('dateTo', transactionFilters.dateTo);
-      if (transactionFilters.branchId) params.append('branchId', transactionFilters.branchId);
-      if (transactionFilters.type) params.append('type', transactionFilters.type);
-      
-      const response = await fetch(`/api/admin/transactions?${params}`);
-      const data = await response.json();
-      setTransactionHistory(Array.isArray(data.transactions) ? data.transactions : []);
-      setTransactionSummary(data.summary || { totalRevenue: 0, totalExpenses: 0, cashRevenue: 0, qrisRevenue: 0 });
-      setCurrentPage(1);
-    } catch (error) {
-      console.error('Failed to fetch transaction history:', error);
-      setTransactionHistory([]);
-    } finally {
-      setGlobalLoading(false);
-    }
+    console.log('API call disabled: fetchTransactionHistory');
+    setTransactionHistory([]);
   };
 
   const fetchOverviewData = async () => {
-    try {
-      setGlobalLoading(true);
-      const response = await fetch(`/api/admin/overview?period=${overviewPeriod}&chartPeriod=${chartPeriod}&branchPeriod=${branchPeriod}`);
-      const data = await response.json();
-      setOverviewData(data);
-    } catch (error) {
-      console.error('Failed to fetch overview data:', error);
-    } finally {
-      setGlobalLoading(false);
-    }
+    console.log('API call disabled: fetchOverviewData');
+    setOverviewData(null);
   };
 
   useEffect(() => {
@@ -621,6 +340,17 @@ export default function AdminDashboard() {
       fetchTransactionHistory();
     }
   }, [transactionFilters]);
+
+  // Auto-expand menus based on active tab
+  useEffect(() => {
+    if (['services', 'products', 'gallery'].includes(activeTab)) {
+      setExpandedMenus(prev => ({ ...prev, 'data-master': true }));
+    } else if (['capster', 'kasir', 'branches'].includes(activeTab)) {
+      setExpandedMenus(prev => ({ ...prev, 'data-user': true }));
+    } else if (['transactions', 'commission'].includes(activeTab)) {
+      setExpandedMenus(prev => ({ ...prev, 'data-transaksi': true }));
+    }
+  }, [activeTab]);
 
   const generateCommissionPDF = (staff: any, transactions: any[]) => {
     const doc = `
@@ -731,37 +461,7 @@ export default function AdminDashboard() {
   };
 
   const confirmDeleteTransaction = async () => {
-    if (!deleteTransaction) return;
-    
-    try {
-      const response = await fetch('/api/admin/delete-transaction', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: deleteTransaction.type,
-          transactionId: deleteTransaction.id || deleteTransaction.transactionId,
-          visitId: deleteTransaction.visitId
-        })
-      });
-      
-      if (response.ok) {
-        setShowDeleteModal(false);
-        setDeleteTransaction(null);
-        setNotificationMessage('Transaction deleted successfully');
-        setShowNotification(true);
-        setTimeout(() => setShowNotification(false), 3000);
-        fetchTransactionHistory();
-      } else {
-        setNotificationMessage('Failed to delete transaction');
-        setShowNotification(true);
-        setTimeout(() => setShowNotification(false), 3000);
-      }
-    } catch (error) {
-      console.error('Failed to delete transaction:', error);
-      setNotificationMessage('Failed to delete transaction');
-      setShowNotification(true);
-      setTimeout(() => setShowNotification(false), 3000);
-    }
+    console.log('API call disabled: confirmDeleteTransaction');
   };
 
   const handleLogout = () => {
@@ -769,350 +469,51 @@ export default function AdminDashboard() {
     window.location.href = '/login';
   };
 
+
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">BP</span>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Admin Dashboard</h1>
-                <p className="text-sm text-gray-500">Barber Place Management</p>
-              </div>
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
+      {/* Sidebar */}
+      <Sidebar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        expandedMenus={expandedMenus}
+        setExpandedMenus={setExpandedMenus}
+        setShowLogoutModal={setShowLogoutModal}
+      />
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col h-full">
+        {/* Top Header */}
+        <div className="bg-white shadow-sm border-b p-4 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">Barber Place Management</h1>
+              <p className="text-sm text-gray-500">Admin Dashboard</p>
             </div>
-            <button 
-              onClick={handleLogout}
-              className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-            >
-              Logout
-            </button>
           </div>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        {/* Navigation Tabs */}
-        <div className="mb-6">
-          <nav className="flex space-x-1 bg-white p-1 rounded-lg shadow-sm">
-            {[
-              { id: 'overview', name: 'Overview' },
-              { id: 'transactions', name: 'Transaction Monitor' },
-              { id: 'commission', name: 'Commission Monitor' },
-              { id: 'branches', name: 'Branch Logins' },
-              { id: 'capster', name: 'Manage Capster' },
-              { id: 'kasir', name: 'Manage Kasir' },
-              { id: 'services', name: 'Service Packages' },
-              { id: 'products', name: 'Products' },
-              { id: 'gallery', name: 'Gallery Images' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-4 rounded-md font-medium text-sm transition-colors ${
-                  activeTab === tab.id
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                }`}
-              >
-                {tab.name}
-              </button>
-            ))}
-          </nav>
-        </div>
-
-        {/* Content */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border">
+        {/* Content Area */}
+        <div className="flex-1 p-6 overflow-y-auto">
+          <div className="bg-white rounded-lg shadow-sm p-6 border">
           {activeTab === 'overview' && (
-            <div className="space-y-8">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900">Business Overview</h2>
-                  <p className="text-gray-600 mt-1">Real-time insights and performance metrics</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm text-gray-500">Last updated</div>
-                  <div className="text-lg font-semibold text-gray-900">
-                    {new Date().toLocaleDateString('id-ID', { 
-                      weekday: 'long', 
-                      day: 'numeric', 
-                      month: 'long' 
-                    })}, {new Date().toLocaleTimeString('id-ID').replace(/\./g, ':')} WIB
-                  </div>
-                </div>
-              </div>
-
-              {!overviewData ? (
-                <div className="space-y-8">
-                  {/* Loading Key Metrics */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {[1,2,3,4].map(i => (
-                      <div key={i} className="bg-gray-200 p-6 rounded-xl animate-pulse">
-                        <div className="flex items-center justify-between">
-                          <div className="space-y-2">
-                            <div className="h-4 bg-gray-300 rounded w-24"></div>
-                            <div className="h-8 bg-gray-300 rounded w-32"></div>
-                          </div>
-                          <div className="w-12 h-12 bg-gray-300 rounded-lg"></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Loading Charts */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <div className="bg-white p-6 rounded-xl border border-gray-200">
-                      <div className="h-6 bg-gray-200 rounded w-48 mb-4 animate-pulse"></div>
-                      <div className="h-64 bg-gray-100 rounded animate-pulse"></div>
-                    </div>
-                    <div className="bg-white p-6 rounded-xl border border-gray-200">
-                      <div className="h-6 bg-gray-200 rounded w-40 mb-4 animate-pulse"></div>
-                      <div className="space-y-4">
-                        {[1,2,3].map(i => (
-                          <div key={i} className="flex items-center justify-between animate-pulse">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
-                              <div className="space-y-1">
-                                <div className="h-4 bg-gray-200 rounded w-24"></div>
-                                <div className="h-3 bg-gray-200 rounded w-16"></div>
-                              </div>
-                            </div>
-                            <div className="h-4 bg-gray-200 rounded w-20"></div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Loading Branch Performance */}
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200">
-                      <div className="h-6 bg-gray-200 rounded w-48 mb-4 animate-pulse"></div>
-                      <div className="space-y-4">
-                        {[1,2].map(i => (
-                          <div key={i} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg animate-pulse">
-                            <div className="flex items-center space-x-4">
-                              <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                              <div className="space-y-1">
-                                <div className="h-4 bg-gray-200 rounded w-32"></div>
-                                <div className="h-3 bg-gray-200 rounded w-24"></div>
-                              </div>
-                            </div>
-                            <div className="space-y-1">
-                              <div className="h-4 bg-gray-200 rounded w-24"></div>
-                              <div className="h-3 bg-gray-200 rounded w-16"></div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="bg-white p-6 rounded-xl border border-gray-200">
-                      <div className="h-6 bg-gray-200 rounded w-24 mb-4 animate-pulse"></div>
-                      <div className="space-y-4">
-                        {[1,2,3,4].map(i => (
-                          <div key={i} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg animate-pulse">
-                            <div className="h-4 bg-gray-200 rounded w-24"></div>
-                            <div className="h-6 bg-gray-200 rounded w-8"></div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-8">
-                  {/* Key Metrics */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-xl text-white">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-green-100 text-sm font-medium">Today's Revenue</p>
-                          <p className="text-3xl font-bold">Rp {overviewData?.todayRevenue?.toLocaleString() || '0'}</p>
-                        </div>
-                        <div className="w-12 h-12 bg-green-400 rounded-lg flex items-center justify-center">
-                          <span className="text-2xl">💰</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-gradient-to-br from-red-500 to-red-600 p-6 rounded-xl text-white">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-red-100 text-sm font-medium">Today's Expenses</p>
-                          <p className="text-3xl font-bold">Rp {overviewData?.todayExpenses?.toLocaleString() || '0'}</p>
-                        </div>
-                        <div className="w-12 h-12 bg-red-400 rounded-lg flex items-center justify-center">
-                          <span className="text-2xl">💸</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl text-white">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-blue-100 text-sm font-medium">Net Profit Today</p>
-                          <p className="text-3xl font-bold">Rp {((overviewData?.todayRevenue || 0) - (overviewData?.todayExpenses || 0)).toLocaleString()}</p>
-                        </div>
-                        <div className="w-12 h-12 bg-blue-400 rounded-lg flex items-center justify-center">
-                          <span className="text-2xl">📈</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-xl text-white">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-purple-100 text-sm font-medium">Transactions Today</p>
-                          <p className="text-3xl font-bold">{overviewData?.todayTransactions || 0}</p>
-                        </div>
-                        <div className="w-12 h-12 bg-purple-400 rounded-lg flex items-center justify-center">
-                          <span className="text-2xl">🛒</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Charts and Analytics */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {/* Revenue Chart */}
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-bold text-gray-900">Revenue Trend</h3>
-                        <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
-                          {[
-                            { id: '7days', name: '7 Days' },
-                            { id: '30days', name: '30 Days' }
-                          ].map((period) => (
-                            <button
-                              key={period.id}
-                              onClick={() => setChartPeriod(period.id)}
-                              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                                chartPeriod === period.id
-                                  ? 'bg-blue-600 text-white'
-                                  : 'text-gray-600 hover:text-gray-900'
-                              }`}
-                            >
-                              {period.name}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="h-64 flex items-end justify-between space-x-2">
-                        {overviewData.weeklyRevenue.map((day, index) => (
-                          <div key={index} className="flex-1 flex flex-col items-center">
-                            <div 
-                              className="w-full bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-md transition-all hover:from-blue-600 hover:to-blue-500"
-                              style={{ height: `${Math.max((day.revenue / Math.max(...overviewData.weeklyRevenue.map(d => d.revenue))) * 200, 10)}px` }}
-                            ></div>
-                            <div className="mt-2 text-xs text-gray-600 font-medium">{day.day}</div>
-                            <div className="text-xs text-gray-500">Rp {(day.revenue / 1000).toFixed(0)}k</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Top Services */}
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                      <h3 className="text-lg font-bold text-gray-900 mb-4">Top Services</h3>
-                      <div className="space-y-4">
-                        {overviewData.topServices.map((service, index) => (
-                          <div key={index} className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm ${
-                                index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-orange-500'
-                              }`}>
-                                {index + 1}
-                              </div>
-                              <div>
-                                <div className="font-medium text-gray-900">{service.name}</div>
-                                <div className="text-sm text-gray-500">{service.count} transactions</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="font-bold text-gray-900">Rp {service.revenue.toLocaleString()}</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Branch Performance & Quick Stats */}
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Branch Performance */}
-                    <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-bold text-gray-900">Branch Performance</h3>
-                        <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
-                          {[
-                            { id: 'today', name: 'Today' },
-                            { id: '7days', name: '7 Days' },
-                            { id: '30days', name: '30 Days' }
-                          ].map((period) => (
-                            <button
-                              key={period.id}
-                              onClick={() => setBranchPeriod(period.id)}
-                              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                                branchPeriod === period.id
-                                  ? 'bg-blue-600 text-white'
-                                  : 'text-gray-600 hover:text-gray-900'
-                              }`}
-                            >
-                              {period.name}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="space-y-4">
-                        {overviewData.branchPerformance.map((branch, index) => (
-                          <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                            <div className="flex items-center space-x-4">
-                              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                <span className="text-blue-600 font-bold">#{index + 1}</span>
-                              </div>
-                              <div>
-                                <div className="font-medium text-gray-900">{branch.name}</div>
-                                <div className="text-sm text-gray-500">{branch.transactions} transactions</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="font-bold text-gray-900">Rp {branch.revenue.toLocaleString()}</div>
-                              <div className="text-sm text-gray-500">{branch.staff} staff active</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Quick Stats */}
-                    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                      <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Stats</h3>
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
-                          <span className="text-sm font-medium text-gray-700">Total Branches</span>
-                          <span className="text-xl font-bold text-orange-600">{branchList.length}</span>
-                        </div>
-                        <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                          <span className="text-sm font-medium text-gray-700">Total Capsters</span>
-                          <span className="text-xl font-bold text-blue-600">{capsterList.length}</span>
-                        </div>
-                        <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                          <span className="text-sm font-medium text-gray-700">Total Kasir</span>
-                          <span className="text-xl font-bold text-green-600">{kasirList.length}</span>
-                        </div>
-                        <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                          <span className="text-sm font-medium text-gray-700">Services & Products</span>
-                          <span className="text-xl font-bold text-purple-600">{(serviceList?.length || 0) + (productList?.length || 0)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            <Overview
+              overviewData={overviewData}
+              overviewPeriod={overviewPeriod}
+              chartPeriod={chartPeriod}
+              branchPeriod={branchPeriod}
+              setOverviewPeriod={setOverviewPeriod}
+              setChartPeriod={setChartPeriod}
+              setBranchPeriod={setBranchPeriod}
+              branchList={branchList}
+              capsterList={capsterList}
+              kasirList={kasirList}
+              serviceList={serviceList}
+              productList={productList}
+            />
           )}
 
           {activeTab === 'transactions' && (
@@ -1719,190 +1120,27 @@ export default function AdminDashboard() {
           )}
 
           {activeTab === 'capster' && (
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-xl font-bold text-black">Manage Capster</h2>
-                  <p className="text-gray-600 text-sm">Add, edit, and manage your capster team</p>
-                </div>
-                <button 
-                  onClick={() => setShowCapsterForm(true)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Add New Capster
-                </button>
-              </div>
-              
-              {showCapsterForm && (
-                <div className="mb-6 p-4 bg-gray-50 rounded-lg border">
-                  <h3 className="font-bold text-black mb-4">Add New Capster</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-bold text-black mb-1">Full Name</label>
-                      <input
-                        type="text"
-                        placeholder="Enter capster name"
-                        value={newCapster.name}
-                        onChange={(e) => setNewCapster({...newCapster, name: e.target.value})}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:outline-none bg-white text-black"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-black mb-1">Phone Number</label>
-                      <input
-                        type="text"
-                        placeholder="Enter phone number"
-                        value={newCapster.phone}
-                        onChange={(e) => setNewCapster({...newCapster, phone: e.target.value})}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:outline-none bg-white text-black"
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-4 flex gap-2">
-                    <button 
-                      onClick={handleAddCapster}
-                      className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
-                    >
-                      Save Capster
-                    </button>
-                    <button 
-                      onClick={() => {setShowCapsterForm(false); setNewCapster({name: '', phone: ''})}}
-                      className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
-              
-              <div className="overflow-hidden rounded-lg border border-gray-200">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {capsterList.length === 0 ? (
-                      <tr>
-                        <td colSpan={3} className="px-6 py-12 text-center text-gray-500">
-                          No capsters yet. Add your first capster to get started.
-                        </td>
-                      </tr>
-                    ) : (
-                      capsterList.map((capster) => (
-                        <tr key={capster.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-black">{capster.name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{capster.phone || '-'}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button 
-                              onClick={() => handleDeleteCapster(capster.id)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <CapsterManager
+              capsterList={capsterList}
+              showCapsterForm={showCapsterForm}
+              setShowCapsterForm={setShowCapsterForm}
+              newCapster={newCapster}
+              setNewCapster={setNewCapster}
+              handleAddCapster={handleAddCapster}
+              handleDeleteCapster={handleDeleteCapster}
+            />
           )}
 
           {activeTab === 'kasir' && (
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-xl font-bold text-black">Manage Kasir</h2>
-                <button 
-                  onClick={() => setShowKasirForm(true)}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  Add New Kasir
-                </button>
-              </div>
-              
-              {showKasirForm && (
-                <div className="mb-6 p-4 bg-gray-50 rounded-lg border">
-                  <h3 className="font-bold text-black mb-4">Add New Kasir</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-bold text-black mb-1">Full Name</label>
-                      <input
-                        type="text"
-                        placeholder="Enter kasir name"
-                        value={newKasir.name}
-                        onChange={(e) => setNewKasir({...newKasir, name: e.target.value})}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-green-500 focus:outline-none bg-white text-black"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-bold text-black mb-1">Phone Number</label>
-                      <input
-                        type="text"
-                        placeholder="Enter phone number"
-                        value={newKasir.phone}
-                        onChange={(e) => setNewKasir({...newKasir, phone: e.target.value})}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-green-500 focus:outline-none bg-white text-black"
-                      />
-                    </div>
-                  </div>
-                  <div className="mt-4 flex gap-2">
-                    <button 
-                      onClick={handleAddKasir}
-                      className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
-                    >
-                      Save Kasir
-                    </button>
-                    <button 
-                      onClick={() => {setShowKasirForm(false); setNewKasir({name: '', phone: ''})}}
-                      className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
-              
-              <div className="overflow-hidden rounded-lg border border-gray-200">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {kasirList.length === 0 ? (
-                      <tr>
-                        <td colSpan={3} className="px-6 py-12 text-center text-gray-500">
-                          No kasir yet. Add your first kasir to get started.
-                        </td>
-                      </tr>
-                    ) : (
-                      kasirList.map((kasir) => (
-                        <tr key={kasir.id} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-black">{kasir.name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{kasir.phone || '-'}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button 
-                              onClick={() => handleDeleteKasir(kasir.id)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <KasirManager
+              kasirList={kasirList}
+              showKasirForm={showKasirForm}
+              setShowKasirForm={setShowKasirForm}
+              newKasir={newKasir}
+              setNewKasir={setNewKasir}
+              handleAddKasir={handleAddKasir}
+              handleDeleteKasir={handleDeleteKasir}
+            />
           )}
 
           {activeTab === 'services' && (
@@ -2232,6 +1470,7 @@ export default function AdminDashboard() {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
 
@@ -2387,6 +1626,35 @@ export default function AdminDashboard() {
       {globalLoading && (
         <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
           <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin bg-white shadow-lg"></div>
+        </div>
+      )}
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg w-80 p-6 shadow-2xl">
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full">
+              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900 mb-2 text-center">Konfirmasi Logout</h3>
+            <p className="text-gray-600 mb-6 text-center">Apakah Anda yakin ingin keluar dari dashboard admin?</p>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => setShowLogoutModal(false)}
+                className="px-6 py-2 bg-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-6 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Ya, Logout
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

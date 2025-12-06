@@ -14,19 +14,21 @@ export default function Gallery() {
   const [galleryImages, setGalleryImages] = useState(GALLERY_IMAGES);
 
   useEffect(() => {
-    const fetchGallery = async () => {
-      try {
-        const response = await fetch('/api/gallery');
-        const images = await response.json();
-        if (images.length > 0) {
-          setGalleryImages(images);
-        }
-      } catch (error) {
-        console.error('Failed to fetch gallery:', error);
-      }
-    };
+    // API Gallery disabled
+    // const fetchGallery = async () => {
+    //   try {
+    //     const response = await fetch('/api/gallery');
+    //     const images = await response.json();
+    //     if (images.length > 0) {
+    //       setGalleryImages(images);
+    //     }
+    //   } catch (error) {
+    //     console.error('Failed to fetch gallery:', error);
+    //   }
+    // };
 
-    fetchGallery();
+    // fetchGallery();
+    console.log('Gallery API disabled - using static images');
   }, []);
 
   const handleNavigation = (direction: 'prev' | 'next') => {

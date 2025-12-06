@@ -45,7 +45,8 @@ export const NAVIGATION_ITEMS = [
   { href: "#about", label: "Service" },
   { href: "#service", label: "Pricelist" },
   { href: "#gallery", label: "Gallery" },
-  { href: "#location", label: "About Us" }
+  { href: "#location", label: "About Us" },
+  { href: "#faq", label: "FAQ" }
 ];
 
 export const PRICELIST = {

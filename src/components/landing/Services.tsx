@@ -27,7 +27,7 @@ export default function Services() {
       const newX = Math.min(currentX + cardWidth, 0);
       slider.style.transform = `translateX(${newX}px)`;
     } else {
-      const totalCards = SERVICES.length;
+      const totalCards = SERVICE_CARDS.length;
       const visibleCards = 3.2;
       const maxScroll = -(cardWidth * (totalCards - visibleCards));
       const newX = Math.max(currentX - cardWidth, maxScroll);
@@ -43,7 +43,7 @@ export default function Services() {
         <SectionHeader title="Service" />
         
         <div className="relative">
-          <div className="overflow-hidden px-16">
+          <div className="overflow-visible px-16 py-4">
             <div 
               id="serviceSlider" 
               className="flex space-x-6 transition-transform duration-300 cursor-grab active:cursor-grabbing"
@@ -80,10 +80,10 @@ export default function Services() {
               }}
             >
               {SERVICE_CARDS.map((service, index) => (
-                <div key={index} className="flex-shrink-0 w-96 h-[28rem] bg-white p-12 rounded-3xl border border-gray-200">
+                <div key={index} className="group flex-shrink-0 w-96 h-[28rem] bg-white p-12 rounded-3xl border border-gray-200 transition-all duration-500 ease-out hover:shadow-2xl hover:-translate-y-3 hover:border-gray-300 hover:scale-105">
                   <div className="flex flex-col items-center text-center">
-                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-8">
-                      <svg className="w-10 h-10 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                    <div className="w-20 h-20 bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50 rounded-full flex items-center justify-center mb-8 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
+                      <svg className="w-10 h-10 text-gray-600 transition-colors duration-300 group-hover:text-gray-800" fill="currentColor" viewBox="0 0 24 24">
                         <path d={service.icon} />
                       </svg>
                     </div>
