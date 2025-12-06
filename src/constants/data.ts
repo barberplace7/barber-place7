@@ -1,31 +1,31 @@
 export const SERVICE_CARDS = [
   {
-    icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z",
+    icon: "ri-scissors-2-line",
     title: "Hair Cut",
     description: "Dari haircut reguler hingga platinum dengan cuci rambut 2x, semua paket dirancang untuk hasil maksimal dengan teknik profesional terbaik"
   },
   {
-    icon: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z",
+    icon: "ri-user-smile-line",
     title: "Face & Skin Treatment",
     description: "Black mask dan gold mask untuk perawatan wajah mendalam, serta facial wash berkualitas tinggi untuk kulit sehat dan bersih"
   },
   {
-    icon: "M12 3c2.21 0 4 1.79 4 4 0 .89-.29 1.71-.78 2.38C17.33 10.5 18.5 12.59 18.5 15c0 2.21-1.79 4-4 4s-4-1.79-4-4c0-2.41 1.17-4.5 3.28-5.62C13.29 8.71 13 7.89 13 7c0-2.21 1.79-4 4-4zm-7 4c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z",
+    icon: "ri-brush-line",
     title: "Hair Coloring",
     description: "Layanan coloring profesional mulai dari black colouring hingga full colouring dengan produk premium berkualitas tinggi"
   },
   {
-    icon: "M22 16v-2a3 3 0 0 0-3-3H9a3 3 0 0 0-3 3v2c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zM2 16v-2a3 3 0 0 1 3-3h1v2H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h1v2H5a3 3 0 0 1-3-3z",
+    icon: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z",
     title: "Shaving & Grooming",
     description: "Pemangkasan dan styling jenggot profesional, plus layanan shaving untuk mustache & beard dengan teknik terbaik"
   },
   {
-    icon: "M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z",
+    icon: "ri-hand-sanitizer-fill",
     title: "Hair Treatment",
     description: "Creambath, perm hair & cut, down perm & cut, serta hair wash & styling profesional untuk perawatan rambut optimal"
   },
   {
-    icon: "M19 7h-3V6a4 4 0 0 0-8 0v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zM10 6a2 2 0 0 1 4 0v1h-4V6zm8 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9h2v1a1 1 0 0 0 2 0V9h4v1a1 1 0 0 0 2 0V9h2v10z",
+    icon: "ri-shopping-bag-fill",
     title: "Premium Products",
     description: "Jual pomade, powder, toner, hair tonic, dan produk grooming berkualitas premium pilihan terbaik untuk kebutuhan Anda"
   }
