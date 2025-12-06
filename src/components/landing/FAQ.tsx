@@ -24,7 +24,7 @@ export default function FAQ() {
   return (
     <div>
       <SectionHeader title="FAQ" />
-      <div className="max-w-5xl mx-auto mt-4 sm:mt-5 md:mt-6 space-y-3 sm:space-y-3.5 md:space-y-4 px-2 sm:px-4 md:px-0">
+      <div className="max-w-6xl mx-auto mt-4 sm:mt-5 md:mt-6 space-y-3 sm:space-y-3.5 md:space-y-4 px-2 sm:px-4 md:px-0">
         {FAQ_DATA.map((faq, index) => (
           <div key={index} className="group bg-white rounded-lg sm:rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-gray-300 overflow-hidden">
             <button

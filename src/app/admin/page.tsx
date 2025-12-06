@@ -126,22 +126,24 @@ export default function AdminDashboard() {
   const fetchKasir = async () => {
     try {
       const response = await fetch('/api/admin/kasir');
-      const data = await response.json();
-      setKasirList(Array.isArray(data) ? data : []);
+      if (response.ok) {
+        const data = await response.json();
+        setKasirList(data);
+      }
     } catch (error) {
       console.error('Failed to fetch kasir:', error);
-      setKasirList([]);
     }
   };
 
   const fetchCapster = async () => {
     try {
       const response = await fetch('/api/admin/capster');
-      const data = await response.json();
-      setCapsterList(Array.isArray(data) ? data : []);
+      if (response.ok) {
+        const data = await response.json();
+        setCapsterList(data);
+      }
     } catch (error) {
       console.error('Failed to fetch capster:', error);
-      setCapsterList([]);
     }
   };
 
@@ -177,22 +179,24 @@ export default function AdminDashboard() {
   const fetchServices = async () => {
     try {
       const response = await fetch('/api/admin/services');
-      const data = await response.json();
-      setServiceList(Array.isArray(data) ? data : []);
+      if (response.ok) {
+        const data = await response.json();
+        setServiceList(data);
+      }
     } catch (error) {
       console.error('Failed to fetch services:', error);
-      setServiceList([]);
     }
   };
 
   const fetchProducts = async () => {
     try {
       const response = await fetch('/api/admin/products');
-      const data = await response.json();
-      setProductList(Array.isArray(data) ? data : []);
+      if (response.ok) {
+        const data = await response.json();
+        setProductList(data);
+      }
     } catch (error) {
       console.error('Failed to fetch products:', error);
-      setProductList([]);
     }
   };
 
@@ -243,23 +247,25 @@ export default function AdminDashboard() {
 
   const fetchBranches = async () => {
     try {
-      const response = await fetch('/api/admin/branch-logins');
-      const data = await response.json();
-      setBranchList(Array.isArray(data) ? data : []);
+      const response = await fetch('/api/admin/branches');
+      if (response.ok) {
+        const data = await response.json();
+        setBranchList(data);
+      }
     } catch (error) {
       console.error('Failed to fetch branches:', error);
-      setBranchList([]);
     }
   };
 
   const fetchCabangList = async () => {
     try {
       const response = await fetch('/api/admin/cabang');
-      const data = await response.json();
-      setCabangList(Array.isArray(data) ? data : []);
+      if (response.ok) {
+        const data = await response.json();
+        setCabangList(data);
+      }
     } catch (error) {
       console.error('Failed to fetch cabang:', error);
-      setCabangList([]);
     }
   };
 
@@ -273,18 +279,19 @@ export default function AdminDashboard() {
 
   const fetchCommissionData = async () => {
     try {
-      const params = new URLSearchParams({
-        dateFrom: commissionFilters.dateFrom,
-        dateTo: commissionFilters.dateTo,
-        capsterId: commissionFilters.capsterId,
-        branchId: commissionFilters.branchId
-      });
-      const response = await fetch(`/api/admin/commission?${params}`);
-      const data = await response.json();
-      setCommissionData(Array.isArray(data) ? data : []);
+      const params = new URLSearchParams();
+      if (commissionFilters.dateFrom) params.append('dateFrom', commissionFilters.dateFrom);
+      if (commissionFilters.dateTo) params.append('dateTo', commissionFilters.dateTo);
+      if (commissionFilters.capsterId) params.append('capsterId', commissionFilters.capsterId);
+      if (commissionFilters.branchId) params.append('branchId', commissionFilters.branchId);
+      
+      const response = await fetch(`/api/admin/commission?${params.toString()}`);
+      if (response.ok) {
+        const data = await response.json();
+        setCommissionData(data);
+      }
     } catch (error) {
       console.error('Failed to fetch commission data:', error);
-      setCommissionData([]);
     }
   };
 
@@ -294,23 +301,38 @@ export default function AdminDashboard() {
   };
 
   const fetchTransactionHistory = async () => {
-    console.log('API call disabled: fetchTransactionHistory');
-    setTransactionHistory([]);
+    try {
+      const params = new URLSearchParams();
+      if (transactionFilters.dateFrom) params.append('dateFrom', transactionFilters.dateFrom);
+      if (transactionFilters.dateTo) params.append('dateTo', transactionFilters.dateTo);
+      if (transactionFilters.branchId) params.append('branchId', transactionFilters.branchId);
+      if (transactionFilters.type) params.append('type', transactionFilters.type);
+      
+      const response = await fetch(`/api/admin/transactions?${params.toString()}`);
+      if (response.ok) {
+        const data = await response.json();
+        setTransactionHistory(data.transactions || []);
+        setTransactionSummary(data.summary || {totalRevenue: 0, totalExpenses: 0, cashRevenue: 0, qrisRevenue: 0});
+      }
+    } catch (error) {
+      console.error('Failed to fetch transaction history:', error);
+    }
   };
 
   const fetchOverviewData = async () => {
     try {
-      const params = new URLSearchParams({
-        overviewPeriod,
-        chartPeriod,
-        branchPeriod
-      });
-      const response = await fetch(`/api/admin/overview?${params}`);
-      const data = await response.json();
-      setOverviewData(data);
+      const params = new URLSearchParams();
+      params.append('overviewPeriod', overviewPeriod);
+      params.append('chartPeriod', chartPeriod);
+      params.append('branchPeriod', branchPeriod);
+      
+      const response = await fetch(`/api/admin/overview?${params.toString()}`);
+      if (response.ok) {
+        const data = await response.json();
+        setOverviewData(data);
+      }
     } catch (error) {
-      console.error('Failed to fetch overview:', error);
-      setOverviewData(null);
+      console.error('Failed to fetch overview data:', error);
     }
   };
 
@@ -1683,7 +1705,7 @@ export default function AdminDashboard() {
 
       {/* Logout Confirmation Modal */}
       {showLogoutModal && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg w-96 p-6 shadow-2xl border border-gray-200">
             <div className="text-center">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">

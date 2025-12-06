@@ -221,22 +221,23 @@ export default function KasirDashboard() {
 
   const fetchCustomers = async () => {
     try {
-      setGlobalLoading(true);
       const response = await fetch('/api/kasir/customers');
-      const data = await response.json();
-      setCustomers(Array.isArray(data) ? data : []);
+      if (response.ok) {
+        const data = await response.json();
+        setCustomers(data);
+      }
     } catch (error) {
       console.error('Failed to fetch customers:', error);
-    } finally {
-      setGlobalLoading(false);
     }
   };
 
   const fetchServices = async () => {
     try {
       const response = await fetch('/api/kasir/services');
-      const data = await response.json();
-      setServices(Array.isArray(data) ? data : []);
+      if (response.ok) {
+        const data = await response.json();
+        setServices(data);
+      }
     } catch (error) {
       console.error('Failed to fetch services:', error);
     }
@@ -245,8 +246,10 @@ export default function KasirDashboard() {
   const fetchCapsters = async () => {
     try {
       const response = await fetch('/api/kasir/capsters');
-      const data = await response.json();
-      setCapsters(Array.isArray(data) ? data : []);
+      if (response.ok) {
+        const data = await response.json();
+        setCapsters(data);
+      }
     } catch (error) {
       console.error('Failed to fetch capsters:', error);
     }
@@ -255,8 +258,10 @@ export default function KasirDashboard() {
   const fetchKasir = async () => {
     try {
       const response = await fetch('/api/kasir/kasir-list');
-      const data = await response.json();
-      setKasirList(Array.isArray(data) ? data : []);
+      if (response.ok) {
+        const data = await response.json();
+        setKasirList(data);
+      }
     } catch (error) {
       console.error('Failed to fetch kasir:', error);
     }
@@ -265,8 +270,10 @@ export default function KasirDashboard() {
   const fetchProducts = async () => {
     try {
       const response = await fetch('/api/kasir/products');
-      const data = await response.json();
-      setProducts(Array.isArray(data) ? data : []);
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data);
+      }
     } catch (error) {
       console.error('Failed to fetch products:', error);
     }
@@ -274,38 +281,32 @@ export default function KasirDashboard() {
 
   const fetchHistory = async () => {
     try {
-      const params = new URLSearchParams({
-        dateFrom: historyFilters.dateFrom,
-        dateTo: historyFilters.dateTo
-      });
+      const params = new URLSearchParams();
+      if (historyFilters.dateFrom) params.append('dateFrom', historyFilters.dateFrom);
+      if (historyFilters.dateTo) params.append('dateTo', historyFilters.dateTo);
+      if (historyFilters.type) params.append('type', historyFilters.type);
       
-      const response = await fetch(`/api/kasir/history?${params}`);
-      const data = await response.json();
-      setHistory(data);
-      setCurrentPage(1); // Reset to first page when filters change
+      const response = await fetch(`/api/kasir/history?${params.toString()}`);
+      if (response.ok) {
+        const data = await response.json();
+        setHistory(data);
+      }
     } catch (error) {
       console.error('Failed to fetch history:', error);
-      setHistory({visits: [], productSales: [], expenses: []});
     }
   };
 
   const fetchCompletedToday = async () => {
     try {
-      setGlobalLoading(true);
       const response = await fetch('/api/kasir/completed-today');
-      const data = await response.json();
-      setCompletedToday(data.visits);
-      setDailySummary(data.summary);
-      
-      const productResponse = await fetch('/api/kasir/product-transactions');
-      if (productResponse.ok) {
-        const productData = await productResponse.json();
-        setProductTransactions(productData);
+      if (response.ok) {
+        const data = await response.json();
+        setCompletedToday(data.visits || []);
+        setDailySummary(data.summary || {total: 0, cash: 0, qris: 0});
+        setProductTransactions(data.productTransactions || []);
       }
     } catch (error) {
       console.error('Failed to fetch completed today:', error);
-    } finally {
-      setGlobalLoading(false);
     }
   };
 
