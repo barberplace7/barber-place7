@@ -106,7 +106,17 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-gray-300">
+        <div className="pt-8">
+          <div className="h-1 flex mb-8 overflow-hidden">
+            {Array.from({ length: 100 }).map((_, i) => (
+              <div key={i} className="flex flex-shrink-0">
+                <div className="w-4 bg-blue-700"></div>
+                <div className="w-4 bg-white"></div>
+                <div className="w-4 bg-red-600"></div>
+                <div className="w-4 bg-white"></div>
+              </div>
+            ))}
+          </div>
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className={`text-gray-600 text-sm ${montserrat.className}`}>
               &copy; 2024 Barber Place. All rights reserved.

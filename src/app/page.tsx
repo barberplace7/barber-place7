@@ -13,6 +13,7 @@ export default function BarbershopLanding() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNavVisible, setIsNavVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isScrolled, setIsScrolled] = useState(false);
 
 
   useEffect(() => {
@@ -21,8 +22,13 @@ export default function BarbershopLanding() {
       
       if (currentScrollY <= 50) {
         setIsNavVisible(true);
+        setIsScrolled(false);
+      } else if (currentScrollY < lastScrollY) {
+        setIsNavVisible(true);
+        setIsScrolled(true);
       } else {
         setIsNavVisible(false);
+        setIsScrolled(true);
       }
       
       setLastScrollY(currentScrollY);
@@ -36,17 +42,23 @@ export default function BarbershopLanding() {
 
   return (
     <div className="min-h-screen text-white font-sans overflow-x-hidden">
-      <Hero isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} isNavVisible={isNavVisible} />
+      <Hero isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} isNavVisible={isNavVisible} isScrolled={isScrolled} />
 
       <div className="h-4 sm:h-6 md:h-8 bg-gradient-to-b from-white to-gray-50"></div>
 
       <Services />
 
+      <div className="py-12 bg-gray-50"></div>
+
       <Pricelist />
+
+      <div className="py-12 bg-gray-50"></div>
 
       <Gallery />
 
-      <div id="location" className="bg-gray-50 py-16 px-4 sm:px-6 md:px-8">
+      <div className="py-12 bg-gray-50"></div>
+
+      <div id="location" className="bg-gray-50 py-24 px-4 sm:px-6 md:px-8">
         <div className="max-w-7xl mx-auto">
           <AboutUs />
           
@@ -56,7 +68,7 @@ export default function BarbershopLanding() {
         </div>
       </div>
 
-      <div id="faq" className="bg-gray-50 pt-16 pb-24 px-4 sm:px-6 md:px-8">
+      <div id="faq" className="bg-gray-50 pt-24 pb-24 px-4 sm:px-6 md:px-8">
         <FAQ />
       </div>
 

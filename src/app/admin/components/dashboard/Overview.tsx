@@ -176,68 +176,87 @@ export default function Overview({
             </div>
           </div>
 
-          {/* Charts and Analytics */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Revenue Chart */}
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-              <div className="flex justify-between items-center mb-4">
+          {/* Revenue Chart - Full Width */}
+          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex justify-between items-center mb-6">
+              <div>
                 <h3 className="text-lg font-bold text-gray-900">Revenue Trend</h3>
-                <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
-                  {[
-                    { id: '7days', name: '7 Days' },
-                    { id: '30days', name: '30 Days' }
-                  ].map((period) => (
-                    <button
-                      key={period.id}
-                      onClick={() => setChartPeriod(period.id)}
-                      className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                        chartPeriod === period.id
-                          ? 'bg-blue-600 text-white'
-                          : 'text-gray-600 hover:text-gray-900'
-                      }`}
-                    >
-                      {period.name}
-                    </button>
-                  ))}
-                </div>
+                <p className="text-sm text-gray-500 mt-1">Daily revenue performance</p>
               </div>
-              <div className="h-64 flex items-end justify-between space-x-2">
-                {overviewData.weeklyRevenue.map((day: any, index: number) => (
-                  <div key={index} className="flex-1 flex flex-col items-center">
-                    <div 
-                      className="w-full bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-md transition-all hover:from-blue-600 hover:to-blue-500"
-                      style={{ height: `${Math.max((day.revenue / Math.max(...overviewData.weeklyRevenue.map((d: any) => d.revenue))) * 200, 10)}px` }}
-                    ></div>
-                    <div className="mt-2 text-xs text-gray-600 font-medium">{day.day}</div>
-                    <div className="text-xs text-gray-500">Rp {(day.revenue / 1000).toFixed(0)}k</div>
-                  </div>
+              <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+                {[
+                  { id: '7days', name: '7 Days' },
+                  { id: '30days', name: '30 Days' }
+                ].map((period) => (
+                  <button
+                    key={period.id}
+                    onClick={() => setChartPeriod(period.id)}
+                    className={`px-4 py-2 text-xs font-medium rounded-md transition-colors ${
+                      chartPeriod === period.id
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
+                    }`}
+                  >
+                    {period.name}
+                  </button>
                 ))}
               </div>
             </div>
-
-            {/* Top Services */}
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Top Services</h3>
-              <div className="space-y-4">
-                {overviewData.topServices.map((service: any, index: number) => (
-                  <div key={index} className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm ${
-                        index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-orange-500'
-                      }`}>
-                        {index + 1}
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-900">{service.name}</div>
-                        <div className="text-sm text-gray-500">{service.count} transactions</div>
+            <div className={chartPeriod === '30days' ? 'overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100' : 'pb-2'}>
+              <div className="relative" style={{ minWidth: chartPeriod === '30days' ? '1000px' : '100%' }}>
+                {/* Grid Lines */}
+                <div className="absolute inset-0 flex flex-col justify-between pointer-events-none" style={{ height: chartPeriod === '30days' ? '240px' : '240px' }}>
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <div key={i} className="border-t border-gray-200 border-dashed"></div>
+                  ))}
+                </div>
+                {/* Chart Bars */}
+                <div className={`h-60 flex items-end space-x-2 pt-4 ${chartPeriod === '30days' ? 'pb-16' : 'pb-8'}`}>
+                  {overviewData.weeklyRevenue.map((day: any, index: number) => (
+                    <div key={index} className="flex-1 flex flex-col items-center group relative" style={{ minWidth: chartPeriod === '30days' ? '25px' : 'auto' }}>
+                      <div 
+                        className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-lg transition-all hover:from-blue-700 hover:to-blue-500 cursor-pointer shadow-sm"
+                        style={{ height: `${Math.max((day.revenue / Math.max(...overviewData.weeklyRevenue.map((d: any) => d.revenue))) * 200, 8)}px` }}
+                      ></div>
+                      <div className="mt-2 text-xs text-gray-600 font-medium w-full text-center" style={{ writingMode: chartPeriod === '30days' ? 'vertical-rl' : 'horizontal-tb', transform: chartPeriod === '30days' ? 'rotate(180deg)' : 'none' }}>{day.day}</div>
+                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full mt-2 bg-gray-900 text-white px-3 py-2 rounded-lg text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-lg">
+                        <div className="font-bold">Rp {day.revenue.toLocaleString()}</div>
+                        <div className="text-[10px] text-gray-300 mt-0.5">{day.day}</div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="font-bold text-gray-900">Rp {service.revenue.toLocaleString()}</div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            {chartPeriod === '30days' && (
+              <div className="mt-3 text-center text-xs text-gray-500">
+                💡 Scroll horizontally to view all days
+              </div>
+            )}
+          </div>
+
+          {/* Top Services - Moved Below */}
+          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Top Services</h3>
+            <div className="space-y-4">
+              {overviewData.topServices.map((service: any, index: number) => (
+                <div key={index} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm ${
+                      index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-orange-500'
+                    }`}>
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-900">{service.name}</div>
+                      <div className="text-sm text-gray-500">{service.count} transactions</div>
                     </div>
                   </div>
-                ))}
-              </div>
+                  <div className="text-right">
+                    <div className="font-bold text-gray-900">Rp {service.revenue.toLocaleString()}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 

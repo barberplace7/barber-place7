@@ -83,9 +83,13 @@ export default function Services() {
                 <div key={index} className="group flex-shrink-0 w-96 h-[28rem] bg-white p-12 rounded-3xl border border-gray-200 transition-all duration-500 ease-out hover:shadow-2xl hover:-translate-y-3 hover:border-gray-300 hover:scale-105">
                   <div className="flex flex-col items-center text-center">
                     <div className="w-20 h-20 bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50 rounded-full flex items-center justify-center mb-8 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6">
-                      <svg className="w-10 h-10 text-gray-600 transition-colors duration-300 group-hover:text-gray-800" fill="currentColor" viewBox="0 0 24 24">
-                        <path d={service.icon} />
-                      </svg>
+                      {service.icon.startsWith('ri-') ? (
+                        <i className={`${service.icon} text-4xl text-gray-600 transition-colors duration-300 group-hover:text-gray-800`}></i>
+                      ) : (
+                        <svg className="w-10 h-10 text-gray-600 transition-colors duration-300 group-hover:text-gray-800" fill="currentColor" viewBox="0 0 24 24">
+                          <path d={service.icon} />
+                        </svg>
+                      )}
                     </div>
                     <h3 className={`text-xl font-bold text-black mb-6 ${montserrat.className}`}>
                       {service.title}

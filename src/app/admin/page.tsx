@@ -124,13 +124,25 @@ export default function AdminDashboard() {
   }, [overviewPeriod, chartPeriod, branchPeriod]);
 
   const fetchKasir = async () => {
-    console.log('API call disabled: fetchKasir');
-    setKasirList([]);
+    try {
+      const response = await fetch('/api/admin/kasir');
+      const data = await response.json();
+      setKasirList(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to fetch kasir:', error);
+      setKasirList([]);
+    }
   };
 
   const fetchCapster = async () => {
-    console.log('API call disabled: fetchCapster');
-    setCapsterList([]);
+    try {
+      const response = await fetch('/api/admin/capster');
+      const data = await response.json();
+      setCapsterList(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to fetch capster:', error);
+      setCapsterList([]);
+    }
   };
 
   const handleAddKasir = async () => {
@@ -163,13 +175,25 @@ export default function AdminDashboard() {
   };
 
   const fetchServices = async () => {
-    console.log('API call disabled: fetchServices');
-    setServiceList([]);
+    try {
+      const response = await fetch('/api/admin/services');
+      const data = await response.json();
+      setServiceList(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to fetch services:', error);
+      setServiceList([]);
+    }
   };
 
   const fetchProducts = async () => {
-    console.log('API call disabled: fetchProducts');
-    setProductList([]);
+    try {
+      const response = await fetch('/api/admin/products');
+      const data = await response.json();
+      setProductList(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to fetch products:', error);
+      setProductList([]);
+    }
   };
 
   const handleAddService = async () => {
@@ -218,13 +242,25 @@ export default function AdminDashboard() {
   };
 
   const fetchBranches = async () => {
-    console.log('API call disabled: fetchBranches');
-    setBranchList([]);
+    try {
+      const response = await fetch('/api/admin/branch-logins');
+      const data = await response.json();
+      setBranchList(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to fetch branches:', error);
+      setBranchList([]);
+    }
   };
 
   const fetchCabangList = async () => {
-    console.log('API call disabled: fetchCabangList');
-    setCabangList([]);
+    try {
+      const response = await fetch('/api/admin/cabang');
+      const data = await response.json();
+      setCabangList(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to fetch cabang:', error);
+      setCabangList([]);
+    }
   };
 
   const handleAddBranch = async () => {
@@ -236,8 +272,20 @@ export default function AdminDashboard() {
   };
 
   const fetchCommissionData = async () => {
-    console.log('API call disabled: fetchCommissionData');
-    setCommissionData([]);
+    try {
+      const params = new URLSearchParams({
+        dateFrom: commissionFilters.dateFrom,
+        dateTo: commissionFilters.dateTo,
+        capsterId: commissionFilters.capsterId,
+        branchId: commissionFilters.branchId
+      });
+      const response = await fetch(`/api/admin/commission?${params}`);
+      const data = await response.json();
+      setCommissionData(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error('Failed to fetch commission data:', error);
+      setCommissionData([]);
+    }
   };
 
   const fetchStaffTransactionDetails = async (staff: any) => {
@@ -251,8 +299,19 @@ export default function AdminDashboard() {
   };
 
   const fetchOverviewData = async () => {
-    console.log('API call disabled: fetchOverviewData');
-    setOverviewData(null);
+    try {
+      const params = new URLSearchParams({
+        overviewPeriod,
+        chartPeriod,
+        branchPeriod
+      });
+      const response = await fetch(`/api/admin/overview?${params}`);
+      const data = await response.json();
+      setOverviewData(data);
+    } catch (error) {
+      console.error('Failed to fetch overview:', error);
+      setOverviewData(null);
+    }
   };
 
   useEffect(() => {
@@ -486,19 +545,9 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-full">
-        {/* Top Header */}
-        <div className="bg-white shadow-sm border-b p-4 flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Barber Place Management</h1>
-              <p className="text-sm text-gray-500">Admin Dashboard</p>
-            </div>
-          </div>
-        </div>
-
         {/* Content Area */}
         <div className="flex-1 p-6 overflow-y-auto">
-          <div className="bg-white rounded-lg shadow-sm p-6 border">
+          <div className={`bg-white rounded-lg shadow-md p-6 ${!sidebarOpen ? 'mt-16' : ''}`}>
           {activeTab === 'overview' && (
             <Overview
               overviewData={overviewData}
@@ -1015,8 +1064,9 @@ export default function AdminDashboard() {
                 <h2 className="text-xl font-bold text-black">Branch Login Accounts</h2>
                 <button 
                   onClick={() => setShowBranchForm(true)}
-                  className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
                 >
+                  <span className="text-xl">+</span>
                   Add Login Account
                 </button>
               </div>
@@ -1149,8 +1199,9 @@ export default function AdminDashboard() {
                 <h2 className="text-xl font-bold text-black">Service Packages</h2>
                 <button 
                   onClick={() => setShowServiceForm(true)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
                 >
+                  <span className="text-xl">+</span>
                   Add New Service
                 </button>
               </div>
@@ -1287,8 +1338,9 @@ export default function AdminDashboard() {
                 <h2 className="text-xl font-bold text-black">Products</h2>
                 <button 
                   onClick={() => setShowProductForm(true)}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
                 >
+                  <span className="text-xl">+</span>
                   Add New Product
                 </button>
               </div>
@@ -1631,28 +1683,30 @@ export default function AdminDashboard() {
 
       {/* Logout Confirmation Modal */}
       {showLogoutModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg w-80 p-6 shadow-2xl">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full">
-              <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2 text-center">Konfirmasi Logout</h3>
-            <p className="text-gray-600 mb-6 text-center">Apakah Anda yakin ingin keluar dari dashboard admin?</p>
-            <div className="flex gap-3 justify-center">
-              <button
-                onClick={() => setShowLogoutModal(false)}
-                className="px-6 py-2 bg-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 transition-colors"
-              >
-                Batal
-              </button>
-              <button
-                onClick={handleLogout}
-                className="px-6 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
-              >
-                Ya, Logout
-              </button>
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg w-96 p-6 shadow-2xl border border-gray-200">
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+                <svg className="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Konfirmasi Logout</h3>
+              <p className="text-gray-600 mb-6">Apakah Anda yakin ingin logout dari panel admin?</p>
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => setShowLogoutModal(false)}
+                  className="px-6 py-2 bg-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="px-6 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -45,9 +45,9 @@ export default function Sidebar({
         </svg>
       ),
       submenu: [
-        { id: 'services', name: 'Service Packages' },
-        { id: 'products', name: 'Products' },
-        { id: 'gallery', name: 'Gallery Images' }
+        { id: 'services', name: 'Data Services' },
+        { id: 'products', name: 'Data Product' },
+        { id: 'gallery', name: 'Data Gallery' }
       ]
     },
     {
@@ -59,9 +59,9 @@ export default function Sidebar({
         </svg>
       ),
       submenu: [
-        { id: 'capster', name: 'Manage Capster' },
-        { id: 'kasir', name: 'Manage Kasir' },
-        { id: 'branches', name: 'Branch Logins' }
+        { id: 'capster', name: 'Data Capster' },
+        { id: 'kasir', name: 'Data Kasir' },
+        { id: 'branches', name: 'Data User Cabang' }
       ]
     },
     {
@@ -73,41 +73,51 @@ export default function Sidebar({
         </svg>
       ),
       submenu: [
-        { id: 'transactions', name: 'Transaction Monitor' },
-        { id: 'commission', name: 'Commission Monitor' }
+        { id: 'transactions', name: 'Transaksi Cabang' },
+        { id: 'commission', name: 'Transaksi Staff' }
       ]
     }
   ];
 
   return (
-    <div className={`bg-white shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-16'} flex flex-col h-full`}>
+    <>
+    <div className={`bg-white shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-0'} flex flex-col h-full overflow-hidden`}>
       {/* Sidebar Header */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className={`flex items-center space-x-3 ${!sidebarOpen && 'justify-center'}`}>
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">BP</span>
-            </div>
+            <img 
+              src="/logo_barberplace.png" 
+              alt="Barber Place Logo" 
+              className="w-10 h-10 rounded-full object-cover shadow-md"
+            />
             {sidebarOpen && (
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Admin</h1>
-                <p className="text-xs text-gray-500">Dashboard</p>
+                <h1 className="text-lg font-bold text-gray-900">Admin Acong</h1>
+                <p className="text-xs text-gray-500">Barberplace</p>
               </div>
             )}
           </div>
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-1 rounded-md hover:bg-gray-100 transition-colors"
-          >
-            <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </button>
+          {sidebarOpen && (
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+            >
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
 
       {/* Navigation Menu */}
       <nav className="flex-1 p-4 space-y-2">
+        {sidebarOpen && (
+          <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-3">
+            Menu
+          </div>
+        )}
         {menuItems.map((item) => (
           <div key={item.id}>
             {item.submenu ? (
@@ -136,7 +146,7 @@ export default function Sidebar({
                   )}
                 </button>
                 {sidebarOpen && expandedMenus[item.id] && (
-                  <div className="ml-6 mt-2 space-y-1">
+                  <div className="ml-11 mt-2 space-y-1">
                     {item.submenu.map((subItem) => (
                       <button
                         key={subItem.id}
@@ -158,7 +168,7 @@ export default function Sidebar({
                 onClick={() => setActiveTab(item.id)}
                 className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
                   activeTab === item.id
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-black text-white'
                     : 'text-gray-600 hover:bg-gray-100'
                 } ${!sidebarOpen && 'justify-center'}`}
               >
@@ -185,5 +195,18 @@ export default function Sidebar({
         </button>
       </div>
     </div>
+    
+    {/* Floating Hamburger Button */}
+    {!sidebarOpen && (
+      <button
+        onClick={() => setSidebarOpen(true)}
+        className="fixed top-6 left-6 z-50 p-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-300 group backdrop-blur-sm"
+      >
+        <svg className="w-6 h-6 text-white group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    )}
+    </>
   );
 }

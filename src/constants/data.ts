@@ -1,6 +1,6 @@
 export const SERVICE_CARDS = [
   {
-    icon: "ri-scissors-2-line",
+    icon: "ri-scissors-2-fill",
     title: "Hair Cut",
     description: "Dari haircut reguler hingga platinum dengan cuci rambut 2x, semua paket dirancang untuk hasil maksimal dengan teknik profesional terbaik"
   },

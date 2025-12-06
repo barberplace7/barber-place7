@@ -1,5 +1,5 @@
 import { Montserrat } from 'next/font/google';
-import { NAVIGATION_ITEMS } from '@/constants/data';
+import { NAVIGATION_ITEMS, CONTACT_INFO } from '@/constants/data';
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -11,21 +11,22 @@ interface HeroProps {
   isMenuOpen: boolean;
   setIsMenuOpen: (value: boolean) => void;
   isNavVisible: boolean;
+  isScrolled: boolean;
 }
 
-export default function Hero({ isMenuOpen, setIsMenuOpen, isNavVisible }: HeroProps) {
+export default function Hero({ isMenuOpen, setIsMenuOpen, isNavVisible, isScrolled }: HeroProps) {
   return (
     <>
       {/* Navigation */}
-      <nav className={`fixed top-4 left-4 right-4 z-40 px-8 py-4 flex items-center justify-between transition-transform duration-300 rounded-2xl ${isNavVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-40 px-8 py-4 flex items-center justify-between transition-all duration-300 ${isScrolled ? 'backdrop-blur-lg bg-black/20' : ''} ${isNavVisible ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="flex items-center gap-3 ml-16">
-          <div className="relative">
+          <a href="#home" className="relative">
             <img 
               src="/logo_barberplace.png" 
               alt="Logo" 
-              className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full object-cover shadow-2xl"
+              className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full object-cover shadow-2xl cursor-pointer hover:scale-105 transition-transform"
             />
-          </div>
+          </a>
         </div>
 
         <div className="hidden md:flex items-center gap-8 mr-8">
@@ -122,7 +123,10 @@ export default function Hero({ isMenuOpen, setIsMenuOpen, isNavVisible }: HeroPr
               Berbagai layanan lengkap untuk kebutuhan grooming dan perawatan rambut Anda dengan standar profesional tertinggi
             </p>
             <div className="flex justify-start">
-              <button className={`group relative px-6 sm:px-8 py-3 sm:py-4 border-2 border-white rounded-full text-white font-medium tracking-wider hover:bg-white hover:text-black transition-all duration-300 flex items-center gap-2 shadow-2xl hover:shadow-white/20 ${montserrat.className}`}>
+              <button 
+                onClick={() => window.open(CONTACT_INFO.whatsapp.url, '_blank')}
+                className={`group relative px-6 sm:px-8 py-3 sm:py-4 border-2 border-white rounded-full text-white font-medium tracking-wider hover:bg-white hover:text-black transition-all duration-300 flex items-center gap-2 shadow-2xl hover:shadow-white/20 ${montserrat.className}`}
+              >
                 Book Now
                 <svg className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

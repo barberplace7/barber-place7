@@ -14,21 +14,19 @@ export default function Gallery() {
   const [galleryImages, setGalleryImages] = useState(GALLERY_IMAGES);
 
   useEffect(() => {
-    // API Gallery disabled
-    // const fetchGallery = async () => {
-    //   try {
-    //     const response = await fetch('/api/gallery');
-    //     const images = await response.json();
-    //     if (images.length > 0) {
-    //       setGalleryImages(images);
-    //     }
-    //   } catch (error) {
-    //     console.error('Failed to fetch gallery:', error);
-    //   }
-    // };
+    const fetchGallery = async () => {
+      try {
+        const response = await fetch('/api/gallery');
+        const images = await response.json();
+        if (images.length > 0) {
+          setGalleryImages(images);
+        }
+      } catch (error) {
+        console.error('Failed to fetch gallery:', error);
+      }
+    };
 
-    // fetchGallery();
-    console.log('Gallery API disabled - using static images');
+    fetchGallery();
   }, []);
 
   const handleNavigation = (direction: 'prev' | 'next') => {
@@ -42,10 +40,10 @@ export default function Gallery() {
 
     if (direction === 'prev') {
       let newX = currentX + imageWidth;
-      if (newX > 0) newX = -(imageWidth * (totalImages - 2));
+      if (newX > 0) newX = -(imageWidth * (totalImages - 1));
       slider.style.transform = `translateX(${newX}px)`;
     } else {
-      const maxScroll = -(imageWidth * (totalImages - 2));
+      const maxScroll = -(imageWidth * (totalImages - 1));
       let newX = currentX - imageWidth;
       if (newX < maxScroll) newX = 0;
       slider.style.transform = `translateX(${newX}px)`;
@@ -101,26 +99,23 @@ export default function Gallery() {
           <div className="relative flex-1">
             <div className="overflow-hidden w-full ml-8">
               <div id="gallerySlider" className="flex transition-transform duration-300">
-                {galleryImages.map((image, index) => {
-                  const isLastVisible = index === 1;
-                  return (
-                    <div 
-                      key={index} 
-                      className="flex-shrink-0 bg-gray-800 rounded-2xl overflow-hidden" 
-                      style={{ 
-                        width: isLastVisible ? '250px' : '500px', 
-                        height: '500px', 
-                        marginRight: '10px' 
-                      }}
-                    >
-                      <img 
-                        src={image} 
-                        alt={`Style ${index + 1}`} 
-                        className="w-full h-full object-cover" 
-                      />
-                    </div>
-                  );
-                })}
+                {galleryImages.map((image, index) => (
+                  <div 
+                    key={index} 
+                    className="flex-shrink-0 bg-gray-800 rounded-2xl overflow-hidden" 
+                    style={{ 
+                      width: '500px', 
+                      height: '500px', 
+                      marginRight: '10px' 
+                    }}
+                  >
+                    <img 
+                      src={image} 
+                      alt={`Style ${index + 1}`} 
+                      className="w-full h-full object-cover" 
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </div>

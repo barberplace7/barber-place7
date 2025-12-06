@@ -24,15 +24,15 @@ export default function AboutUs() {
               <Icon name="whatsapp" className="w-7 h-7 text-gray-600" />
             </div>
           </div>
-          <h4 className={`text-lg font-bold text-black mb-4 text-center ${montserrat.className}`}>Contact</h4>
-          <div className="space-y-2">
+          <h4 className={`text-lg font-bold text-black mb-3 text-center ${montserrat.className}`}>Contact</h4>
+          <div className="space-y-1 mt-8">
             <a href={CONTACT_INFO.whatsapp.url} target="_blank" rel="noopener noreferrer" className={`flex items-start gap-2 text-gray-700 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-100 ${montserrat.className}`}>
               <Icon name="whatsapp" className="w-4 h-4 flex-shrink-0 mt-0.5 text-gray-600" />
-              <span className="text-xs font-medium">{CONTACT_INFO.whatsapp.number}</span>
+              <span className="text-sm font-medium">{CONTACT_INFO.whatsapp.number}</span>
             </a>
             <a href={CONTACT_INFO.instagram.url} target="_blank" rel="noopener noreferrer" className={`flex items-start gap-2 text-gray-700 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-100 ${montserrat.className}`}>
               <Icon name="instagram" className="w-4 h-4 flex-shrink-0 mt-0.5 text-gray-600" />
-              <span className="text-xs font-medium">{CONTACT_INFO.instagram.handle}</span>
+              <span className="text-sm font-medium">{CONTACT_INFO.instagram.handle}</span>
             </a>
           </div>
         </div>
@@ -44,12 +44,12 @@ export default function AboutUs() {
               <Icon name="location" className="w-7 h-7 text-gray-600" />
             </div>
           </div>
-          <h4 className={`text-lg font-bold text-black mb-4 text-center ${montserrat.className}`}>Location</h4>
-          <div className="space-y-2">
+          <h4 className={`text-lg font-bold text-black mb-3 text-center ${montserrat.className}`}>Location</h4>
+          <div className="space-y-1 mt-6">
             {CONTACT_INFO.locations.map((location, index) => (
               <div key={index} className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors">
                 <Icon name="location" className="w-4 h-4 text-gray-600 flex-shrink-0 mt-0.5" />
-                <span className={`text-xs text-gray-700 ${montserrat.className}`}>{location}</span>
+                <span className={`text-sm text-gray-700 ${montserrat.className}`}>{location}</span>
               </div>
             ))}
           </div>
@@ -62,15 +62,15 @@ export default function AboutUs() {
               <Icon name="clock" className="w-7 h-7 text-gray-600" />
             </div>
           </div>
-          <h4 className={`text-lg font-bold text-black mb-4 text-center ${montserrat.className}`}>Operational Hours</h4>
-          <div className="space-y-2">
+          <h4 className={`text-lg font-bold text-black mb-3 text-center ${montserrat.className}`}>Operational Hours</h4>
+          <div className="space-y-1 mt-6">
             <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors">
               <Icon name="calendar" className="w-4 h-4 text-gray-600 flex-shrink-0 mt-0.5" />
-              <span className={`text-xs text-gray-700 font-medium ${montserrat.className}`}>Open Everyday</span>
+              <span className={`text-sm text-gray-700 font-medium ${montserrat.className}`}>Open Everyday</span>
             </div>
             <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors">
               <Icon name="clock" className="w-4 h-4 text-gray-600" />
-              <span className={`text-xs text-gray-700 font-medium ${montserrat.className}`}>{CONTACT_INFO.hours} WIB</span>
+              <span className={`text-sm text-gray-700 font-medium ${montserrat.className}`}>{CONTACT_INFO.hours} WIB</span>
             </div>
           </div>
         </div>

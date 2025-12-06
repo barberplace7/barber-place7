@@ -31,8 +31,9 @@ export default function KasirManager({
         <h2 className="text-xl font-bold text-black">Manage Kasir</h2>
         <button 
           onClick={() => setShowKasirForm(true)}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
         >
+          <span className="text-xl">+</span>
           Add New Kasir
         </button>
       </div>
