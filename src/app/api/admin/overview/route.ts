@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prismaClient';
 
-const prisma = new PrismaClient();
+const getChartDays = (period: string): number => {
+  if (period === 'today') return 1;
+  if (period === '30days') return 30;
+  return 7;
+};
 
 export async function GET(request: NextRequest) {
   try {
@@ -13,13 +17,6 @@ export async function GET(request: NextRequest) {
     const today = new Date();
     const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000);
-    
-    // Get different periods for different sections
-    const getChartDays = (period: string) => {
-      if (period === 'today') return 1;
-      if (period === '30days') return 30;
-      return 7;
-    };
     
     const chartDays = getChartDays(chartPeriod);
     const branchDays = getChartDays(branchPeriod);
@@ -61,7 +58,26 @@ export async function GET(request: NextRequest) {
     const todayExpensesTotal = todayExpenses.reduce((sum, exp) => sum + exp.nominal, 0);
     const todayTransactions = todayVisits.length + todayProductSales.length;
 
-    // Revenue data for chart period
+    // Optimize: Fetch all visits at once instead of N queries
+    const allVisitsInPeriod = await prisma.customerVisit.findMany({
+      where: {
+        jamSelesai: { gte: chartPeriodAgo, lte: today },
+        status: 'DONE'
+      },
+      include: {
+        serviceTransactions: true,
+        productTransactions: true
+      }
+    });
+
+    const allProductSalesInPeriod = await prisma.productTransaction.findMany({
+      where: {
+        createdAt: { gte: chartPeriodAgo, lte: today },
+        visit: null
+      }
+    });
+
+    // Group by day
     const revenueData = [];
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     
@@ -70,22 +86,14 @@ export async function GET(request: NextRequest) {
       const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
       const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
       
-      const dayVisits = await prisma.customerVisit.findMany({
-        where: {
-          jamSelesai: { gte: dayStart, lt: dayEnd },
-          status: 'DONE'
-        },
-        include: {
-          serviceTransactions: true,
-          productTransactions: true
-        }
+      const dayVisits = allVisitsInPeriod.filter(v => {
+        const visitDate = new Date(v.jamSelesai!);
+        return visitDate >= dayStart && visitDate < dayEnd;
       });
 
-      const dayProductSales = await prisma.productTransaction.findMany({
-        where: {
-          createdAt: { gte: dayStart, lt: dayEnd },
-          visit: null
-        }
+      const dayProductSales = allProductSalesInPeriod.filter(ps => {
+        const saleDate = new Date(ps.createdAt);
+        return saleDate >= dayStart && saleDate < dayEnd;
       });
 
       const dayRevenue = dayVisits.reduce((sum, visit) => {
@@ -201,8 +209,12 @@ export async function GET(request: NextRequest) {
       ]
     });
 
-  } catch (error) {
-    console.error('Failed to fetch overview data:', error);
+  } catch (error: any) {
+    console.error('[API /admin/overview] Error:', {
+      error: error?.message || error,
+      stack: error?.stack,
+      timestamp: new Date().toISOString()
+    });
     return NextResponse.json(
       { error: 'Failed to fetch overview data' },
       { status: 500 }

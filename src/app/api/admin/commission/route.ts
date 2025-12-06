@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prismaClient';
 
 export async function GET(request: NextRequest) {
   try {
@@ -56,6 +54,7 @@ export async function GET(request: NextRequest) {
       if (!commissionMap.has(key)) {
         commissionMap.set(key, {
           staffId: visit.capsterId,
+          capsterId: visit.capsterId,
           capsterName: visit.capster.name,
           branchName: visit.cabang.name,
           role: 'CAPSTER',
@@ -112,6 +111,7 @@ export async function GET(request: NextRequest) {
         if (!commissionMap.has(key)) {
           commissionMap.set(key, {
             staffId: pt.recommenderId,
+            capsterId: pt.recommenderId,
             capsterName: recommender.name,
             branchName: pt.cabang.name,
             role: recommender.role,

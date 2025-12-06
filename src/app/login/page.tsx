@@ -211,6 +211,8 @@ export default function LoginPage() {
                   </button>
                   <button
                     onClick={async () => {
+                      if (isStartingSession) return; // Prevent double click
+                      
                       if (!selectedKasir) {
                         alert('Please select a kasir');
                         return;
@@ -218,7 +220,6 @@ export default function LoginPage() {
                       
                       setIsStartingSession(true);
                       
-                      // Update session with selected kasir
                       try {
                         const response = await fetch('/api/auth/kasir-select', {
                           method: 'POST',
@@ -233,10 +234,10 @@ export default function LoginPage() {
                           window.location.href = '/kasir';
                         } else {
                           alert('Failed to start session');
+                          setIsStartingSession(false);
                         }
                       } catch (error) {
                         alert('Network error');
-                      } finally {
                         setIsStartingSession(false);
                       }
                     }}
