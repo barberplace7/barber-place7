@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface OverviewProps {
   overviewData: any;
   overviewPeriod: string;
@@ -27,6 +29,28 @@ export default function Overview({
   serviceList,
   productList
 }: OverviewProps) {
+  const [currentTime, setCurrentTime] = React.useState('');
+
+  React.useEffect(() => {
+    // Set initial time on client
+    setCurrentTime(new Date().toLocaleDateString('id-ID', { 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long' 
+    }) + ', ' + new Date().toLocaleTimeString('id-ID').replace(/\./g, ':') + ' WIB');
+
+    // Update every second
+    const timer = setInterval(() => {
+      setCurrentTime(new Date().toLocaleDateString('id-ID', { 
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long' 
+      }) + ', ' + new Date().toLocaleTimeString('id-ID').replace(/\./g, ':') + ' WIB');
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
@@ -37,11 +61,7 @@ export default function Overview({
         <div className="text-right">
           <div className="text-sm text-gray-500">Last updated</div>
           <div className="text-lg font-semibold text-gray-900">
-            {new Date().toLocaleDateString('id-ID', { 
-              weekday: 'long', 
-              day: 'numeric', 
-              month: 'long' 
-            })}, {new Date().toLocaleTimeString('id-ID').replace(/\./g, ':')} WIB
+            {currentTime || 'Loading...'}
           </div>
         </div>
       </div>

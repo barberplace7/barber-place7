@@ -87,3 +87,11 @@ export interface ConfirmModalData {
   message: string;
   onConfirm: () => void;
 }
+
+export interface AdvanceForm {
+  staffId: string;
+  staffRole: string;
+  staffName: string;
+  amount: string;
+  note: string;
+}

@@ -216,7 +216,38 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
     );
   }
 
+  const uploadGalleryMutation = useMutation({
+    mutationFn: async ({ file, position }: { file: File; position: number }) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('position', position.toString());
+      const res = await fetch('/api/admin/gallery', {
+        method: 'POST',
+        body: formData
+      });
+      if (!res.ok) throw new Error('Failed to upload');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'gallery'] });
+    }
+  });
+
+  const deleteGalleryMutation = useMutation({
+    mutationFn: async (position: number) => {
+      const res = await fetch(`/api/admin/gallery?position=${position}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'gallery'] });
+    }
+  });
+
   if (activeTab === 'gallery') {
+    const galleries = adminData.galleries || [];
+    const galleryMap = new Map(galleries.map((g: any) => [g.position, g]));
+
     return (
       <div>
         <div className="flex justify-between items-center mb-6">
@@ -224,17 +255,56 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
           <p className="text-gray-600 text-sm">Upload images for landing page gallery</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {[1,2,3,4,5,6].map((slot) => (
-            <div key={slot} className="aspect-square bg-gray-100 rounded-lg border border-gray-200 overflow-hidden relative group">
-              <div className="w-full h-full flex flex-col items-center justify-center">
-                <span className="text-gray-500 mb-2">Slot {slot}</span>
-                <label className="bg-purple-600 text-white px-3 py-1 rounded text-sm cursor-pointer hover:bg-purple-700">
-                  Upload Image
-                  <input type="file" accept="image/*" className="hidden" />
-                </label>
+          {[1,2,3,4,5,6].map((slot) => {
+            const gallery = galleryMap.get(slot);
+            return (
+              <div key={slot} className="aspect-square bg-gray-100 rounded-lg border border-gray-200 overflow-hidden relative group">
+                {gallery ? (
+                  <>
+                    <img src={gallery.url} alt={`Gallery ${slot}`} className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <label className="bg-blue-600 text-white px-3 py-1 rounded text-sm cursor-pointer hover:bg-blue-700">
+                        Replace
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) uploadGalleryMutation.mutate({ file, position: slot });
+                          }}
+                        />
+                      </label>
+                      <button
+                        onClick={() => {
+                          if (confirm('Delete this image?')) deleteGalleryMutation.mutate(slot);
+                        }}
+                        className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center">
+                    <span className="text-gray-500 mb-2">Slot {slot}</span>
+                    <label className="bg-purple-600 text-white px-3 py-1 rounded text-sm cursor-pointer hover:bg-purple-700">
+                      Upload Image
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) uploadGalleryMutation.mutate({ file, position: slot });
+                        }}
+                      />
+                    </label>
+                  </div>
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     );

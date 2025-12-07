@@ -74,7 +74,8 @@ export default function Sidebar({
       ),
       submenu: [
         { id: 'transactions', name: 'Transaksi Cabang' },
-        { id: 'commission', name: 'Transaksi Staff' }
+        { id: 'commission', name: 'Transaksi Staff' },
+        { id: 'kasbon', name: 'Kasbon Staff' }
       ]
     }
   ];

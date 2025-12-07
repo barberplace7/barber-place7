@@ -38,8 +38,14 @@ export const useAdminMasterData = () => {
     staleTime: 10 * 60 * 1000,
   });
 
+  const galleries = useQuery({
+    queryKey: ['admin', 'gallery'],
+    queryFn: adminApi.getGallery,
+    staleTime: 10 * 60 * 1000,
+  });
+
   const loading = kasirList.isLoading || capsterList.isLoading || serviceList.isLoading || 
-                  productList.isLoading || cabangList.isLoading || branchList.isLoading;
+                  productList.isLoading || cabangList.isLoading || branchList.isLoading || galleries.isLoading;
 
   return {
     kasirList: kasirList.data || [],
@@ -48,6 +54,7 @@ export const useAdminMasterData = () => {
     productList: productList.data || [],
     cabangList: cabangList.data || [],
     branchList: branchList.data || [],
+    galleries: galleries.data || [],
     loading,
   };
 };

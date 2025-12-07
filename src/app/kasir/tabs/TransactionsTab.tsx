@@ -5,6 +5,7 @@ import ProductSaleModal from '../modals/ProductSaleModal';
 import ExpenseModal from '../modals/ExpenseModal';
 import EditVisitModal from '../modals/EditVisitModal';
 import CompleteVisitModal from '../modals/CompleteVisitModal';
+import AddAdvanceModal from '../modals/AddAdvanceModal';
 
 export default function TransactionsTab({ state }: any) {
   const hairCutServices = useMemo(() => state.services.filter(s => s.category === 'HAIRCUT'), [state.services]);
@@ -72,6 +73,12 @@ export default function TransactionsTab({ state }: any) {
             className="bg-stone-500 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-stone-600 transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             <span>💸</span> <span className="hidden sm:inline">Tambah Pengeluaran</span><span className="sm:hidden">Pengeluaran</span>
+          </button>
+          <button 
+            onClick={() => state.setShowAdvance(true)}
+            className="bg-orange-600 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
+          >
+            <span>💰</span> <span className="hidden sm:inline">Kasbon</span><span className="sm:hidden">Kasbon</span>
           </button>
         </div>
       </div>
@@ -277,6 +284,26 @@ export default function TransactionsTab({ state }: any) {
       {state.showAddService && <AddServiceModal state={state} hairCutServices={hairCutServices} treatmentServices={treatmentServices} onClose={() => state.setShowAddService(false)} />}
       {state.showProductSale && <ProductSaleModal state={state} onClose={() => state.setShowProductSale(false)} />}
       {state.showExpense && <ExpenseModal state={state} onClose={() => state.setShowExpense(false)} />}
+      {state.showAdvance && (
+        <AddAdvanceModal
+          onClose={() => state.setShowAdvance(false)}
+          onSubmit={async (data) => {
+            try {
+              state.setIsSubmitting(true);
+              await state.mutations.addAdvance.mutateAsync(data);
+              state.showToast('Kasbon berhasil ditambahkan', 'success');
+              state.setShowAdvance(false);
+            } catch (error: any) {
+              state.showToast(error?.message || 'Gagal menambahkan kasbon', 'error');
+            } finally {
+              state.setIsSubmitting(false);
+            }
+          }}
+          isSubmitting={state.isSubmitting}
+          capsters={state.capsters}
+          kasirList={state.kasirList}
+        />
+      )}
       {state.editingVisit && <EditVisitModal state={state} onClose={() => { state.setEditingVisit(null); state.setEditServices([]); }} />}
       {state.completingCustomer && <CompleteVisitModal state={state} onClose={() => { state.setCompletingCustomer(null); state.setSelectedProducts([]); }} />}
     </div>

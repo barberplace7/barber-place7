@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useKasirQueries, useKasirHistory } from '@/hooks/useKasirQueries';
 import { useToast } from '@/hooks/useToast';
-import type { NewCustomerForm, ProductSaleForm, ExpenseForm, HistoryFilters, ConfirmModalData } from '../types';
+import type { NewCustomerForm, ProductSaleForm, ExpenseForm, HistoryFilters, ConfirmModalData, AdvanceForm } from '../types';
 
 export const useKasirStateV2 = () => {
   const [activeTab, setActiveTab] = useState('transactions');
@@ -12,6 +12,7 @@ export const useKasirStateV2 = () => {
   const [showProductSale, setShowProductSale] = useState(false);
   const [showExpense, setShowExpense] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showAdvance, setShowAdvance] = useState(false);
   
   const [newCustomer, setNewCustomer] = useState<NewCustomerForm>({ name: '', phone: '', services: [], capsterId: '' });
   const [productSaleData, setProductSaleData] = useState<ProductSaleForm>({ customerName: '', customerPhone: '', products: [], paymentMethod: 'CASH', completedBy: '', recommendedBy: '' });
@@ -84,13 +85,13 @@ export const useKasirStateV2 = () => {
   }, [queries.sessionInfo.data, queries.kasirList.data]);
 
   useEffect(() => {
-    if (showProductSale || showExpense || showAddService) {
+    if (showProductSale || showExpense || showAddService || showAdvance) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
     return () => { document.body.style.overflow = 'unset'; };
-  }, [showProductSale, showExpense, showAddService]);
+  }, [showProductSale, showExpense, showAddService, showAdvance]);
 
   return {
     activeTab, setActiveTab,
@@ -108,6 +109,7 @@ export const useKasirStateV2 = () => {
     showProductSale, setShowProductSale,
     showExpense, setShowExpense,
     showLogoutModal, setShowLogoutModal,
+    showAdvance, setShowAdvance,
     newCustomer, setNewCustomer,
     productSaleData, setProductSaleData,
     expenseData, setExpenseData,

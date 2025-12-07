@@ -1,5 +1,6 @@
 'use client';
-import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '@/lib/api/admin';
 
 interface StaffPayrollModalProps {
@@ -10,6 +11,11 @@ interface StaffPayrollModalProps {
 }
 
 export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: StaffPayrollModalProps) {
+  const queryClient = useQueryClient();
+  const [deductKasbon, setDeductKasbon] = useState(false);
+  const [deductAmount, setDeductAmount] = useState('');
+  const [deductedKasbon, setDeductedKasbon] = useState<any>(null);
+  
   if (!staff) return null;
 
   const { data: transactions = [], isLoading } = useQuery({
@@ -18,7 +24,58 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
     enabled: !!(staff.capsterId || staff.staffId),
   });
 
+  const { data: advances = [] } = useQuery({
+    queryKey: ['staff-advances', staff.capsterId || staff.staffId],
+    queryFn: async () => {
+      const res = await fetch(`/api/admin/advances?staffId=${staff.capsterId || staff.staffId}`);
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: !!(staff.capsterId || staff.staffId),
+  });
+
+  // Fetch deductions dalam periode payroll
+  const { data: deductions = [] } = useQuery({
+    queryKey: ['staff-deductions', staff.capsterId || staff.staffId, dateFrom, dateTo],
+    queryFn: async () => {
+      const res = await fetch(`/api/admin/deductions?staffId=${staff.capsterId || staff.staffId}&dateFrom=${dateFrom}&dateTo=${dateTo}`);
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: !!(staff.capsterId || staff.staffId),
+  });
+
+  const deductMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await fetch('/api/admin/advances', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error('Failed to deduct');
+      return res.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['staff-advances'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'advances'] });
+      queryClient.invalidateQueries({ queryKey: ['staff-deductions'] });
+      setDeductedKasbon({
+        amount: variables.amount,
+        date: new Date().toISOString()
+      });
+      setDeductKasbon(false);
+      setDeductAmount('');
+    }
+  });
+
   const totalCommission = (staff.serviceCommission || 0) + (staff.productCommission || 0);
+  const totalKasbon = advances.reduce((sum: number, adv: any) => sum + adv.remainingAmount, 0);
+  const maxDeduct = Math.min(totalCommission, totalKasbon);
+  
+  // Hitung total deduction dari database atau state baru
+  const totalDeductionsFromDB = deductions.reduce((sum: number, ded: any) => sum + ded.amount, 0);
+  const kasbonDeduction = deductedKasbon ? deductedKasbon.amount : totalDeductionsFromDB;
+  const netSalary = totalCommission - kasbonDeduction;
 
   const handlePrint = () => {
     window.print();
@@ -179,23 +236,155 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
                     <td className="py-3 text-gray-500 text-xs">({staff.productCount || 0} transactions)</td>
                     <td className="py-3 text-right font-bold text-black">Rp {(staff.productCommission || 0).toLocaleString()}</td>
                   </tr>
+                  <tr className="border-b-2 border-gray-300">
+                    <td className="py-3 text-gray-700 font-bold" colSpan={2}>Gross Salary</td>
+                    <td className="py-3 text-right font-bold text-black">Rp {totalCommission.toLocaleString()}</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
           </div>
 
+          {/* Deductions Section */}
+          {kasbonDeduction > 0 && (
+            <div className="mb-6 border-2 border-red-300 rounded-lg bg-red-50">
+              <div className="bg-red-100 px-4 py-2 border-b border-red-300">
+                <p className="font-bold text-red-800 text-sm">DEDUCTIONS</p>
+              </div>
+              <div className="p-4">
+                <table className="w-full text-sm">
+                  <tbody>
+                    {deductedKasbon ? (
+                      <tr>
+                        <td className="py-2 text-gray-700">Kasbon Advance Deduction</td>
+                        <td className="py-2 text-gray-500 text-xs">Dipotong: {new Date(deductedKasbon.date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                        <td className="py-2 text-right font-bold text-red-600">- Rp {deductedKasbon.amount.toLocaleString()}</td>
+                      </tr>
+                    ) : (
+                      deductions.map((ded: any, idx: number) => (
+                        <tr key={idx} className={idx > 0 ? 'border-t border-red-200' : ''}>
+                          <td className="py-2 text-gray-700">Kasbon Advance Deduction</td>
+                          <td className="py-2 text-gray-500 text-xs">Dipotong: {new Date(ded.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                          <td className="py-2 text-right font-bold text-red-600">- Rp {ded.amount.toLocaleString()}</td>
+                        </tr>
+                      ))
+                    )}
+                    {deductions.length > 1 && !deductedKasbon && (
+                      <tr className="border-t-2 border-red-400">
+                        <td className="py-2 text-gray-700 font-bold" colSpan={2}>Total Deductions</td>
+                        <td className="py-2 text-right font-bold text-red-600">- Rp {kasbonDeduction.toLocaleString()}</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Kasbon Deduction */}
+          {totalKasbon > 0 && (
+            <div className="mb-6 border-2 border-orange-300 rounded-lg bg-orange-50">
+              <div className="bg-orange-100 px-4 py-2 border-b border-orange-300">
+                <p className="font-bold text-orange-800 text-sm">⚠️ KASBON OUTSTANDING</p>
+              </div>
+              <div className="p-4">
+                <div className="mb-3">
+                  <p className="text-sm text-gray-700">Total Kasbon: <span className="font-bold text-orange-600">Rp {totalKasbon.toLocaleString()}</span></p>
+                </div>
+                <div className="flex items-center gap-3 mb-3">
+                  <input
+                    type="checkbox"
+                    id="deductKasbon"
+                    checked={deductKasbon}
+                    onChange={(e) => {
+                      setDeductKasbon(e.target.checked);
+                      if (e.target.checked) {
+                        setDeductAmount(maxDeduct.toString());
+                      } else {
+                        setDeductAmount('');
+                      }
+                    }}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="deductKasbon" className="text-sm font-medium text-gray-700 cursor-pointer">
+                    Potong kasbon dari gaji ini?
+                  </label>
+                </div>
+                {deductKasbon && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Jumlah Potongan (Max: Rp {maxDeduct.toLocaleString()})</label>
+                    <input
+                      type="number"
+                      value={deductAmount}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value) || 0;
+                        setDeductAmount(Math.min(val, maxDeduct).toString());
+                      }}
+                      max={maxDeduct}
+                      className="w-full border border-gray-300 rounded px-3 py-2 text-black"
+                    />
+                    <button
+                      onClick={async () => {
+                        if (!deductAmount || parseInt(deductAmount) <= 0) return;
+                        const advance = advances[0];
+                        if (!advance) return;
+                        if (confirm(`Potong kasbon Rp ${parseInt(deductAmount).toLocaleString()}?`)) {
+                          try {
+                            await deductMutation.mutateAsync({
+                              advanceId: advance.id,
+                              amount: parseInt(deductAmount),
+                              deductedBy: 'admin',
+                              deductedByName: 'Admin'
+                            });
+                            alert('Kasbon berhasil dipotong! Detail tersimpan di slip gaji.');
+                          } catch (error) {
+                            alert('Gagal memotong kasbon');
+                          }
+                        }
+                      }}
+                      disabled={deductMutation.isPending}
+                      className="mt-2 w-full bg-orange-600 text-white py-2 rounded hover:bg-orange-700 disabled:opacity-50"
+                    >
+                      {deductMutation.isPending ? 'Processing...' : 'Konfirmasi Potong Kasbon'}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Total */}
           <div className="mb-8 border-2 border-black rounded-lg bg-gray-50">
             <div className="p-4">
+              {kasbonDeduction > 0 && (
+                <div className="mb-3 pb-3 border-b border-gray-300">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-700">Gross Salary</span>
+                    <span className="font-bold text-black">Rp {totalCommission.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-red-600 mt-1">
+                    <span>Potongan Kasbon</span>
+                    <span className="font-bold">- Rp {kasbonDeduction.toLocaleString()}</span>
+                  </div>
+                  {deductedKasbon?.date && (
+                    <div className="text-xs text-gray-500 mt-1">
+                      Dipotong: {new Date(deductedKasbon.date).toLocaleDateString('id-ID')}
+                    </div>
+                  )}
+                </div>
+              )}
               <div className="flex justify-between items-center">
                 <div>
                   <p className="text-sm font-bold text-black">TOTAL NET SALARY</p>
                   <p className="text-xs text-gray-600 mt-1">
                     {(staff.serviceCount || 0) + (staff.productCount || 0)} total transactions
+                    {kasbonDeduction > 0 && (
+                      <span className="text-red-600 font-medium"> • {deductions.length || 1} kasbon deduction(s)</span>
+                    )}
                   </p>
                 </div>
                 <p className="text-3xl font-bold text-black">
-                  Rp {totalCommission.toLocaleString()}
+                  Rp {netSalary.toLocaleString()}
                 </p>
               </div>
             </div>
@@ -205,6 +394,11 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
           <div className="text-center text-xs text-gray-500 pt-4 border-t border-gray-300">
             <p className="font-medium">This is an official salary slip from Barber Place</p>
             <p className="mt-1">Generated on {new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+            {kasbonDeduction > 0 && (
+              <p className="mt-2 text-xs text-red-600 font-medium">
+                ⚠️ Kasbon deduction of Rp {kasbonDeduction.toLocaleString()} has been applied to this payroll
+              </p>
+            )}
             <p className="mt-2 text-xs">For inquiries, please contact HR Department</p>
           </div>
         </div>
