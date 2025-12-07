@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
 
     // Group by day
     const revenueData = [];
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
     
     for (let i = chartDays - 1; i >= 0; i--) {
       const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
@@ -195,7 +195,7 @@ export async function GET(request: NextRequest) {
       todayTransactions: todayTransactions || 0,
       weeklyRevenue: revenueData.length > 0 ? revenueData : [
         ...Array.from({ length: chartDays }, (_, i) => ({
-          day: chartPeriod === 'today' ? 'Today' :
+          day: chartPeriod === 'today' ? 'Hari Ini' :
                chartPeriod === '30days' ? `${i + 1}` : 
                dayNames[i % 7],
           revenue: 0
