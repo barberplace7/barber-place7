@@ -67,14 +67,14 @@ export default function LoginPage() {
     <div className="min-h-screen bg-black text-white font-sans">
       {/* Top Border */}
       <div className="absolute top-0 left-0 right-0 bg-white z-50" style={{height: '1.3rem'}}>
-        <div className="absolute left-1/2 transform -translate-x-1/2 h-full flex" style={{width: 'min(21rem, 90vw)'}}>
-          <div className="w-8 sm:w-10 md:w-12 bg-red-600"></div>
-          <div className="w-8 sm:w-10 md:w-12 bg-white"></div>
-          <div className="w-8 sm:w-10 md:w-12 bg-blue-700"></div>
-          <div className="w-8 sm:w-10 md:w-12 bg-white"></div>
-          <div className="w-8 sm:w-10 md:w-12 bg-red-600"></div>
-          <div className="w-8 sm:w-10 md:w-12 bg-white"></div>
-          <div className="w-8 sm:w-10 md:w-12 bg-blue-700"></div>
+        <div className="absolute left-1/2 transform -translate-x-1/2 h-full flex" style={{width: 'min(10.5rem, 50vw)'}}>
+          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-red-600"></div>
+          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-white"></div>
+          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-blue-700"></div>
+          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-white"></div>
+          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-red-600"></div>
+          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-white"></div>
+          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-blue-700"></div>
         </div>
       </div>
       
@@ -84,26 +84,26 @@ export default function LoginPage() {
       {/* Left Border */}
       <div className="absolute left-0 top-0 bottom-0 bg-white z-50" style={{width: '1.3rem'}}>
         <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex flex-col" style={{height: 'min(21rem, 70vh)'}}>
-          <div className="h-8 sm:h-10 md:h-12 bg-red-600"></div>
-          <div className="h-8 sm:h-10 md:h-12 bg-white"></div>
-          <div className="h-8 sm:h-10 md:h-12 bg-blue-700"></div>
-          <div className="h-8 sm:h-10 md:h-12 bg-white"></div>
-          <div className="h-8 sm:h-10 md:h-12 bg-red-600"></div>
-          <div className="h-8 sm:h-10 md:h-12 bg-white"></div>
-          <div className="h-8 sm:h-10 md:h-12 bg-blue-700"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-red-600"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-blue-700"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-red-600"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-blue-700"></div>
         </div>
       </div>
       
       {/* Right Border */}
       <div className="absolute right-0 top-0 bottom-0 bg-white z-50" style={{width: '1.3rem'}}>
         <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex flex-col" style={{height: 'min(21rem, 70vh)'}}>
-          <div className="h-8 sm:h-10 md:h-12 bg-red-600"></div>
-          <div className="h-8 sm:h-10 md:h-12 bg-white"></div>
-          <div className="h-8 sm:h-10 md:h-12 bg-blue-700"></div>
-          <div className="h-8 sm:h-10 md:h-12 bg-white"></div>
-          <div className="h-8 sm:h-10 md:h-12 bg-red-600"></div>
-          <div className="h-8 sm:h-10 md:h-12 bg-white"></div>
-          <div className="h-8 sm:h-10 md:h-12 bg-blue-700"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-red-600"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-blue-700"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-red-600"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
+          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-blue-700"></div>
         </div>
       </div>
 
@@ -118,12 +118,12 @@ export default function LoginPage() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
-        <div className="w-full max-w-md">
+      <div className="relative z-10 flex items-center justify-center min-h-screen px-4 sm:px-6 py-8">
+        <div className="w-full max-w-[85vw] sm:max-w-sm">
           {/* Login Form */}
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-2xl border border-white/20">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold mb-2">Login</h1>
+          <div className="bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 shadow-2xl border border-white/20">
+            <div className="text-center mb-4 sm:mb-6">
+              <h1 className="text-xl sm:text-2xl font-bold mb-2">Login</h1>
               <div className="w-16 h-1 mx-auto flex">
                 <div className="flex-1 bg-blue-700"></div>
                 <div className="flex-1 bg-white"></div>
@@ -133,11 +133,11 @@ export default function LoginPage() {
                 <div className="flex-1 bg-white"></div>
                 <div className="flex-1 bg-red-600"></div>
               </div>
-              <p className="text-gray-300 mt-4">Staff Access Portal</p>
+              <p className="text-xs sm:text-sm text-gray-300 mt-2 sm:mt-3">Staff Access Portal</p>
             </div>
 
             {!showKasirSelect ? (
-              <form onSubmit={handleBranchLogin} className="space-y-6">
+              <form onSubmit={handleBranchLogin} className="space-y-3 sm:space-y-4">
               {/* Username */}
               <div>
                 <label className="block text-sm font-medium mb-2">Username</label>
@@ -145,7 +145,7 @@ export default function LoginPage() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-white/10 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter your username"
                   required
                 />
@@ -158,7 +158,7 @@ export default function LoginPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-white/10 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Enter your password"
                   required
                 />
@@ -168,12 +168,12 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-white text-black py-3 px-6 rounded-lg font-medium hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                  className="w-full bg-white text-black py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg text-sm sm:text-base font-medium hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
                   {isLoading ? (
                     <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black mr-2"></div>
-                      Logging in...
+                      <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-black mr-2"></div>
+                      <span className="text-sm sm:text-base">Logging in...</span>
                     </>
                   ) : (
                     'Login to Branch'
@@ -181,17 +181,17 @@ export default function LoginPage() {
                 </button>
               </form>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <div className="text-center">
-                  <h3 className="text-lg font-medium mb-2">Pilih Akun Kasir Anda</h3>
-                  <p className="text-sm text-gray-300">Cabang: {branchData?.user?.cabangName}</p>
+                  <h3 className="text-base sm:text-lg font-medium mb-2">Pilih Akun Kasir Anda</h3>
+                  <p className="text-xs sm:text-sm text-gray-300">Cabang: {branchData?.user?.cabangName}</p>
                 </div>
                 
                 <div>
                   <select
                     value={selectedKasir}
                     onChange={(e) => setSelectedKasir(e.target.value)}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-white/10 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="" className="text-black">Select a kasir...</option>
                     {kasirList.map((kasir) => (
@@ -202,10 +202,10 @@ export default function LoginPage() {
                   </select>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-2 sm:gap-3">
                   <button
                     onClick={() => {setShowKasirSelect(false); setBranchData(null); setSelectedKasir('');}}
-                    className="flex-1 bg-gray-600 text-white py-3 px-4 rounded-lg hover:bg-gray-700 transition-colors font-medium"
+                    className="flex-1 bg-gray-600 text-white py-2.5 sm:py-3 px-3 sm:px-4 text-sm sm:text-base rounded-lg hover:bg-gray-700 transition-colors font-medium"
                   >
                     Back
                   </button>
@@ -242,12 +242,12 @@ export default function LoginPage() {
                       }
                     }}
                     disabled={!selectedKasir || isStartingSession}
-                    className="flex-1 bg-white text-black py-3 px-4 rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center"
+                    className="flex-1 bg-white text-black py-2.5 sm:py-3 px-3 sm:px-4 text-sm sm:text-base rounded-lg hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center"
                   >
                     {isStartingSession ? (
                       <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-black mr-2"></div>
-                        Starting...
+                        <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-black mr-2"></div>
+                        <span className="text-sm sm:text-base">Starting...</span>
                       </>
                     ) : (
                       'Start Session'

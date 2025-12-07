@@ -51,44 +51,44 @@ export default function Gallery() {
   };
 
   return (
-    <div id="gallery" className="bg-gray-50 py-16 px-4 sm:px-8">
+    <div id="gallery" className="bg-gray-50 py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8">
       <div className="max-w-7xl mx-auto">
         <SectionHeader title="Gallery" />
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12 items-center">
           {/* Left Content */}
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <p className={`text-4xl md:text-5xl font-bold text-black ${montserrat.className}`}>See Our</p>
-              <h2 className={`text-4xl md:text-5xl font-bold text-black ${montserrat.className}`}>Barberplace</h2>
-              <h3 className={`text-4xl md:text-5xl font-bold text-black ${montserrat.className}`}>Styles</h3>
+          <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-1 sm:space-y-2">
+              <p className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black ${montserrat.className}`}>See Our</p>
+              <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black ${montserrat.className}`}>Barberplace</h2>
+              <h3 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black ${montserrat.className}`}>Styles</h3>
             </div>
             
-            <p className={`text-gray-600 text-lg leading-relaxed ${montserrat.className}`}>
+            <p className={`text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed ${montserrat.className}`}>
               Check out our Legendary styles that would best suite you.
             </p>
             
             <div className="flex items-center gap-2 text-black hover:text-gray-700 transition-colors cursor-pointer">
-              <span className={`text-sm font-bold ${montserrat.className}`}>View More Styles</span>
+              <span className={`text-xs sm:text-sm font-bold ${montserrat.className}`}>View More Styles</span>
               <span className="text-sm">⟶</span>
             </div>
             
             {/* Navigation Buttons */}
-            <div className="flex gap-2 pt-4">
+            <div className="flex gap-2 pt-2 sm:pt-4">
               <button 
-                className="bg-white border-2 border-black rounded-full p-3 hover:bg-gray-100 transition-all duration-200"
+                className="bg-white border-2 border-black rounded-full p-2 sm:p-3 hover:bg-gray-100 transition-all duration-200"
                 onClick={() => handleNavigation('prev')}
               >
-                <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 sm:w-5 h-4 sm:h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
               
               <button 
-                className="bg-white border-2 border-black rounded-full p-3 hover:bg-gray-100 transition-all duration-200"
+                className="bg-white border-2 border-black rounded-full p-2 sm:p-3 hover:bg-gray-100 transition-all duration-200"
                 onClick={() => handleNavigation('next')}
               >
-                <svg className="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 sm:w-5 h-4 sm:h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
@@ -97,17 +97,18 @@ export default function Gallery() {
           
           {/* Right Images */}
           <div className="relative flex-1">
-            <div className="overflow-hidden w-full ml-8">
+            <div className="overflow-hidden w-full ml-0 sm:ml-4 md:ml-8">
               <div id="gallerySlider" className="flex transition-transform duration-300">
                 {galleryImages.map((image, index) => (
                   <div 
                     key={index} 
-                    className="flex-shrink-0 bg-gray-800 rounded-2xl overflow-hidden" 
+                    className="flex-shrink-0 bg-gray-800 rounded-xl sm:rounded-2xl overflow-hidden" 
                     style={{ 
-                      width: '500px', 
-                      height: '500px', 
+                      width: '280px', 
+                      height: '280px', 
                       marginRight: '10px' 
                     }}
+                    className="flex-shrink-0 bg-gray-800 rounded-xl sm:rounded-2xl overflow-hidden w-[280px] sm:w-[350px] md:w-[450px] lg:w-[500px] h-[280px] sm:h-[350px] md:h-[450px] lg:h-[500px] mr-2 sm:mr-3"
                   >
                     <img 
                       src={image} 
