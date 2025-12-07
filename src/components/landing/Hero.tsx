@@ -1,3 +1,5 @@
+'use client';
+import { useState, useEffect } from 'react';
 import { Montserrat } from 'next/font/google';
 import { NAVIGATION_ITEMS, CONTACT_INFO } from '@/constants/data';
 
@@ -7,6 +9,12 @@ const montserrat = Montserrat({
   display: 'swap',
 });
 
+const HERO_IMAGES = [
+  'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1600&h=900&fit=crop',
+  'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1600&h=900&fit=crop',
+  'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=1600&h=900&fit=crop',
+];
+
 interface HeroProps {
   isMenuOpen: boolean;
   setIsMenuOpen: (value: boolean) => void;
@@ -15,6 +23,22 @@ interface HeroProps {
 }
 
 export default function Hero({ isMenuOpen, setIsMenuOpen, isNavVisible, isScrolled }: HeroProps) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % HERO_IMAGES.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + HERO_IMAGES.length) % HERO_IMAGES.length);
+  };
   return (
     <>
       {/* Navigation */}
@@ -65,15 +89,21 @@ export default function Hero({ isMenuOpen, setIsMenuOpen, isNavVisible, isScroll
       )}
 
       {/* Hero Section */}
-      <div id="home" className="relative min-h-screen flex items-center">
+      <div id="home" className="relative min-h-screen flex items-center bg-black">
         
+        {/* Image Slider */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <div 
-            className="w-full h-full bg-cover bg-center"
-            style={{
-              backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1600&h=900&fit=crop")',
-            }}
-          ></div>
+          {HERO_IMAGES.map((image, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-1000 ${
+                index === currentSlide ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{
+                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("${image}")`,
+              }}
+            ></div>
+          ))}
           <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black to-transparent opacity-80"></div>
         </div>
 

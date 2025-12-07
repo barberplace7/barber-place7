@@ -65,47 +65,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-black text-white font-sans">
-      {/* Top Border */}
-      <div className="absolute top-0 left-0 right-0 bg-white z-50" style={{height: '1.3rem'}}>
-        <div className="absolute left-1/2 transform -translate-x-1/2 h-full flex" style={{width: 'min(10.5rem, 50vw)'}}>
-          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-red-600"></div>
-          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-white"></div>
-          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-blue-700"></div>
-          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-white"></div>
-          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-red-600"></div>
-          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-white"></div>
-          <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-blue-700"></div>
-        </div>
-      </div>
-      
-      {/* Bottom Border */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white z-50" style={{height: '1.3rem'}}></div>
-      
-      {/* Left Border */}
-      <div className="absolute left-0 top-0 bottom-0 bg-white z-50" style={{width: '1.3rem'}}>
-        <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex flex-col" style={{height: 'min(21rem, 70vh)'}}>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-red-600"></div>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-blue-700"></div>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-red-600"></div>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-blue-700"></div>
-        </div>
-      </div>
-      
-      {/* Right Border */}
-      <div className="absolute right-0 top-0 bottom-0 bg-white z-50" style={{width: '1.3rem'}}>
-        <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex flex-col" style={{height: 'min(21rem, 70vh)'}}>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-red-600"></div>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-blue-700"></div>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-red-600"></div>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
-          <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-blue-700"></div>
-        </div>
-      </div>
 
       {/* Background */}
       <div className="absolute inset-0 z-0">
