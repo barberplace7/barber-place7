@@ -70,8 +70,8 @@ export const PRICELIST = {
       { name: "Black Colouring", price: "Rp 80.000" },
       { name: "Highlight Colouring", price: "Rp 250.000" },
       { name: "Full Colouring", price: "Rp 350.000" },
-      { name: "Perm Hair & Cut", price: "Rp 250.000" },
-      { name: "Down Perm & Cut", price: "Rp 200.000" }
+      { name: "Perm Hair", price: "Rp 250.000" },
+      { name: "Down Perm", price: "Rp 200.000" }
     ]
   },
   products: {

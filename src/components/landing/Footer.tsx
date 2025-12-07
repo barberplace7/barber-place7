@@ -10,11 +10,11 @@ const montserrat = Montserrat({
 
 export default function Footer() {
   return (
-    <footer className="relative bg-gradient-to-br from-gray-100 via-gray-200 to-gray-100 text-gray-800 overflow-hidden">
+    <footer className="relative bg-gradient-to-b from-black to-zinc-900 text-white overflow-hidden">
       {/* Decorative Elements */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gray-300 rounded-full filter blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gray-400 rounded-full filter blur-3xl"></div>
+        <div className="absolute top-0 left-0 w-96 h-96 bg-gray-700 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gray-600 rounded-full filter blur-3xl"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12 md:py-16">
@@ -28,18 +28,18 @@ export default function Footer() {
                 alt="Logo" 
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shadow-lg"
               />
-              <h3 className={`text-xl sm:text-2xl font-bold text-gray-800 ${montserrat.className}`}>
+              <h3 className={`text-xl sm:text-2xl font-bold text-white ${montserrat.className}`}>
                 BARBER PLACE
               </h3>
             </div>
-            <p className={`text-gray-600 text-xs sm:text-sm leading-relaxed ${montserrat.className}`}>
+            <p className={`text-gray-300 text-xs sm:text-sm leading-relaxed ${montserrat.className}`}>
               Your trusted barbershop for premium grooming and styling services.
             </p>
           </div>
 
           {/* Contact Section */}
           <div className="space-y-3 sm:space-y-4">
-            <h3 className={`text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 ${montserrat.className}`}>Contact Us</h3>
+            <h3 className={`text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 ${montserrat.className}`}>Contact Us</h3>
             <div className="space-y-2 sm:space-y-3">
               <a 
                 href={CONTACT_INFO.whatsapp.url} 
@@ -47,10 +47,10 @@ export default function Footer() {
                 rel="noopener noreferrer" 
                 className="group flex items-center gap-3 hover:translate-x-1 transition-all duration-200"
               >
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-300/50 rounded-lg flex items-center justify-center group-hover:bg-gray-300 transition-colors">
-                  <Icon name="whatsapp" className="w-4 sm:w-5 h-4 sm:h-5 text-gray-600" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-700/50 rounded-lg flex items-center justify-center group-hover:bg-gray-700 transition-colors">
+                  <Icon name="whatsapp" className="w-4 sm:w-5 h-4 sm:h-5 text-gray-300" />
                 </div>
-                <span className={`text-gray-600 text-xs sm:text-sm group-hover:text-gray-800 ${montserrat.className}`}>
+                <span className={`text-gray-300 text-xs sm:text-sm group-hover:text-white ${montserrat.className}`}>
                   {CONTACT_INFO.whatsapp.number}
                 </span>
               </a>
@@ -60,10 +60,10 @@ export default function Footer() {
                 rel="noopener noreferrer" 
                 className="group flex items-center gap-3 hover:translate-x-1 transition-all duration-200"
               >
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-300/50 rounded-lg flex items-center justify-center group-hover:bg-gray-300 transition-colors">
-                  <Icon name="instagram" className="w-4 sm:w-5 h-4 sm:h-5 text-gray-600" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-700/50 rounded-lg flex items-center justify-center group-hover:bg-gray-700 transition-colors">
+                  <Icon name="instagram" className="w-4 sm:w-5 h-4 sm:h-5 text-gray-300" />
                 </div>
-                <span className={`text-gray-600 text-xs sm:text-sm group-hover:text-gray-800 ${montserrat.className}`}>
+                <span className={`text-gray-300 text-xs sm:text-sm group-hover:text-white ${montserrat.className}`}>
                   {CONTACT_INFO.instagram.handle}
                 </span>
               </a>
@@ -72,33 +72,33 @@ export default function Footer() {
 
           {/* Hours Section */}
           <div className="space-y-3 sm:space-y-4">
-            <h3 className={`text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 ${montserrat.className}`}>Opening Hours</h3>
+            <h3 className={`text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 ${montserrat.className}`}>Opening Hours</h3>
             <div className="space-y-2 sm:space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-300/50 rounded-lg flex items-center justify-center">
-                  <Icon name="calendar" className="w-4 sm:w-5 h-4 sm:h-5 text-gray-600" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-700/50 rounded-lg flex items-center justify-center">
+                  <Icon name="calendar" className="w-4 sm:w-5 h-4 sm:h-5 text-gray-300" />
                 </div>
-                <p className={`text-gray-600 text-xs sm:text-sm ${montserrat.className}`}>Open Everyday</p>
+                <p className={`text-gray-300 text-xs sm:text-sm ${montserrat.className}`}>Open Everyday</p>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-300/50 rounded-lg flex items-center justify-center">
-                  <Icon name="clock" className="w-4 sm:w-5 h-4 sm:h-5 text-gray-600" />
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-700/50 rounded-lg flex items-center justify-center">
+                  <Icon name="clock" className="w-4 sm:w-5 h-4 sm:h-5 text-gray-300" />
                 </div>
-                <p className={`text-gray-600 text-xs sm:text-sm font-medium ${montserrat.className}`}>{CONTACT_INFO.hours} WIB</p>
+                <p className={`text-gray-300 text-xs sm:text-sm font-medium ${montserrat.className}`}>{CONTACT_INFO.hours} WIB</p>
               </div>
             </div>
           </div>
 
           {/* Location Section */}
           <div className="space-y-3 sm:space-y-4">
-            <h3 className={`text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4 ${montserrat.className}`}>Our Locations</h3>
+            <h3 className={`text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 ${montserrat.className}`}>Our Locations</h3>
             <div className="space-y-2 sm:space-y-3">
               {CONTACT_INFO.locations.map((location, index) => (
                 <div key={index} className="flex items-start gap-2 sm:gap-3">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-300/50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Icon name="location" className="w-4 sm:w-5 h-4 sm:h-5 text-gray-600" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-700/50 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Icon name="location" className="w-4 sm:w-5 h-4 sm:h-5 text-gray-300" />
                   </div>
-                  <span className={`text-gray-600 text-xs sm:text-sm leading-relaxed ${montserrat.className}`}>{location}</span>
+                  <span className={`text-gray-300 text-xs sm:text-sm leading-relaxed ${montserrat.className}`}>{location}</span>
                 </div>
               ))}
             </div>
@@ -118,14 +118,14 @@ export default function Footer() {
             ))}
           </div>
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
-            <p className={`text-gray-600 text-xs sm:text-sm ${montserrat.className}`}>
+            <p className={`text-gray-300 text-xs sm:text-sm ${montserrat.className}`}>
               &copy; 2024 Barber Place. All rights reserved.
             </p>
             <div className="flex gap-3 sm:gap-4">
-              <a href="#home" className={`text-gray-600 hover:text-gray-800 text-xs sm:text-sm transition-colors ${montserrat.className}`}>Home</a>
-              <a href="#about" className={`text-gray-600 hover:text-gray-800 text-xs sm:text-sm transition-colors ${montserrat.className}`}>Service</a>
-              <a href="#gallery" className={`text-gray-600 hover:text-gray-800 text-xs sm:text-sm transition-colors ${montserrat.className}`}>Gallery</a>
-              <a href="#location" className={`text-gray-600 hover:text-gray-800 text-xs sm:text-sm transition-colors ${montserrat.className}`}>About</a>
+              <a href="#home" className={`text-gray-300 hover:text-white text-xs sm:text-sm transition-colors ${montserrat.className}`}>Home</a>
+              <a href="#about" className={`text-gray-300 hover:text-white text-xs sm:text-sm transition-colors ${montserrat.className}`}>Service</a>
+              <a href="#gallery" className={`text-gray-300 hover:text-white text-xs sm:text-sm transition-colors ${montserrat.className}`}>Gallery</a>
+              <a href="#location" className={`text-gray-300 hover:text-white text-xs sm:text-sm transition-colors ${montserrat.className}`}>About</a>
             </div>
           </div>
         </div>

@@ -13,21 +13,19 @@ interface PriceItemProps {
   price: string;
 }
 
-function PriceItem({ name, price }: PriceItemProps) {
+function PriceItem({ name }: { name: string }) {
   const hasParentheses = name.includes('(');
   const mainName = hasParentheses ? name.split('(')[0].trim() : name;
   const subName = hasParentheses ? '(' + name.split('(')[1] : '';
 
   return (
-    <div className="border-b border-gray-200 pb-2 sm:pb-3">
-      <div className="flex justify-between items-center gap-2 sm:gap-3 md:gap-4">
-        <div className="flex flex-col">
-          <span className="text-sm sm:text-base font-medium text-gray-600">{mainName}</span>
-          {hasParentheses && (
-            <span className="text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1">{subName}</span>
-          )}
-        </div>
-        <span className="text-sm sm:text-base font-bold text-red-600 flex-shrink-0">{price}</span>
+    <div className="flex items-start gap-2">
+      <span className="text-gray-400 mt-1">•</span>
+      <div className="flex flex-col">
+        <span className="text-sm sm:text-base font-medium text-gray-300">{mainName}</span>
+        {hasParentheses && (
+          <span className="text-xs sm:text-sm text-gray-400 mt-0.5">{subName}</span>
+        )}
       </div>
     </div>
   );
@@ -46,20 +44,20 @@ function PriceCategory({ title, items }: PriceCategoryProps) {
   };
 
   return (
-    <div className="group bg-white p-4 sm:p-5 md:p-6 rounded-sm shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-dashed border-gray-300 h-full relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-3 bg-gradient-to-b from-gray-50 to-transparent"></div>
-      <div className="absolute bottom-0 left-0 right-0 h-3 bg-gradient-to-t from-gray-50 to-transparent"></div>
-      <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-5 md:mb-6 pb-3 sm:pb-4 border-b-2 border-dashed border-gray-200">
-        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 bg-gradient-to-br from-blue-100 via-red-50 to-blue-50 rounded-full flex items-center justify-center">
-          <i className={`${getIconClass()} text-xl sm:text-2xl text-gray-600`}></i>
+    <div className="group bg-zinc-900 backdrop-blur-sm p-4 sm:p-5 md:p-6 rounded-sm transition-all duration-300 hover:shadow-lg hover:shadow-gray-900/50 border-2 border-gray-400 hover:border-gray-600 h-full relative overflow-hidden cursor-pointer">
+      <div className="absolute top-0 left-0 right-0 h-3 bg-gradient-to-b from-gray-800/30 to-transparent"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-3 bg-gradient-to-t from-gray-800/30 to-transparent"></div>
+      <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-5 md:mb-6 pb-3 sm:pb-4 border-b-2 border-dashed border-gray-700">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 bg-gradient-to-br from-blue-100 via-white to-red-100 rounded-full flex items-center justify-center">
+          <i className={`${getIconClass()} text-xl sm:text-2xl text-gray-700`}></i>
         </div>
-        <h3 className={`text-base sm:text-lg md:text-xl font-bold text-gray-700 ${montserrat.className}`}>
+        <h3 className={`text-base sm:text-lg md:text-xl font-bold text-white ${montserrat.className}`}>
           {title}
         </h3>
       </div>
-      <div className="space-y-3 sm:space-y-4">
+      <div className="space-y-2 sm:space-y-3">
         {items.map((item, index) => (
-          <PriceItem key={index} name={item.name} price={item.price} />
+          <PriceItem key={index} name={item.name} />
         ))}
       </div>
     </div>
@@ -68,9 +66,9 @@ function PriceCategory({ title, items }: PriceCategoryProps) {
 
 export default function Pricelist() {
   return (
-    <div id="service" className="bg-gray-50 py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8">
+    <div id="service" className="bg-transparent py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8">
       <div className="max-w-7xl mx-auto">
-        <SectionHeader title="Pricelist" />
+        <SectionHeader title="Our Services" />
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-6 md:gap-8">
           <PriceCategory title={PRICELIST.haircut.title} items={PRICELIST.haircut.items} />

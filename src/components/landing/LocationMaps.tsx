@@ -6,10 +6,12 @@ import Icon from '@/components/ui/Icon';
 
 function MapCard({ name, mapUrl }: { name: string; mapUrl: string }) {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100">
-      <div className="flex items-center justify-center gap-2 mb-4">
-        <Icon name="location" className="w-5 h-5 text-gray-600" />
-        <h3 className="text-lg font-bold text-black text-center">{name}</h3>
+    <div>
+      <div className="flex items-center justify-center gap-3 mb-4">
+        <div className="w-10 h-10 bg-gradient-to-br from-blue-100 via-white to-red-100 rounded-full flex items-center justify-center">
+          <Icon name="location" className="w-5 h-5 text-gray-700" />
+        </div>
+        <h3 className="text-lg font-bold text-white text-center">{name}</h3>
       </div>
       <div className="rounded-lg overflow-hidden">
         <iframe 

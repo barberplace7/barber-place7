@@ -66,52 +66,15 @@ export default function Hero({ isMenuOpen, setIsMenuOpen, isNavVisible, isScroll
 
       {/* Hero Section */}
       <div id="home" className="relative min-h-screen flex items-center">
-        <div className="absolute top-0 left-0 right-0 bg-white z-50" style={{height: '1.3rem'}}>
-          <div className="absolute left-1/2 transform -translate-x-1/2 h-full flex" style={{width: 'min(10.5rem, 50vw)'}}>
-            <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-red-600"></div>
-            <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-white"></div>
-            <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-blue-700"></div>
-            <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-white"></div>
-            <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-red-600"></div>
-            <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-white"></div>
-            <div className="w-6 sm:w-8 md:w-10 lg:w-12 bg-blue-700"></div>
-          </div>
-        </div>
         
-        <div className="absolute bottom-0 left-0 right-0 bg-white z-50" style={{height: '1.3rem'}}></div>
-        
-        <div className="absolute left-0 top-0 bottom-0 bg-white z-50" style={{width: '1.3rem'}}>
-          <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex flex-col" style={{height: 'min(21rem, 70vh)'}}>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-red-600"></div>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-blue-700"></div>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-red-600"></div>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-blue-700"></div>
-          </div>
-        </div>
-        
-        <div className="absolute right-0 top-0 bottom-0 bg-white z-50" style={{width: '1.3rem'}}>
-          <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex flex-col" style={{height: 'min(21rem, 70vh)'}}>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-red-600"></div>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-blue-700"></div>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-red-600"></div>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-white"></div>
-            <div className="h-6 sm:h-8 md:h-10 lg:h-12 bg-blue-700"></div>
-          </div>
-        </div>
-        
-        <div className="absolute inset-0 z-0 rounded-3xl overflow-hidden">
+        <div className="absolute inset-0 z-0 overflow-hidden">
           <div 
             className="w-full h-full bg-cover bg-center"
             style={{
               backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=1600&h=900&fit=crop")',
             }}
           ></div>
-          <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-gray-50 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black to-transparent opacity-80"></div>
         </div>
 
         <div className="relative z-10 w-full px-4 sm:px-6 md:px-8 pt-64 sm:pt-72 md:pt-80 lg:pt-96 pb-12 sm:pb-14 md:pb-16">

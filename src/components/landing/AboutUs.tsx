@@ -46,59 +46,59 @@ export default function AboutUs() {
         >
           <div className="flex md:grid md:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mb-0 md:mb-8 min-w-max md:min-w-0">
         {/* Contact */}
-        <div className="group flex-shrink-0 w-[85vw] md:w-auto bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-gray-200 snap-center">
+        <div className="group flex-shrink-0 w-[85vw] md:w-auto bg-zinc-900 backdrop-blur-sm p-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-gray-900/50 border-2 border-gray-400 hover:border-gray-600 snap-center cursor-pointer">
           <div className="flex justify-center mb-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <Icon name="whatsapp" className="w-7 h-7 text-gray-600" />
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-100 via-white to-red-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <Icon name="whatsapp" className="w-7 h-7 text-gray-700" />
             </div>
           </div>
-          <h4 className={`text-lg font-bold text-black mb-3 text-center ${montserrat.className}`}>Contact</h4>
+          <h4 className={`text-lg font-bold text-white mb-3 text-center ${montserrat.className}`}>Contact</h4>
           <div className="space-y-1 mt-8">
-            <a href={CONTACT_INFO.whatsapp.url} target="_blank" rel="noopener noreferrer" className={`flex items-start gap-2 text-gray-700 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-100 ${montserrat.className}`}>
-              <Icon name="whatsapp" className="w-4 h-4 flex-shrink-0 mt-0.5 text-gray-600" />
+            <a href={CONTACT_INFO.whatsapp.url} target="_blank" rel="noopener noreferrer" className={`flex items-start gap-2 text-gray-300 hover:text-white transition-colors p-2 rounded-lg hover:bg-gray-700/50 ${montserrat.className}`}>
+              <Icon name="whatsapp" className="w-4 h-4 flex-shrink-0 mt-0.5 text-gray-400" />
               <span className="text-sm font-medium">{CONTACT_INFO.whatsapp.number}</span>
             </a>
-            <a href={CONTACT_INFO.instagram.url} target="_blank" rel="noopener noreferrer" className={`flex items-start gap-2 text-gray-700 hover:text-gray-900 transition-colors p-2 rounded-lg hover:bg-gray-100 ${montserrat.className}`}>
-              <Icon name="instagram" className="w-4 h-4 flex-shrink-0 mt-0.5 text-gray-600" />
+            <a href={CONTACT_INFO.instagram.url} target="_blank" rel="noopener noreferrer" className={`flex items-start gap-2 text-gray-300 hover:text-white transition-colors p-2 rounded-lg hover:bg-gray-700/50 ${montserrat.className}`}>
+              <Icon name="instagram" className="w-4 h-4 flex-shrink-0 mt-0.5 text-gray-400" />
               <span className="text-sm font-medium">{CONTACT_INFO.instagram.handle}</span>
             </a>
           </div>
         </div>
 
         {/* Location */}
-        <div className="group flex-shrink-0 w-[85vw] md:w-auto bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-gray-200 snap-center">
+        <div className="group flex-shrink-0 w-[85vw] md:w-auto bg-zinc-900 backdrop-blur-sm p-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-gray-900/50 border-2 border-gray-400 hover:border-gray-600 snap-center cursor-pointer">
           <div className="flex justify-center mb-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <Icon name="location" className="w-7 h-7 text-gray-600" />
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-100 via-white to-red-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <Icon name="location" className="w-7 h-7 text-gray-700" />
             </div>
           </div>
-          <h4 className={`text-lg font-bold text-black mb-3 text-center ${montserrat.className}`}>Location</h4>
+          <h4 className={`text-lg font-bold text-white mb-3 text-center ${montserrat.className}`}>Location</h4>
           <div className="space-y-1 mt-6">
             {CONTACT_INFO.locations.map((location, index) => (
-              <div key={index} className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-                <Icon name="location" className="w-4 h-4 text-gray-600 flex-shrink-0 mt-0.5" />
-                <span className={`text-sm text-gray-700 ${montserrat.className}`}>{location}</span>
+              <div key={index} className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-700/50 transition-colors">
+                <Icon name="location" className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                <span className={`text-sm text-gray-300 ${montserrat.className}`}>{location}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Operational Hours */}
-        <div className="group flex-shrink-0 w-[85vw] md:w-auto bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-gray-200 snap-center">
+        <div className="group flex-shrink-0 w-[85vw] md:w-auto bg-zinc-900 backdrop-blur-sm p-6 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-gray-900/50 border-2 border-gray-400 hover:border-gray-600 snap-center cursor-pointer">
           <div className="flex justify-center mb-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-50 via-pink-50 to-purple-50 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-              <Icon name="clock" className="w-7 h-7 text-gray-600" />
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-100 via-white to-red-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <Icon name="clock" className="w-7 h-7 text-gray-700" />
             </div>
           </div>
-          <h4 className={`text-lg font-bold text-black mb-3 text-center ${montserrat.className}`}>Operational Hours</h4>
+          <h4 className={`text-lg font-bold text-white mb-3 text-center ${montserrat.className}`}>Operational Hours</h4>
           <div className="space-y-1 mt-6">
-            <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-              <Icon name="calendar" className="w-4 h-4 text-gray-600 flex-shrink-0 mt-0.5" />
-              <span className={`text-sm text-gray-700 font-medium ${montserrat.className}`}>Open Everyday</span>
+            <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-700/50 transition-colors">
+              <Icon name="calendar" className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+              <span className={`text-sm text-gray-300 font-medium ${montserrat.className}`}>Open Everyday</span>
             </div>
-            <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors">
-              <Icon name="clock" className="w-4 h-4 text-gray-600" />
-              <span className={`text-sm text-gray-700 font-medium ${montserrat.className}`}>{CONTACT_INFO.hours} WIB</span>
+            <div className="flex items-start gap-2 p-2 rounded-lg hover:bg-gray-700/50 transition-colors">
+              <Icon name="clock" className="w-4 h-4 text-gray-400" />
+              <span className={`text-sm text-gray-300 font-medium ${montserrat.className}`}>{CONTACT_INFO.hours} WIB</span>
             </div>
           </div>
         </div>
@@ -109,7 +109,7 @@ export default function AboutUs() {
         {currentIndex > 0 && (
           <button 
             onClick={() => scrollContainer('left')}
-            className="md:hidden absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/10 border border-gray-200/50 rounded-full p-2 text-gray-600 active:bg-white/90 active:border-gray-300 transition-all duration-200 z-10 backdrop-blur-sm"
+            className="md:hidden absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800/50 border border-gray-600/50 rounded-full p-2 text-gray-300 active:bg-gray-700 active:border-gray-500 transition-all duration-200 z-10 backdrop-blur-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -120,7 +120,7 @@ export default function AboutUs() {
         {currentIndex < totalCards - 1 && (
           <button 
             onClick={() => scrollContainer('right')}
-            className="md:hidden absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/10 border border-gray-200/50 rounded-full p-2 text-gray-600 active:bg-white/90 active:border-gray-300 transition-all duration-200 z-10 backdrop-blur-sm"
+            className="md:hidden absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800/50 border border-gray-600/50 rounded-full p-2 text-gray-300 active:bg-gray-700 active:border-gray-500 transition-all duration-200 z-10 backdrop-blur-sm"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -141,7 +141,7 @@ export default function AboutUs() {
                 setCurrentIndex(index);
               }}
               className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                currentIndex === index ? 'bg-gray-800 w-4' : 'bg-gray-300'
+                currentIndex === index ? 'bg-white w-4' : 'bg-gray-600'
               }`}
             />
           ))}

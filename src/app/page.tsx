@@ -41,24 +41,24 @@ export default function BarbershopLanding() {
 
 
   return (
-    <div className="min-h-screen text-white font-sans overflow-x-hidden">
+    <div className="min-h-screen text-white font-sans overflow-x-hidden bg-black">
       <Hero isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} isNavVisible={isNavVisible} isScrolled={isScrolled} />
 
-      <div className="h-4 sm:h-6 md:h-8 bg-gradient-to-b from-white to-gray-50"></div>
+      <div className="h-4 sm:h-6 md:h-8 bg-gradient-to-b from-black/20 to-transparent"></div>
 
       <Services />
 
-      <div className="py-12 bg-gray-50"></div>
+      <div className="py-12 bg-transparent"></div>
 
       <Pricelist />
 
-      <div className="py-12 bg-gray-50"></div>
+      <div className="py-12 bg-transparent"></div>
 
       <Gallery />
 
-      <div className="py-12 bg-gray-50"></div>
+      <div className="py-12 bg-transparent"></div>
 
-      <div id="location" className="bg-gray-50 py-24 px-4 sm:px-6 md:px-8">
+      <div id="location" className="bg-transparent py-24 px-4 sm:px-6 md:px-8">
         <div className="max-w-7xl mx-auto">
           <AboutUs />
           
@@ -68,7 +68,7 @@ export default function BarbershopLanding() {
         </div>
       </div>
 
-      <div id="faq" className="bg-gray-50 pt-24 pb-24 px-4 sm:px-6 md:px-8">
+      <div id="faq" className="bg-transparent pt-24 pb-24 px-4 sm:px-6 md:px-8">
         <FAQ />
       </div>
 

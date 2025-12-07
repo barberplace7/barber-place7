@@ -51,7 +51,7 @@ export default function Gallery() {
   };
 
   return (
-    <div id="gallery" className="bg-gray-50 py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8">
+    <div id="gallery" className="bg-transparent py-8 sm:py-12 md:py-16 px-4 sm:px-6 md:px-8">
       <div className="max-w-7xl mx-auto">
         <SectionHeader title="Gallery" />
         
@@ -59,16 +59,16 @@ export default function Gallery() {
           {/* Left Content */}
           <div className="space-y-4 sm:space-y-6">
             <div className="space-y-1 sm:space-y-2">
-              <p className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black ${montserrat.className}`}>See Our</p>
-              <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black ${montserrat.className}`}>Barberplace</h2>
-              <h3 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-black ${montserrat.className}`}>Styles</h3>
+              <p className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white ${montserrat.className}`}>See Our</p>
+              <h2 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white ${montserrat.className}`}>Barberplace</h2>
+              <h3 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white ${montserrat.className}`}>Styles</h3>
             </div>
             
-            <p className={`text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed ${montserrat.className}`}>
+            <p className={`text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed ${montserrat.className}`}>
               Check out our Legendary styles that would best suite you.
             </p>
             
-            <div className="flex items-center gap-2 text-black hover:text-gray-700 transition-colors cursor-pointer">
+            <div className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors cursor-pointer">
               <span className={`text-xs sm:text-sm font-bold ${montserrat.className}`}>View More Styles</span>
               <span className="text-sm">⟶</span>
             </div>
@@ -76,19 +76,19 @@ export default function Gallery() {
             {/* Navigation Buttons */}
             <div className="flex gap-2 pt-2 sm:pt-4">
               <button 
-                className="bg-white border-2 border-black rounded-full p-2 sm:p-3 hover:bg-gray-100 transition-all duration-200"
+                className="bg-gray-800/50 border-2 border-gray-600 rounded-full p-2 sm:p-3 hover:bg-gray-700 transition-all duration-200"
                 onClick={() => handleNavigation('prev')}
               >
-                <svg className="w-4 sm:w-5 h-4 sm:h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 sm:w-5 h-4 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
               </button>
               
               <button 
-                className="bg-white border-2 border-black rounded-full p-2 sm:p-3 hover:bg-gray-100 transition-all duration-200"
+                className="bg-gray-800/50 border-2 border-gray-600 rounded-full p-2 sm:p-3 hover:bg-gray-700 transition-all duration-200"
                 onClick={() => handleNavigation('next')}
               >
-                <svg className="w-4 sm:w-5 h-4 sm:h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 sm:w-5 h-4 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </button>
