@@ -82,44 +82,83 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
           </div>
 
           {/* Transaction Details */}
-          <div className="mb-6 border border-gray-300 rounded-lg">
-            <div className="bg-gray-100 px-4 py-2 border-b border-gray-300">
+          <div className="mb-6">
+            <div className="bg-gray-100 px-4 py-2 border border-gray-300 rounded-t-lg">
               <p className="font-bold text-black text-sm">TRANSACTION DETAILS</p>
             </div>
-            <div className="p-4 max-h-96 overflow-y-auto">
-              {isLoading ? (
-                <div className="text-center py-8 text-gray-500">Loading transactions...</div>
-              ) : transactions.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">No transactions found</div>
-              ) : (
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50 sticky top-0">
-                    <tr className="border-b border-gray-300">
-                      <th className="py-3 px-4 text-left text-gray-600 font-semibold">Type</th>
-                      <th className="py-3 px-4 text-left text-gray-600 font-semibold">Item Name</th>
-                      <th className="py-3 px-4 text-center text-gray-600 font-semibold">Transactions</th>
-                      <th className="py-3 px-4 text-right text-gray-600 font-semibold">Total Commission</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {transactions.map((item: any, idx: number) => (
-                      <tr key={idx} className="border-b border-gray-200 hover:bg-gray-50">
-                        <td className="py-3 px-4">
-                          <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            item.type === 'SERVICE' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
-                          }`}>
-                            {item.type}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 text-gray-700 font-medium">{item.itemName}</td>
-                        <td className="py-3 px-4 text-center text-gray-700">{item.count}x</td>
-                        <td className="py-3 px-4 text-right font-bold text-green-600">Rp {item.totalCommission.toLocaleString()}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              )}
-            </div>
+            {isLoading ? (
+              <div className="text-center py-8 text-gray-500 border border-t-0 border-gray-300 rounded-b-lg">Loading transactions...</div>
+            ) : transactions.length === 0 ? (
+              <div className="text-center py-8 text-gray-500 border border-t-0 border-gray-300 rounded-b-lg">No transactions found</div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-t-0 border-gray-300 rounded-b-lg">
+                {/* Services Section */}
+                <div className="border border-gray-300 rounded-lg">
+                  <div className="bg-blue-50 px-3 py-2 border-b border-gray-300">
+                    <p className="font-bold text-blue-700 text-xs">SERVICES</p>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    <table className="w-full text-xs">
+                      <thead className="bg-gray-50 sticky top-0">
+                        <tr className="border-b border-gray-200">
+                          <th className="py-2 px-2 text-left text-gray-600 font-semibold">Service Name</th>
+                          <th className="py-2 px-2 text-center text-gray-600 font-semibold">Qty</th>
+                          <th className="py-2 px-2 text-right text-gray-600 font-semibold">Commission</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {transactions.filter((item: any) => item.type === 'SERVICE').length === 0 ? (
+                          <tr>
+                            <td colSpan={3} className="py-4 text-center text-gray-400 text-xs">No service transactions</td>
+                          </tr>
+                        ) : (
+                          transactions.filter((item: any) => item.type === 'SERVICE').map((item: any, idx: number) => (
+                            <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
+                              <td className="py-2 px-2 text-gray-700">{item.itemName}</td>
+                              <td className="py-2 px-2 text-center text-gray-700">{item.count}x</td>
+                              <td className="py-2 px-2 text-right font-bold text-blue-600">Rp {item.totalCommission.toLocaleString()}</td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Products Section */}
+                <div className="border border-gray-300 rounded-lg">
+                  <div className="bg-orange-50 px-3 py-2 border-b border-gray-300">
+                    <p className="font-bold text-orange-700 text-xs">PRODUCTS</p>
+                  </div>
+                  <div className="max-h-80 overflow-y-auto">
+                    <table className="w-full text-xs">
+                      <thead className="bg-gray-50 sticky top-0">
+                        <tr className="border-b border-gray-200">
+                          <th className="py-2 px-2 text-left text-gray-600 font-semibold">Product Name</th>
+                          <th className="py-2 px-2 text-center text-gray-600 font-semibold">Qty</th>
+                          <th className="py-2 px-2 text-right text-gray-600 font-semibold">Commission</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {transactions.filter((item: any) => item.type === 'PRODUCT').length === 0 ? (
+                          <tr>
+                            <td colSpan={3} className="py-4 text-center text-gray-400 text-xs">No product transactions</td>
+                          </tr>
+                        ) : (
+                          transactions.filter((item: any) => item.type === 'PRODUCT').map((item: any, idx: number) => (
+                            <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
+                              <td className="py-2 px-2 text-gray-700">{item.itemName}</td>
+                              <td className="py-2 px-2 text-center text-gray-700">{item.count}x</td>
+                              <td className="py-2 px-2 text-right font-bold text-orange-600">Rp {item.totalCommission.toLocaleString()}</td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Commission Summary */}
