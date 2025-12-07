@@ -18,6 +18,7 @@ model BarberBranch {
   productTransactions ProductTransaction[]
   serviceTransactions ServiceTransaction[]
   users               User[]
+  staffAdvances       StaffAdvance[]
 
   @@map("barber_branches")
 }
@@ -207,5 +208,40 @@ enum ExpenseCategory {
 
 enum UserRole {
   ADMIN
+  KASIR
+}
+
+model StaffAdvance {
+  id              String               @id @default(uuid())
+  staffId         String
+  staffRole       StaffRole
+  staffName       String
+  amount          Int
+  remainingAmount Int
+  note            String?
+  cabangId        String
+  cabang          BarberBranch         @relation(fields: [cabangId], references: [id])
+  givenBy         String
+  givenByName     String
+  createdAt       DateTime             @default(now())
+  deductions      AdvanceDeduction[]
+
+  @@map("staff_advances")
+}
+
+model AdvanceDeduction {
+  id             String       @id @default(uuid())
+  advanceId      String
+  advance        StaffAdvance @relation(fields: [advanceId], references: [id], onDelete: Cascade)
+  amount         Int
+  deductedBy     String
+  deductedByName String
+  createdAt      DateTime     @default(now())
+
+  @@map("advance_deductions")
+}
+
+enum StaffRole {
+  CAPSTER
   KASIR
 }

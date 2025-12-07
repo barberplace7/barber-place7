@@ -90,6 +90,10 @@ export const useKasirQueries = () => {
     mutationFn: kasirApi.addExpense,
   });
 
+  const addAdvanceMutation = useMutation({
+    mutationFn: kasirApi.addAdvance,
+  });
+
   return {
     services,
     capsters,
@@ -104,6 +108,7 @@ export const useKasirQueries = () => {
     cancelVisit: cancelVisitMutation,
     addProductSale: addProductSaleMutation,
     addExpense: addExpenseMutation,
+    addAdvance: addAdvanceMutation,
   };
 };
 

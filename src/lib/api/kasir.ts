@@ -53,4 +53,9 @@ export const kasirApi = {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ ...data, nominal: parseInt(data.nominal) }),
   }),
+  addAdvance: (data: any) => apiFetch('/api/kasir/advance', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  }),
 };

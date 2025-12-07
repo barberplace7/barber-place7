@@ -6,6 +6,7 @@ import TransactionsTab from './tabs/TransactionsTab';
 import CommissionTab from './tabs/CommissionTab';
 import UsersTab from './tabs/UsersTab';
 import MasterDataTab from './tabs/MasterDataTab';
+import KasbonTab from './tabs/KasbonTab';
 import { useAdminData } from '@/hooks/useAdminData';
 import { GlobalLoadingSpinner } from '@/components/shared/LoadingSpinner';
 
@@ -51,6 +52,7 @@ export default function AdminDashboard() {
             {activeTab === 'overview' && <OverviewTab adminData={adminData} />}
             {activeTab === 'transactions' && <TransactionsTab cabangList={adminData.cabangList} />}
             {activeTab === 'commission' && <CommissionTab adminData={adminData} />}
+            {activeTab === 'kasbon' && <KasbonTab adminData={adminData} />}
             {['capster', 'kasir', 'branches'].includes(activeTab) && <UsersTab activeTab={activeTab} adminData={adminData} />}
             {['services', 'products', 'gallery'].includes(activeTab) && <MasterDataTab activeTab={activeTab} adminData={adminData} />}
           </div>

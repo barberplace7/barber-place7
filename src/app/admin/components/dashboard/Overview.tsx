@@ -1,3 +1,5 @@
+import React from 'react';
+
 interface OverviewProps {
   overviewData: any;
   overviewPeriod: string;
@@ -27,6 +29,28 @@ export default function Overview({
   serviceList,
   productList
 }: OverviewProps) {
+  const [currentTime, setCurrentTime] = React.useState('');
+
+  React.useEffect(() => {
+    // Set initial time on client
+    setCurrentTime(new Date().toLocaleDateString('id-ID', { 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long' 
+    }) + ', ' + new Date().toLocaleTimeString('id-ID').replace(/\./g, ':') + ' WIB');
+
+    // Update every second
+    const timer = setInterval(() => {
+      setCurrentTime(new Date().toLocaleDateString('id-ID', { 
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long' 
+      }) + ', ' + new Date().toLocaleTimeString('id-ID').replace(/\./g, ':') + ' WIB');
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
@@ -37,11 +61,7 @@ export default function Overview({
         <div className="text-right">
           <div className="text-sm text-gray-500">Last updated</div>
           <div className="text-lg font-semibold text-gray-900">
-            {new Date().toLocaleDateString('id-ID', { 
-              weekday: 'long', 
-              day: 'numeric', 
-              month: 'long' 
-            })}, {new Date().toLocaleTimeString('id-ID').replace(/\./g, ':')} WIB
+            {currentTime || 'Loading...'}
           </div>
         </div>
       </div>
@@ -129,9 +149,12 @@ export default function Overview({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="bg-white p-6 rounded-xl border-l-4 border-green-500 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
-                <div>
+                <div className="flex-1 min-w-0">
                   <p className="text-gray-500 text-sm font-medium mb-2">Today's Revenue</p>
-                  <p className="text-3xl font-bold text-gray-900">Rp {overviewData?.todayRevenue?.toLocaleString() || '0'}</p>
+                  <p className={`font-bold text-gray-900 break-words ${
+                    (overviewData?.todayRevenue?.toLocaleString() || '0').length > 15 ? 'text-xl' : 
+                    (overviewData?.todayRevenue?.toLocaleString() || '0').length > 12 ? 'text-2xl' : 'text-3xl'
+                  }`}>Rp {overviewData?.todayRevenue?.toLocaleString() || '0'}</p>
                 </div>
                 <div className="w-12 h-12 bg-white border-2 border-green-500 rounded-lg flex items-center justify-center">
                   <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,9 +166,12 @@ export default function Overview({
             
             <div className="bg-white p-6 rounded-xl border-l-4 border-red-500 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
-                <div>
+                <div className="flex-1 min-w-0">
                   <p className="text-gray-500 text-sm font-medium mb-2">Today's Expenses</p>
-                  <p className="text-3xl font-bold text-gray-900">Rp {overviewData?.todayExpenses?.toLocaleString() || '0'}</p>
+                  <p className={`font-bold text-gray-900 break-words ${
+                    (overviewData?.todayExpenses?.toLocaleString() || '0').length > 15 ? 'text-xl' : 
+                    (overviewData?.todayExpenses?.toLocaleString() || '0').length > 12 ? 'text-2xl' : 'text-3xl'
+                  }`}>Rp {overviewData?.todayExpenses?.toLocaleString() || '0'}</p>
                 </div>
                 <div className="w-12 h-12 bg-white border-2 border-red-500 rounded-lg flex items-center justify-center">
                   <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,9 +183,12 @@ export default function Overview({
             
             <div className="bg-white p-6 rounded-xl border-l-4 border-blue-500 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
-                <div>
+                <div className="flex-1 min-w-0">
                   <p className="text-gray-500 text-sm font-medium mb-2">Net Profit Today</p>
-                  <p className="text-3xl font-bold text-gray-900">Rp {((overviewData?.todayRevenue || 0) - (overviewData?.todayExpenses || 0)).toLocaleString()}</p>
+                  <p className={`font-bold text-gray-900 break-words ${
+                    (((overviewData?.todayRevenue || 0) - (overviewData?.todayExpenses || 0)).toLocaleString()).length > 15 ? 'text-xl' : 
+                    (((overviewData?.todayRevenue || 0) - (overviewData?.todayExpenses || 0)).toLocaleString()).length > 12 ? 'text-2xl' : 'text-3xl'
+                  }`}>Rp {((overviewData?.todayRevenue || 0) - (overviewData?.todayExpenses || 0)).toLocaleString()}</p>
                 </div>
                 <div className="w-12 h-12 bg-white border-2 border-blue-500 rounded-lg flex items-center justify-center">
                   <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,31 +240,33 @@ export default function Overview({
               </div>
             </div>
             <div className={chartPeriod === '30days' ? 'overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100' : 'pb-2'}>
-              <div className="relative" style={{ minWidth: chartPeriod === '30days' ? '1000px' : '100%' }}>
-                {/* Grid Lines */}
-                <div className="absolute inset-0 flex flex-col justify-between pointer-events-none" style={{ height: chartPeriod === '30days' ? '240px' : '240px' }}>
-                  {[0, 1, 2, 3, 4].map((i) => (
-                    <div key={i} className="border-t border-gray-200 border-dashed"></div>
-                  ))}
-                </div>
+              <div className="relative pt-4" style={{ minWidth: chartPeriod === '30days' ? '1000px' : '100%' }}>
                 {/* Chart Bars */}
-                <div className={`h-60 flex items-end ${chartPeriod === '30days' ? 'space-x-2' : 'space-x-3'} pt-4 ${chartPeriod === '30days' ? 'pb-16' : 'pb-8'}`}>
-                  {overviewData.weeklyRevenue.map((day: any, index: number) => (
-                    <div key={index} className="flex-1 flex flex-col items-center group relative" style={{ minWidth: chartPeriod === '30days' ? '25px' : 'auto' }}>
-                      <div className="w-full relative">
-                        <div className="absolute inset-0 bg-gray-100 rounded-xl" style={{ height: `${Math.max((day.revenue / Math.max(...overviewData.weeklyRevenue.map((d: any) => d.revenue))) * 200, 8)}px` }}></div>
-                        <div 
-                          className="relative w-full bg-blue-500 rounded-xl transition-all hover:bg-blue-600 cursor-pointer"
-                          style={{ height: `${Math.max((day.revenue / Math.max(...overviewData.weeklyRevenue.map((d: any) => d.revenue))) * 200, 8)}px` }}
-                        ></div>
+                <div className={`h-48 flex items-end ${chartPeriod === '30days' ? 'gap-2' : 'gap-4'} pb-2`}>
+                  {overviewData.weeklyRevenue.map((day: any, index: number) => {
+                    const maxRevenue = Math.max(...overviewData.weeklyRevenue.map((d: any) => d.revenue));
+                    const heightPercent = (day.revenue / maxRevenue) * 100;
+                    return (
+                      <div key={index} className="flex-1 flex flex-col items-center group" style={{ minWidth: chartPeriod === '30days' ? '28px' : 'auto' }}>
+                        <div className="w-full flex flex-col items-center justify-end" style={{ height: '160px' }}>
+                          <div className="text-[9px] font-bold text-gray-700 mb-1 whitespace-nowrap">
+                            {day.revenue.toLocaleString('id-ID')}
+                          </div>
+                          <div 
+                            className="w-full bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-lg transition-all hover:from-blue-700 hover:to-blue-500 cursor-pointer relative"
+                            style={{ height: `${Math.max(heightPercent, 5)}%` }}
+                          >
+                            <div className="absolute inset-0 bg-white/10 rounded-t-lg"></div>
+                          </div>
+                        </div>
+                        <div className="mt-2 text-[11px] text-gray-600 font-medium text-center">{day.day}</div>
+                        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full mt-8 bg-gray-900 text-white px-3 py-2 rounded-lg text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-lg">
+                          <div className="font-bold">Rp {day.revenue.toLocaleString()}</div>
+                          <div className="text-[10px] text-gray-300 mt-0.5">{day.day}</div>
+                        </div>
                       </div>
-                      <div className="mt-2 text-xs text-gray-600 font-medium w-full text-center">{day.day}</div>
-                      <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full mt-2 bg-gray-900 text-white px-3 py-2 rounded-lg text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-lg">
-                        <div className="font-bold">Rp {day.revenue.toLocaleString()}</div>
-                        <div className="text-[10px] text-gray-300 mt-0.5">{day.day}</div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>

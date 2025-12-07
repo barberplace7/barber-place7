@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prismaClient';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  { auth: { persistSession: false } }
+);
 
 export async function GET() {
   try {
@@ -26,13 +32,18 @@ export async function POST(request: NextRequest) {
     // Upload to Supabase Storage
     const fileExt = file.name.split('.').pop();
     const fileName = `gallery-slot-${position}-${Date.now()}.${fileExt}`;
+    const fileBuffer = await file.arrayBuffer();
     
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from('gallery-images')
-      .upload(fileName, file);
+      .upload(fileName, fileBuffer, {
+        contentType: file.type,
+        upsert: false
+      });
 
     if (uploadError) {
-      return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });
+      console.error('Supabase upload error:', uploadError);
+      return NextResponse.json({ error: uploadError.message }, { status: 500 });
     }
 
     // Get public URL
@@ -73,8 +84,9 @@ export async function POST(request: NextRequest) {
       });
       return NextResponse.json(newGallery);
     }
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Gallery upload error:', error);
+    return NextResponse.json({ error: error.message || 'Failed to upload image' }, { status: 500 });
   }
 }
 
