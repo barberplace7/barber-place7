@@ -56,8 +56,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onConfirm,
   title,
   message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel'
+  confirmText = 'Konfirmasi',
+  cancelText = 'Batal'
 }) => {
   if (!isOpen) return null;
 

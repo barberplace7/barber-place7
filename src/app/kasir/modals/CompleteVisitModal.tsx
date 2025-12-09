@@ -8,8 +8,8 @@ export default function CompleteVisitModal({ state, onClose }: any) {
     
     state.setConfirmModal({
       show: true,
-      title: 'Complete Transaction',
-      message: `Complete transaction for ${state.completingCustomer.customerName}?\n\nTotal: Rp ${total.toLocaleString()}`,
+      title: 'Selesaikan Transaksi',
+      message: `Selesaikan transaksi untuk ${state.completingCustomer.customerName}?\n\nTotal: Rp ${total.toLocaleString()}`,
       onConfirm: async () => {
         state.setConfirmModal(null);
         state.setIsSubmitting(true);
@@ -21,10 +21,10 @@ export default function CompleteVisitModal({ state, onClose }: any) {
             completedBy: state.completedBy
           });
           state.setCompletingCustomer(null);
-          state.setSelectedProducts([]);
-          onClose();
           state.showToast('Transaksi berhasil diselesaikan!', 'success');
+          onClose();
         } catch (error: any) {
+          console.error('Complete visit error:', error);
           const isNetworkError = error.message === 'Failed to fetch' || error.name === 'TypeError' || error.name === 'AbortError';
           const isServerError = error.status >= 500;
           

@@ -64,6 +64,34 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
     }
   });
 
+  const uploadGalleryMutation = useMutation({
+    mutationFn: async ({ file, position }: { file: File; position: number }) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('position', position.toString());
+      const res = await fetch('/api/admin/gallery', {
+        method: 'POST',
+        body: formData
+      });
+      if (!res.ok) throw new Error('Failed to upload');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'gallery'] });
+    }
+  });
+
+  const deleteGalleryMutation = useMutation({
+    mutationFn: async (position: number) => {
+      const res = await fetch(`/api/admin/gallery?position=${position}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'gallery'] });
+    }
+  });
+
   if (activeTab === 'services') {
     return (
       <>
@@ -77,13 +105,13 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
         
         <div>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-black">Service Packages</h2>
+            <h2 className="text-xl font-bold text-black">Paket Layanan</h2>
             <button 
               onClick={() => setShowServiceForm(true)}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
             >
               <span className="text-xl">+</span>
-              Add New Service
+              Tambah Layanan Baru
             </button>
           </div>
           
@@ -91,18 +119,18 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Base Price</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Commission Rate</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Layanan</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Harga Dasar</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Komisi</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {adminData.serviceList.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="px-6 py-12 text-center text-gray-500">
-                      No services yet. Add your first service to get started.
+                      Belum ada layanan. Tambahkan layanan pertama untuk memulai.
                     </td>
                   </tr>
                 ) : (
@@ -113,15 +141,15 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           service.category === 'HAIRCUT' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
                         }`}>
-                          {service.category === 'HAIRCUT' ? 'Hair Cut' : 'Treatment'}
+                          {service.category === 'HAIRCUT' ? 'Potong Rambut' : 'Perawatan'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp {service.basePrice.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{(service.commissionRate * 100).toFixed(1)}%</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp {service.commissionAmount.toLocaleString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <button
                           onClick={() => {
-                            if (confirm(`Delete service "${service.name}"?`)) {
+                            if (confirm(`Hapus layanan "${service.name}"?`)) {
                               deleteServiceMutation.mutate(service.id);
                             }
                           }}
@@ -157,13 +185,13 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
         
         <div>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-black">Products</h2>
+            <h2 className="text-xl font-bold text-black">Produk</h2>
             <button 
               onClick={() => setShowProductForm(true)}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
             >
               <span className="text-xl">+</span>
-              Add New Product
+              Tambah Produk Baru
             </button>
           </div>
           
@@ -171,17 +199,17 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Base Price</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Commission Per Unit</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Produk</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Harga Dasar</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Komisi Per Unit</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {adminData.productList.length === 0 ? (
                   <tr>
                     <td colSpan={3} className="px-6 py-12 text-center text-gray-500">
-                      No products yet. Add your first product to get started.
+                      Belum ada produk. Tambahkan produk pertama untuk memulai.
                     </td>
                   </tr>
                 ) : (
@@ -193,7 +221,7 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <button
                           onClick={() => {
-                            if (confirm(`Delete product "${product.name}"?`)) {
+                            if (confirm(`Hapus produk "${product.name}"?`)) {
                               deleteProductMutation.mutate(product.id);
                             }
                           }}
@@ -216,34 +244,6 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
     );
   }
 
-  const uploadGalleryMutation = useMutation({
-    mutationFn: async ({ file, position }: { file: File; position: number }) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('position', position.toString());
-      const res = await fetch('/api/admin/gallery', {
-        method: 'POST',
-        body: formData
-      });
-      if (!res.ok) throw new Error('Failed to upload');
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'gallery'] });
-    }
-  });
-
-  const deleteGalleryMutation = useMutation({
-    mutationFn: async (position: number) => {
-      const res = await fetch(`/api/admin/gallery?position=${position}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete');
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'gallery'] });
-    }
-  });
-
   if (activeTab === 'gallery') {
     const galleries = adminData.galleries || [];
     const galleryMap = new Map(galleries.map((g: any) => [g.position, g]));
@@ -251,8 +251,8 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
     return (
       <div>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-black">Gallery Images (6 slots)</h2>
-          <p className="text-gray-600 text-sm">Upload images for landing page gallery</p>
+          <h2 className="text-xl font-bold text-black">Gambar Galeri (6 slot)</h2>
+          <p className="text-gray-600 text-sm">Unggah gambar untuk galeri halaman utama</p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {[1,2,3,4,5,6].map((slot) => {
@@ -264,7 +264,7 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
                     <img src={gallery.url} alt={`Gallery ${slot}`} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                       <label className="bg-blue-600 text-white px-3 py-1 rounded text-sm cursor-pointer hover:bg-blue-700">
-                        Replace
+                        Ganti
                         <input
                           type="file"
                           accept="image/*"
@@ -277,11 +277,11 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
                       </label>
                       <button
                         onClick={() => {
-                          if (confirm('Delete this image?')) deleteGalleryMutation.mutate(slot);
+                          if (confirm('Hapus gambar ini?')) deleteGalleryMutation.mutate(slot);
                         }}
                         className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
                       >
-                        Delete
+                        Hapus
                       </button>
                     </div>
                   </>
@@ -289,7 +289,7 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
                   <div className="w-full h-full flex flex-col items-center justify-center">
                     <span className="text-gray-500 mb-2">Slot {slot}</span>
                     <label className="bg-purple-600 text-white px-3 py-1 rounded text-sm cursor-pointer hover:bg-purple-700">
-                      Upload Image
+                      Unggah Gambar
                       <input
                         type="file"
                         accept="image/*"
@@ -310,5 +310,5 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
     );
   }
 
-  return <div>Tab not found</div>;
+  return <div>Tab tidak ditemukan</div>;
 }

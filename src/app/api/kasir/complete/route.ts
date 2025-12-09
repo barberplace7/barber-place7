@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     const services = visit.visitServices.map(vs => vs.service);
     const totalServicePrice = services.reduce((sum, service) => sum + service.basePrice, 0);
     const serviceNames = services.map(s => s.name).join(' + ');
-    const avgCommissionRate = services.reduce((sum, service) => sum + service.commissionRate, 0) / services.length;
+    const totalCommission = services.reduce((sum, service) => sum + service.commissionAmount, 0);
 
     await prisma.serviceTransaction.create({
       data: {
@@ -44,8 +44,7 @@ export async function POST(request: NextRequest) {
         capsterId: visit.capsterId,
         paketName: serviceNames,
         priceFinal: totalServicePrice,
-        commissionRate: avgCommissionRate,
-        commissionAmount: Math.round(totalServicePrice * avgCommissionRate),
+        commissionAmount: totalCommission,
         closingById: completedBy,
         closingByRole: 'KASIR',
         closingByNameSnapshot: 'Kasir',

@@ -68,17 +68,14 @@ export const useKasirStateV2 = () => {
     }
   }, [isClient]);
 
-  useEffect(() => {
-    if (queries.kasirList.data && queries.kasirList.data.length > 0 && !currentKasir) {
-      setCurrentKasir(queries.kasirList.data[0].id);
-    }
-  }, [queries.kasirList.data]);
+
 
   useEffect(() => {
     if (queries.sessionInfo.data?.kasirName && queries.kasirList.data) {
       const sessionKasir = queries.kasirList.data.find((k: any) => k.name === queries.sessionInfo.data.kasirName);
       if (sessionKasir) {
         setCompletedBy(sessionKasir.id);
+        setCurrentKasir(sessionKasir.id);
         setProductSaleData(prev => ({ ...prev, completedBy: sessionKasir.id, recommendedBy: sessionKasir.id }));
       }
     }

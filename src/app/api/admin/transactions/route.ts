@@ -125,6 +125,27 @@ export async function GET(request: NextRequest) {
     // Sort by date (newest first)
     transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
+    // Calculate commissions
+    const serviceCommissions = await prisma.serviceTransaction.findMany({
+      where: {
+        ...(dateFilter && { createdAt: dateFilter }),
+        ...(branchId && { cabangId: branchId })
+      },
+      select: { commissionAmount: true }
+    });
+
+    const productCommissions = await prisma.productTransaction.findMany({
+      where: {
+        ...(dateFilter && { createdAt: dateFilter }),
+        ...(branchId && { cabangId: branchId })
+      },
+      select: { commissionAmount: true }
+    });
+
+    const totalServiceCommission = serviceCommissions.reduce((sum, sc) => sum + sc.commissionAmount, 0);
+    const totalProductCommission = productCommissions.reduce((sum, pc) => sum + pc.commissionAmount, 0);
+    const totalCommissions = totalServiceCommission + totalProductCommission;
+
     // Calculate summary
     const totalRevenue = transactions
       .filter(t => t.type !== 'EXPENSE')
@@ -142,13 +163,17 @@ export async function GET(request: NextRequest) {
       .filter(t => t.type !== 'EXPENSE' && t.paymentMethod === 'QRIS')
       .reduce((sum, t) => sum + t.amount, 0);
 
+    const netIncome = totalRevenue - totalCommissions - totalExpenses;
+
     return NextResponse.json({
       transactions,
       summary: {
         totalRevenue,
         totalExpenses,
+        totalCommissions,
         cashRevenue,
-        qrisRevenue
+        qrisRevenue,
+        netIncome
       }
     });
   } catch (error) {

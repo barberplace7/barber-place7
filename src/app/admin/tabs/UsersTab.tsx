@@ -1,15 +1,104 @@
 'use client';
 import { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import CapsterManager from '../components/users/CapsterManager';
 import KasirManager from '../components/users/KasirManager';
 
 export default function UsersTab({ activeTab, adminData }: any) {
+  const queryClient = useQueryClient();
   const [showCapsterForm, setShowCapsterForm] = useState(false);
   const [showKasirForm, setShowKasirForm] = useState(false);
   const [showBranchForm, setShowBranchForm] = useState(false);
   const [newCapster, setNewCapster] = useState({ name: '', phone: '' });
   const [newKasir, setNewKasir] = useState({ name: '', phone: '' });
   const [newBranch, setNewBranch] = useState({ cabangId: '', username: '', password: '' });
+
+  const addCapsterMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await fetch('/api/admin/capster', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error('Failed');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'capster'] });
+      setShowCapsterForm(false);
+      setNewCapster({ name: '', phone: '' });
+    }
+  });
+
+  const deleteCapsterMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/capster?id=${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'capster'] });
+    }
+  });
+
+  const addKasirMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await fetch('/api/admin/kasir', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error('Failed');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'kasir'] });
+      setShowKasirForm(false);
+      setNewKasir({ name: '', phone: '' });
+    }
+  });
+
+  const deleteKasirMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/kasir?id=${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'kasir'] });
+    }
+  });
+
+  const addBranchMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await fetch('/api/admin/branch-logins', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Failed');
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'branch-logins'] });
+      setShowBranchForm(false);
+      setNewBranch({ cabangId: '', username: '', password: '' });
+    }
+  });
+
+  const deleteBranchMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`/api/admin/branch-logins?id=${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'branch-logins'] });
+    }
+  });
 
   if (activeTab === 'capster') {
     return (
@@ -19,8 +108,10 @@ export default function UsersTab({ activeTab, adminData }: any) {
         setShowCapsterForm={setShowCapsterForm}
         newCapster={newCapster}
         setNewCapster={setNewCapster}
-        handleAddCapster={() => console.log('API disabled')}
-        handleDeleteCapster={() => console.log('API disabled')}
+        handleAddCapster={() => addCapsterMutation.mutate(newCapster)}
+        handleDeleteCapster={(id) => {
+          if (confirm('Delete capster?')) deleteCapsterMutation.mutate(id);
+        }}
       />
     );
   }
@@ -33,8 +124,10 @@ export default function UsersTab({ activeTab, adminData }: any) {
         setShowKasirForm={setShowKasirForm}
         newKasir={newKasir}
         setNewKasir={setNewKasir}
-        handleAddKasir={() => console.log('API disabled')}
-        handleDeleteKasir={() => console.log('API disabled')}
+        handleAddKasir={() => addKasirMutation.mutate(newKasir)}
+        handleDeleteKasir={(id) => {
+          if (confirm('Delete kasir?')) deleteKasirMutation.mutate(id);
+        }}
       />
     );
   }
@@ -92,10 +185,11 @@ export default function UsersTab({ activeTab, adminData }: any) {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => console.log('API disabled')}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  onClick={() => addBranchMutation.mutate(newBranch)}
+                  disabled={!newBranch.cabangId || !newBranch.username || !newBranch.password || addBranchMutation.isPending}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
-                  Create Account
+                  {addBranchMutation.isPending ? 'Creating...' : 'Create Account'}
                 </button>
                 <button
                   onClick={() => {
@@ -118,12 +212,13 @@ export default function UsersTab({ activeTab, adminData }: any) {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Branch</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Login Username</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {adminData.branchList.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={4} className="px-6 py-12 text-center text-gray-500">
                     No login accounts yet.
                   </td>
                 </tr>
@@ -133,6 +228,19 @@ export default function UsersTab({ activeTab, adminData }: any) {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-black">{branch.branchName}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{branch.username}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(branch.createdAt).toLocaleDateString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <button
+                        onClick={() => {
+                          if (confirm('Delete branch login?')) deleteBranchMutation.mutate(branch.id);
+                        }}
+                        disabled={deleteBranchMutation.isPending}
+                        className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                      >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}

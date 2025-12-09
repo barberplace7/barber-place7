@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key');
     const { payload } = await jwtVerify(sessionCookie.value, secret);
     
-    const { customerName, customerPhone, products, paymentMethod, completedBy } = await request.json();
+    const { customerName, customerPhone, products, paymentMethod, completedBy, recommendedBy } = await request.json();
 
     for (const product of products) {
       const productData = await prisma.barberProduct.findUnique({
@@ -25,10 +25,10 @@ export async function POST(request: NextRequest) {
           quantity: product.quantity,
           pricePerUnitSnapshot: productData.basePrice,
           totalPrice: productData.basePrice * product.quantity,
-          recommenderId: completedBy,
-          recommenderRole: 'KASIR',
+          recommenderId: recommendedBy || null,
+          recommenderRole: recommendedBy ? 'KASIR' : null,
           commissionPerUnitSnapshot: productData.commissionPerUnit,
-          commissionAmount: productData.commissionPerUnit * product.quantity,
+          commissionAmount: recommendedBy ? productData.commissionPerUnit * product.quantity : 0,
           closingById: completedBy,
           closingByRole: 'KASIR',
           closingByNameSnapshot: 'Kasir',

@@ -38,21 +38,21 @@ export default function AddAdvanceModal({ onClose, onSubmit, isSubmitting, capst
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl max-w-md w-full">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-bold text-black">Kasbon Staff</h3>
-          <p className="text-sm text-gray-500">Input kasbon untuk staff</p>
+          <h3 className="text-lg font-bold text-black">Kasbon Staf</h3>
+          <p className="text-sm text-gray-500">Input kasbon untuk staf</p>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="px-6 py-6 space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Pilih Staff</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Pilih Staf</label>
               <select
                 value={formData.staffId}
                 onChange={(e) => handleStaffChange(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-black focus:border-blue-500 focus:outline-none"
                 required
               >
-                <option value="">-- Pilih Staff --</option>
+                <option value="">-- Pilih Staf --</option>
                 <optgroup label="Capster">
                   {capsters.map(c => (
                     <option key={c.id} value={c.id}>{c.name}</option>
@@ -97,7 +97,7 @@ export default function AddAdvanceModal({ onClose, onSubmit, isSubmitting, capst
               disabled={isSubmitting}
               className="flex-1 px-4 py-2.5 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium disabled:opacity-50"
             >
-              Cancel
+              Batal
             </button>
             <button
               type="submit"
@@ -107,7 +107,7 @@ export default function AddAdvanceModal({ onClose, onSubmit, isSubmitting, capst
               {isSubmitting && (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               )}
-              {isSubmitting ? 'Submitting...' : 'Submit Kasbon'}
+              {isSubmitting ? 'Mengirim...' : 'Kirim Kasbon'}
             </button>
           </div>
         </form>

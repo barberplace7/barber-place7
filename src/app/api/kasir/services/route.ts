@@ -12,7 +12,7 @@ export async function GET() {
         name: true,
         category: true,
         basePrice: true,
-        commissionRate: true
+        commissionAmount: true
       },
       orderBy: { basePrice: 'asc' }
     });

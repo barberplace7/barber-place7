@@ -4,7 +4,7 @@ export default function ExpenseModal({ state, onClose }: any) {
   const handleSubmit = async () => {
     if (state.isSubmitting) return;
     if (!state.expenseData.nominal || parseInt(state.expenseData.nominal) <= 0) {
-      alert('Please enter a valid expense amount');
+      alert('Silakan masukkan jumlah pengeluaran yang valid');
       return;
     }
     
@@ -42,14 +42,14 @@ export default function ExpenseModal({ state, onClose }: any) {
       <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
         <div className="px-6 py-4 border-b border-stone-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-stone-800">💸 Add Expense</h2>
+            <h2 className="text-xl font-bold text-stone-800">💸 Tambah Pengeluaran</h2>
             <button onClick={onClose} className="text-stone-400 hover:text-stone-600 text-xl">×</button>
           </div>
         </div>
 
         <div className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">Amount *</label>
+            <label className="block text-sm font-medium text-stone-700 mb-2">Jumlah *</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-stone-500">Rp</span>
               <input
@@ -63,7 +63,7 @@ export default function ExpenseModal({ state, onClose }: any) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">Category</label>
+            <label className="block text-sm font-medium text-stone-700 mb-2">Kategori</label>
             <select
               value={state.expenseData.category}
               onChange={(e) => state.setExpenseData({...state.expenseData, category: e.target.value})}
@@ -76,9 +76,9 @@ export default function ExpenseModal({ state, onClose }: any) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">Note (Optional)</label>
+            <label className="block text-sm font-medium text-stone-700 mb-2">Catatan (Opsional)</label>
             <textarea
-              placeholder="What is this expense for?"
+              placeholder="Untuk apa pengeluaran ini?"
               value={state.expenseData.note}
               onChange={(e) => state.setExpenseData({...state.expenseData, note: e.target.value})}
               className="w-full border border-stone-300 rounded-lg px-3 py-3 focus:border-stone-500 focus:outline-none bg-white text-stone-800 resize-none"
@@ -89,10 +89,10 @@ export default function ExpenseModal({ state, onClose }: any) {
 
         <div className="px-6 py-4 border-t border-stone-200">
           <div className="flex gap-3">
-            <button onClick={onClose} className="flex-1 text-stone-600 hover:text-stone-800 px-4 py-2 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors">Cancel</button>
+            <button onClick={onClose} className="flex-1 text-stone-600 hover:text-stone-800 px-4 py-2 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors">Batal</button>
             <button onClick={handleSubmit} disabled={!state.expenseData.nominal || parseInt(state.expenseData.nominal) <= 0 || state.isSubmitting} className="flex-1 bg-stone-500 text-white px-4 py-2 rounded-lg hover:bg-stone-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
               {state.isSubmitting && <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>}
-              {state.isSubmitting ? 'Adding...' : 'Add Expense'}
+              {state.isSubmitting ? 'Menambahkan...' : 'Tambah Pengeluaran'}
             </button>
           </div>
         </div>

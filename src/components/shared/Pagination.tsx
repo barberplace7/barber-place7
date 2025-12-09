@@ -37,7 +37,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   return (
     <div className="mt-6 flex items-center justify-between">
       <div className="text-sm text-gray-700">
-        Showing {startItem} to {endItem} of {totalItems} items
+        Menampilkan {startItem} sampai {endItem} dari {totalItems} item
       </div>
       <div className="flex space-x-2">
         <button
@@ -45,7 +45,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === 1}
           className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Previous
+          Sebelumnya
         </button>
         {getPageNumbers().map((page, index) => (
           page === '...' ? (
@@ -71,7 +71,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === totalPages}
           className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Next
+          Selanjutnya
         </button>
       </div>
     </div>

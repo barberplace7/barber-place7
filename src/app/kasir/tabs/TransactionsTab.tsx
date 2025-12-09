@@ -21,7 +21,7 @@ export default function TransactionsTab({ state }: any) {
               <div className="text-sm sm:text-lg font-medium">
                 {state.isClient ? state.currentTime.toLocaleDateString('id-ID', { 
                   weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-                }) : 'Loading...'}
+                }) : 'Memuat...'}
               </div>
               <div className="text-lg sm:text-2xl font-bold text-stone-800">
                 {state.isClient ? `${state.currentTime.toLocaleTimeString('en-US', { hour12: false, hour: 'numeric', minute: '2-digit', second: '2-digit' })} WIB` : '--:--:-- WIB'}
@@ -107,13 +107,13 @@ export default function TransactionsTab({ state }: any) {
         <table className="min-w-full">
           <thead className="bg-stone-50">
             <tr>
-              <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Customer</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Service/Product</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">{state.customerView === 'completed' ? 'Capster/Recommend By' : 'Capster'}</th>
-              {state.customerView === 'completed' && <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Amount</th>}
-              <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">{state.customerView === 'ongoing' ? 'Start Time' : 'Completed'}</th>
-              <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">{state.customerView === 'ongoing' ? 'Status' : 'Payment'}</th>
-              {state.customerView === 'ongoing' && <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Actions</th>}
+              <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Pelanggan</th>
+              <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Layanan/Produk</th>
+              <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">{state.customerView === 'completed' ? 'Capster/Direkomendasi Oleh' : 'Capster'}</th>
+              {state.customerView === 'completed' && <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Jumlah</th>}
+              <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">{state.customerView === 'ongoing' ? 'Waktu Mulai' : 'Selesai'}</th>
+              <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">{state.customerView === 'ongoing' ? 'Status' : 'Pembayaran'}</th>
+              {state.customerView === 'ongoing' && <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Aksi</th>}
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-stone-100">
@@ -134,7 +134,7 @@ export default function TransactionsTab({ state }: any) {
                       <div className="text-sm text-stone-500">{customer.customerPhone}</div>
                     </td>
                     <td className="px-6 py-5 text-stone-700">
-                      {customer.visitServices?.map(vs => vs.service.name).join(' + ') || 'No services'}
+                      {customer.visitServices?.map(vs => vs.service.name).join(' + ') || 'Tidak ada layanan'}
                     </td>
                     <td className="px-6 py-5 text-stone-700">{customer.capster.name}</td>
                     <td className="px-6 py-5 text-stone-500 text-sm">
@@ -172,11 +172,11 @@ export default function TransactionsTab({ state }: any) {
                             }}
                             className="bg-stone-800 text-white px-4 py-2 rounded-lg hover:bg-stone-900 transition-colors text-sm font-medium"
                           >
-                            Complete
+                            Selesai
                           </button>
                           <button 
                             onClick={async () => {
-                              if (confirm('Cancel this service?')) {
+                              if (confirm('Batalkan layanan ini?')) {
                                 try {
                                   state.setGlobalLoading(true);
                                   await state.mutations.cancelVisit.mutateAsync(customer.id);
@@ -190,7 +190,7 @@ export default function TransactionsTab({ state }: any) {
                             }}
                             className="text-stone-500 hover:text-red-600 px-3 py-2 border border-stone-300 rounded-lg hover:border-red-300 transition-colors text-sm"
                           >
-                            Cancel
+                            Batal
                           </button>
                         </div>
                       )}
@@ -219,7 +219,7 @@ export default function TransactionsTab({ state }: any) {
                         <div className="text-stone-700">
                         {customer.serviceTransactions?.length > 0 
                           ? customer.serviceTransactions[0].paketName 
-                          : customer.visitServices?.map(vs => vs.service.name).join(' + ') || 'No services'
+                          : customer.visitServices?.map(vs => vs.service.name).join(' + ') || 'Tidak ada layanan'
                         }
                       </div>
                         <div className="text-xs text-blue-600 font-medium">SERVICE</div>
@@ -258,7 +258,7 @@ export default function TransactionsTab({ state }: any) {
                       <td className="px-6 py-5 text-stone-700">
                         {(() => {
                           const recommender = [...state.kasirList, ...state.capsters].find(p => p.id === transaction.recommenderId);
-                          return recommender ? recommender.name : 'Unknown';
+                          return recommender ? recommender.name : 'Tidak Diketahui';
                         })()}
                       </td>
                       <td className="px-6 py-5 text-stone-700 font-medium">Rp {transaction.totalPrice?.toLocaleString()}</td>
@@ -305,7 +305,7 @@ export default function TransactionsTab({ state }: any) {
         />
       )}
       {state.editingVisit && <EditVisitModal state={state} onClose={() => { state.setEditingVisit(null); state.setEditServices([]); }} />}
-      {state.completingCustomer && <CompleteVisitModal state={state} onClose={() => { state.setCompletingCustomer(null); state.setSelectedProducts([]); }} />}
+      {state.completingCustomer && <CompleteVisitModal state={state} onClose={() => state.setCompletingCustomer(null)} />}
     </div>
   );
 }
