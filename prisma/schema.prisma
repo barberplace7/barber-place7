@@ -45,14 +45,14 @@ model CashierMaster {
 }
 
 model ServicePackage {
-  id             String          @id @default(uuid())
-  name           String
-  basePrice      Int
-  commissionRate Float
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  category       ServiceCategory @default(HAIRCUT)
-  visitServices  VisitService[]
+  id                String          @id @default(uuid())
+  name              String
+  basePrice         Int
+  commissionAmount  Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  category          ServiceCategory @default(HAIRCUT)
+  visitServices     VisitService[]
 
   @@map("service_packages")
 }
@@ -94,7 +94,6 @@ model ServiceTransaction {
   capsterId             String
   paketName             String
   priceFinal            Int
-  commissionRate        Float
   commissionAmount      Int
   closingById           String
   closingByRole         String

@@ -6,8 +6,8 @@ export default function EditVisitModal({ state, onClose }: any) {
     
     state.setConfirmModal({
       show: true,
-      title: 'Update Services',
-      message: `Update services for ${state.editingVisit?.customerName}?`,
+      title: 'Perbarui Layanan',
+      message: `Perbarui layanan untuk ${state.editingVisit?.customerName}?`,
       onConfirm: async () => {
         state.setConfirmModal(null);
         state.setIsSubmitting(true);
@@ -38,8 +38,8 @@ export default function EditVisitModal({ state, onClose }: any) {
         <div className="sticky top-0 bg-white border-b border-stone-200 px-6 py-4 rounded-t-2xl">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-stone-800">Edit Services - {state.editingVisit?.customerName}</h2>
-              <p className="text-stone-500 text-sm">Modify services for ongoing visit</p>
+              <h2 className="text-xl font-bold text-stone-800">Edit Layanan - {state.editingVisit?.customerName}</h2>
+              <p className="text-stone-500 text-sm">Ubah layanan untuk kunjungan yang sedang berlangsung</p>
             </div>
             <button onClick={onClose} className="text-stone-400 hover:text-stone-600 text-2xl w-8 h-8 flex items-center justify-center">×</button>
           </div>
@@ -47,11 +47,11 @@ export default function EditVisitModal({ state, onClose }: any) {
 
         <div className="p-6 space-y-6">
           <div>
-            <h3 className="text-lg font-semibold text-stone-800 mb-4">Edit Services</h3>
+            <h3 className="text-lg font-semibold text-stone-800 mb-4">Edit Layanan</h3>
             <div className="space-y-6">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className="block text-sm font-medium text-stone-700">Haircut Package <span className="text-stone-500">(Optional)</span></label>
+                  <label className="block text-sm font-medium text-stone-700">Paket Potong Rambut <span className="text-stone-500">(Opsional)</span></label>
                   {state.editServices.some((id: string) => {
                     const service = state.services.find((s: any) => s.id === id);
                     return service?.category === 'HAIRCUT';
@@ -66,7 +66,7 @@ export default function EditVisitModal({ state, onClose }: any) {
                         state.setEditServices(nonHaircutServices);
                       }}
                       className="text-xs text-red-600 hover:text-red-800 font-medium"
-                    >Clear Haircut</button>
+                    >Hapus Potong Rambut</button>
                   )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -92,7 +92,7 @@ export default function EditVisitModal({ state, onClose }: any) {
                         />
                         <div>
                           <div className="font-medium text-stone-800">{service.name}</div>
-                          <div className="text-sm text-stone-500">Professional haircut service</div>
+                          <div className="text-sm text-stone-500">Layanan potong rambut profesional</div>
                         </div>
                       </div>
                       <div className="text-right">
@@ -104,7 +104,7 @@ export default function EditVisitModal({ state, onClose }: any) {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-3">Additional Treatments <span className="text-stone-500">(Optional)</span></label>
+                <label className="block text-sm font-medium text-stone-700 mb-3">Perawatan Tambahan <span className="text-stone-500">(Opsional)</span></label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {treatmentServices.map((service: any) => (
                     <label key={service.id} className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-all ${state.editServices.includes(service.id) ? 'border-stone-500 bg-stone-100 ring-2 ring-stone-200' : 'border-stone-300 hover:border-stone-400 hover:bg-stone-50'}`}>
@@ -123,7 +123,7 @@ export default function EditVisitModal({ state, onClose }: any) {
                         />
                         <div>
                           <div className="font-medium text-stone-800">{service.name}</div>
-                          <div className="text-sm text-stone-500">Premium treatment</div>
+                          <div className="text-sm text-stone-500">Perawatan premium</div>
                         </div>
                       </div>
                       <div className="text-right">
@@ -138,7 +138,7 @@ export default function EditVisitModal({ state, onClose }: any) {
 
           {state.editServices.length > 0 && (
             <div className="bg-stone-800 rounded-xl p-4 text-white">
-              <h4 className="font-medium mb-2">Updated Services</h4>
+              <h4 className="font-medium mb-2">Layanan yang Diperbarui</h4>
               <div className="space-y-1">
                 {state.editServices.map((serviceId: string) => {
                   const service = state.services.find((s: any) => s.id === serviceId);
@@ -165,10 +165,10 @@ export default function EditVisitModal({ state, onClose }: any) {
 
         <div className="sticky bottom-0 bg-white border-t border-stone-200 px-6 py-4 rounded-b-2xl">
           <div className="flex gap-3">
-            <button onClick={onClose} className="flex-1 text-stone-600 hover:text-stone-800 px-4 py-2 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors">Cancel</button>
+            <button onClick={onClose} className="flex-1 text-stone-600 hover:text-stone-800 px-4 py-2 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors">Batal</button>
             <button onClick={handleSubmit} disabled={state.editServices.length === 0 || state.isSubmitting} className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
               {state.isSubmitting && <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>}
-              {state.isSubmitting ? 'Updating...' : 'Update Services'}
+              {state.isSubmitting ? 'Memperbarui...' : 'Perbarui Layanan'}
             </button>
           </div>
         </div>

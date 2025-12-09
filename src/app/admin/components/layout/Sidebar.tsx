@@ -29,7 +29,7 @@ export default function Sidebar({
   const menuItems = [
     {
       id: 'overview',
-      name: 'Dashboard',
+      name: 'Beranda',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
@@ -45,9 +45,9 @@ export default function Sidebar({
         </svg>
       ),
       submenu: [
-        { id: 'services', name: 'Data Services' },
-        { id: 'products', name: 'Data Product' },
-        { id: 'gallery', name: 'Data Gallery' }
+        { id: 'services', name: 'Data Layanan' },
+        { id: 'products', name: 'Data Produk' },
+        { id: 'gallery', name: 'Data Galeri' }
       ]
     },
     {
@@ -61,7 +61,7 @@ export default function Sidebar({
       submenu: [
         { id: 'capster', name: 'Data Capster' },
         { id: 'kasir', name: 'Data Kasir' },
-        { id: 'branches', name: 'Data User Cabang' }
+        { id: 'branches', name: 'Data Pengguna Cabang' }
       ]
     },
     {
@@ -74,8 +74,8 @@ export default function Sidebar({
       ),
       submenu: [
         { id: 'transactions', name: 'Transaksi Cabang' },
-        { id: 'commission', name: 'Transaksi Staff' },
-        { id: 'kasbon', name: 'Kasbon Staff' }
+        { id: 'commission', name: 'Transaksi Staf' },
+        { id: 'kasbon', name: 'Kasbon Staf' }
       ]
     }
   ];

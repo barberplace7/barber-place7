@@ -86,7 +86,7 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
       <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="px-6 py-4 border-b border-gray-200 print:hidden">
           <div className="flex justify-between items-center">
-            <h3 className="text-xl font-bold text-black">Staff Payroll Details</h3>
+            <h3 className="text-xl font-bold text-black">Detail Penggajian Staf</h3>
             <button 
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 text-2xl w-8 h-8 flex items-center justify-center"
@@ -100,11 +100,11 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
         <div className="px-6 py-6 print:p-8" id="payroll-content">
           {/* Header */}
           <div className="text-center mb-6 pb-4 border-b-2 border-black">
-            <h1 className="text-3xl font-bold text-black mb-3">BARBER PLACE</h1>
+            <img src="/logo_barberplace.png" alt="Barber Place" className="h-20 mx-auto mb-3" />
             <div className="mt-4">
-              <p className="text-lg font-bold text-black">SALARY SLIP</p>
+              <p className="text-lg font-bold text-black">SLIP GAJI</p>
               <p className="text-sm text-gray-600 mt-1">
-                Period: {new Date(dateFrom).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })} - {new Date(dateTo).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}
+                Periode: {new Date(dateFrom).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })} - {new Date(dateTo).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}
               </p>
             </div>
           </div>
@@ -112,25 +112,25 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
           {/* Staff Info */}
           <div className="mb-6 border border-gray-300 rounded-lg">
             <div className="bg-gray-100 px-4 py-2 border-b border-gray-300">
-              <p className="font-bold text-black text-sm">EMPLOYEE INFORMATION</p>
+              <p className="font-bold text-black text-sm">INFORMASI KARYAWAN</p>
             </div>
             <div className="p-4">
               <table className="w-full text-sm">
                 <tbody>
                   <tr className="border-b border-gray-200">
-                    <td className="py-2 text-gray-600 w-1/3">Employee Name</td>
+                    <td className="py-2 text-gray-600 w-1/3">Nama Karyawan</td>
                     <td className="py-2 font-bold text-black">: {staff.capsterName}</td>
                   </tr>
                   <tr className="border-b border-gray-200">
-                    <td className="py-2 text-gray-600">Position</td>
+                    <td className="py-2 text-gray-600">Posisi</td>
                     <td className="py-2 font-medium text-black">: {staff.role || 'CAPSTER'}</td>
                   </tr>
                   <tr className="border-b border-gray-200">
-                    <td className="py-2 text-gray-600">Branch</td>
+                    <td className="py-2 text-gray-600">Cabang</td>
                     <td className="py-2 font-medium text-black">: {staff.branchName}</td>
                   </tr>
                   <tr>
-                    <td className="py-2 text-gray-600">Payment Date</td>
+                    <td className="py-2 text-gray-600">Tanggal Pembayaran</td>
                     <td className="py-2 font-medium text-black">: {new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}</td>
                   </tr>
                 </tbody>
@@ -141,32 +141,32 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
           {/* Transaction Details */}
           <div className="mb-6">
             <div className="bg-gray-100 px-4 py-2 border border-gray-300 rounded-t-lg">
-              <p className="font-bold text-black text-sm">TRANSACTION DETAILS</p>
+              <p className="font-bold text-black text-sm">DETAIL TRANSAKSI</p>
             </div>
             {isLoading ? (
-              <div className="text-center py-8 text-gray-500 border border-t-0 border-gray-300 rounded-b-lg">Loading transactions...</div>
+              <div className="text-center py-8 text-gray-500 border border-t-0 border-gray-300 rounded-b-lg">Memuat transaksi...</div>
             ) : transactions.length === 0 ? (
-              <div className="text-center py-8 text-gray-500 border border-t-0 border-gray-300 rounded-b-lg">No transactions found</div>
+              <div className="text-center py-8 text-gray-500 border border-t-0 border-gray-300 rounded-b-lg">Tidak ada transaksi ditemukan</div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-t-0 border-gray-300 rounded-b-lg">
                 {/* Services Section */}
                 <div className="border border-gray-300 rounded-lg">
                   <div className="bg-blue-50 px-3 py-2 border-b border-gray-300">
-                    <p className="font-bold text-blue-700 text-xs">SERVICES</p>
+                    <p className="font-bold text-blue-700 text-xs">LAYANAN</p>
                   </div>
                   <div className="max-h-80 overflow-y-auto">
                     <table className="w-full text-xs">
                       <thead className="bg-gray-50 sticky top-0">
                         <tr className="border-b border-gray-200">
-                          <th className="py-2 px-2 text-left text-gray-600 font-semibold">Service Name</th>
-                          <th className="py-2 px-2 text-center text-gray-600 font-semibold">Qty</th>
-                          <th className="py-2 px-2 text-right text-gray-600 font-semibold">Commission</th>
+                          <th className="py-2 px-2 text-left text-gray-600 font-semibold">Nama Layanan</th>
+                          <th className="py-2 px-2 text-center text-gray-600 font-semibold">Jml</th>
+                          <th className="py-2 px-2 text-right text-gray-600 font-semibold">Komisi</th>
                         </tr>
                       </thead>
                       <tbody>
                         {transactions.filter((item: any) => item.type === 'SERVICE').length === 0 ? (
                           <tr>
-                            <td colSpan={3} className="py-4 text-center text-gray-400 text-xs">No service transactions</td>
+                            <td colSpan={3} className="py-4 text-center text-gray-400 text-xs">Tidak ada transaksi layanan</td>
                           </tr>
                         ) : (
                           transactions.filter((item: any) => item.type === 'SERVICE').map((item: any, idx: number) => (
@@ -185,21 +185,21 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
                 {/* Products Section */}
                 <div className="border border-gray-300 rounded-lg">
                   <div className="bg-orange-50 px-3 py-2 border-b border-gray-300">
-                    <p className="font-bold text-orange-700 text-xs">PRODUCTS</p>
+                    <p className="font-bold text-orange-700 text-xs">PRODUK</p>
                   </div>
                   <div className="max-h-80 overflow-y-auto">
                     <table className="w-full text-xs">
                       <thead className="bg-gray-50 sticky top-0">
                         <tr className="border-b border-gray-200">
-                          <th className="py-2 px-2 text-left text-gray-600 font-semibold">Product Name</th>
-                          <th className="py-2 px-2 text-center text-gray-600 font-semibold">Qty</th>
-                          <th className="py-2 px-2 text-right text-gray-600 font-semibold">Commission</th>
+                          <th className="py-2 px-2 text-left text-gray-600 font-semibold">Nama Produk</th>
+                          <th className="py-2 px-2 text-center text-gray-600 font-semibold">Jml</th>
+                          <th className="py-2 px-2 text-right text-gray-600 font-semibold">Komisi</th>
                         </tr>
                       </thead>
                       <tbody>
                         {transactions.filter((item: any) => item.type === 'PRODUCT').length === 0 ? (
                           <tr>
-                            <td colSpan={3} className="py-4 text-center text-gray-400 text-xs">No product transactions</td>
+                            <td colSpan={3} className="py-4 text-center text-gray-400 text-xs">Tidak ada transaksi produk</td>
                           </tr>
                         ) : (
                           transactions.filter((item: any) => item.type === 'PRODUCT').map((item: any, idx: number) => (
@@ -221,23 +221,23 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
           {/* Commission Summary */}
           <div className="mb-6 border border-gray-300 rounded-lg">
             <div className="bg-gray-100 px-4 py-2 border-b border-gray-300">
-              <p className="font-bold text-black text-sm">EARNINGS SUMMARY</p>
+              <p className="font-bold text-black text-sm">RINGKASAN PENDAPATAN</p>
             </div>
             <div className="p-4">
               <table className="w-full text-sm">
                 <tbody>
                   <tr className="border-b border-gray-200">
-                    <td className="py-3 text-gray-700">Service Commission</td>
-                    <td className="py-3 text-gray-500 text-xs">({staff.serviceCount || 0} transactions)</td>
+                    <td className="py-3 text-gray-700">Komisi Layanan</td>
+                    <td className="py-3 text-gray-500 text-xs">({staff.serviceCount || 0} transaksi)</td>
                     <td className="py-3 text-right font-bold text-black">Rp {(staff.serviceCommission || 0).toLocaleString()}</td>
                   </tr>
                   <tr className="border-b border-gray-200">
-                    <td className="py-3 text-gray-700">Product Commission</td>
-                    <td className="py-3 text-gray-500 text-xs">({staff.productCount || 0} transactions)</td>
+                    <td className="py-3 text-gray-700">Komisi Produk</td>
+                    <td className="py-3 text-gray-500 text-xs">({staff.productCount || 0} transaksi)</td>
                     <td className="py-3 text-right font-bold text-black">Rp {(staff.productCommission || 0).toLocaleString()}</td>
                   </tr>
                   <tr className="border-b-2 border-gray-300">
-                    <td className="py-3 text-gray-700 font-bold" colSpan={2}>Gross Salary</td>
+                    <td className="py-3 text-gray-700 font-bold" colSpan={2}>Gaji Kotor</td>
                     <td className="py-3 text-right font-bold text-black">Rp {totalCommission.toLocaleString()}</td>
                   </tr>
                 </tbody>
@@ -249,7 +249,7 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
           {kasbonDeduction > 0 && (
             <div className="mb-6 border-2 border-red-300 rounded-lg bg-red-50">
               <div className="bg-red-100 px-4 py-2 border-b border-red-300">
-                <p className="font-bold text-red-800 text-sm">DEDUCTIONS</p>
+                <p className="font-bold text-red-800 text-sm">POTONGAN</p>
               </div>
               <div className="p-4">
                 <table className="w-full text-sm">
@@ -263,7 +263,7 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
                     ) : (
                       deductions.map((ded: any, idx: number) => (
                         <tr key={idx} className={idx > 0 ? 'border-t border-red-200' : ''}>
-                          <td className="py-2 text-gray-700">Kasbon Advance Deduction</td>
+                          <td className="py-2 text-gray-700">Potongan Kasbon</td>
                           <td className="py-2 text-gray-500 text-xs">Dipotong: {new Date(ded.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                           <td className="py-2 text-right font-bold text-red-600">- Rp {ded.amount.toLocaleString()}</td>
                         </tr>
@@ -271,7 +271,7 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
                     )}
                     {deductions.length > 1 && !deductedKasbon && (
                       <tr className="border-t-2 border-red-400">
-                        <td className="py-2 text-gray-700 font-bold" colSpan={2}>Total Deductions</td>
+                        <td className="py-2 text-gray-700 font-bold" colSpan={2}>Total Potongan</td>
                         <td className="py-2 text-right font-bold text-red-600">- Rp {kasbonDeduction.toLocaleString()}</td>
                       </tr>
                     )}
@@ -285,7 +285,7 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
           {totalKasbon > 0 && (
             <div className="mb-6 border-2 border-orange-300 rounded-lg bg-orange-50">
               <div className="bg-orange-100 px-4 py-2 border-b border-orange-300">
-                <p className="font-bold text-orange-800 text-sm">⚠️ KASBON OUTSTANDING</p>
+                <p className="font-bold text-orange-800 text-sm">⚠️ SISA KASBON</p>
               </div>
               <div className="p-4">
                 <div className="mb-3">
@@ -312,7 +312,7 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
                 </div>
                 {deductKasbon && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Jumlah Potongan (Max: Rp {maxDeduct.toLocaleString()})</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Jumlah Potongan (Maks: Rp {maxDeduct.toLocaleString()})</label>
                     <input
                       type="number"
                       value={deductAmount}
@@ -345,7 +345,7 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
                       disabled={deductMutation.isPending}
                       className="mt-2 w-full bg-orange-600 text-white py-2 rounded hover:bg-orange-700 disabled:opacity-50"
                     >
-                      {deductMutation.isPending ? 'Processing...' : 'Konfirmasi Potong Kasbon'}
+                      {deductMutation.isPending ? 'Memproses...' : 'Konfirmasi Potong Kasbon'}
                     </button>
                   </div>
                 )}
@@ -359,7 +359,7 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
               {kasbonDeduction > 0 && (
                 <div className="mb-3 pb-3 border-b border-gray-300">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-700">Gross Salary</span>
+                    <span className="text-gray-700">Gaji Kotor</span>
                     <span className="font-bold text-black">Rp {totalCommission.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-sm text-red-600 mt-1">
@@ -375,11 +375,11 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
               )}
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="text-sm font-bold text-black">TOTAL NET SALARY</p>
+                  <p className="text-sm font-bold text-black">TOTAL GAJI BERSIH</p>
                   <p className="text-xs text-gray-600 mt-1">
-                    {(staff.serviceCount || 0) + (staff.productCount || 0)} total transactions
+                    {(staff.serviceCount || 0) + (staff.productCount || 0)} total transaksi
                     {kasbonDeduction > 0 && (
-                      <span className="text-red-600 font-medium"> • {deductions.length || 1} kasbon deduction(s)</span>
+                      <span className="text-red-600 font-medium"> • {deductions.length || 1} potongan kasbon</span>
                     )}
                   </p>
                 </div>
@@ -392,14 +392,14 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
 
           {/* Footer */}
           <div className="text-center text-xs text-gray-500 pt-4 border-t border-gray-300">
-            <p className="font-medium">This is an official salary slip from Barber Place</p>
-            <p className="mt-1">Generated on {new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+            <p className="font-medium">Ini adalah slip gaji resmi dari Barber Place</p>
+            <p className="mt-1">Dibuat pada {new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
             {kasbonDeduction > 0 && (
               <p className="mt-2 text-xs text-red-600 font-medium">
-                ⚠️ Kasbon deduction of Rp {kasbonDeduction.toLocaleString()} has been applied to this payroll
+                ⚠️ Potongan kasbon sebesar Rp {kasbonDeduction.toLocaleString()} telah diterapkan pada penggajian ini
               </p>
             )}
-            <p className="mt-2 text-xs">For inquiries, please contact HR Department</p>
+            <p className="mt-2 text-xs">Untuk pertanyaan, silakan hubungi Bagian SDM</p>
           </div>
         </div>
 
@@ -412,13 +412,13 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
             </svg>
-            Print / Save as PDF
+            Cetak / Simpan sebagai PDF
           </button>
           <button
             onClick={onClose}
             className="px-6 py-2.5 border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-medium"
           >
-            Close
+            Tutup
           </button>
         </div>
       </div>

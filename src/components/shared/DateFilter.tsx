@@ -9,10 +9,10 @@ interface DateFilterProps {
 }
 
 const DATE_PRESETS = [
-  { id: 'today', name: 'Today' },
-  { id: '7days', name: 'Last 7 Days' },
-  { id: '30days', name: 'Last 30 Days' },
-  { id: 'custom', name: 'Custom Range' }
+  { id: 'today', name: 'Hari Ini' },
+  { id: '7days', name: '7 Hari Terakhir' },
+  { id: '30days', name: '30 Hari Terakhir' },
+  { id: 'custom', name: 'Rentang Kustom' }
 ];
 
 export const DateFilter: React.FC<DateFilterProps> = ({
@@ -25,7 +25,7 @@ export const DateFilter: React.FC<DateFilterProps> = ({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">Rentang Tanggal</label>
         <div className="flex flex-wrap gap-2">
           {DATE_PRESETS.map((preset) => (
             <button
@@ -45,7 +45,7 @@ export const DateFilter: React.FC<DateFilterProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">From Date</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Dari Tanggal</label>
           <input
             type="date"
             value={dateFrom}
@@ -55,7 +55,7 @@ export const DateFilter: React.FC<DateFilterProps> = ({
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">To Date</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Sampai Tanggal</label>
           <input
             type="date"
             value={dateTo}

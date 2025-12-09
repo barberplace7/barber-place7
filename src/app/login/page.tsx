@@ -54,10 +54,10 @@ export default function LoginPage() {
           await fetchKasirList();
         }
       } else {
-        alert('Login failed: ' + data.error);
+        alert('Login gagal: ' + data.error);
       }
     } catch (error) {
-      alert('Login error');
+      alert('Kesalahan login');
     } finally {
       setIsLoading(false);
     }
@@ -92,33 +92,33 @@ export default function LoginPage() {
                 <div className="flex-1 bg-white"></div>
                 <div className="flex-1 bg-red-600"></div>
               </div>
-              <p className="text-xs sm:text-sm text-gray-300 mt-2 sm:mt-3">Staff Access Portal</p>
+              <p className="text-xs sm:text-sm text-gray-300 mt-2 sm:mt-3">Portal Akses Staf</p>
             </div>
 
             {!showKasirSelect ? (
               <form onSubmit={handleBranchLogin} className="space-y-3 sm:space-y-4">
               {/* Username */}
               <div>
-                <label className="block text-sm font-medium mb-2">Username</label>
+                <label className="block text-sm font-medium mb-2">Nama Pengguna</label>
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-white/10 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter your username"
+                  placeholder="Masukkan nama pengguna"
                   required
                 />
               </div>
 
               {/* Password */}
               <div>
-                <label className="block text-sm font-medium mb-2">Password</label>
+                <label className="block text-sm font-medium mb-2">Kata Sandi</label>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-white/10 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter your password"
+                  placeholder="Masukkan kata sandi"
                   required
                 />
               </div>
@@ -132,10 +132,10 @@ export default function LoginPage() {
                   {isLoading ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-black mr-2"></div>
-                      <span className="text-sm sm:text-base">Logging in...</span>
+                      <span className="text-sm sm:text-base">Masuk...</span>
                     </>
                   ) : (
-                    'Login to Branch'
+                    'Masuk ke Cabang'
                   )}
                 </button>
               </form>
@@ -152,7 +152,7 @@ export default function LoginPage() {
                     onChange={(e) => setSelectedKasir(e.target.value)}
                     className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-white/10 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="" className="text-black">Select a kasir...</option>
+                    <option value="" className="text-black">Pilih kasir...</option>
                     {kasirList.map((kasir) => (
                       <option key={kasir.id} value={kasir.id} className="text-black">
                         {kasir.name}
@@ -166,14 +166,14 @@ export default function LoginPage() {
                     onClick={() => {setShowKasirSelect(false); setBranchData(null); setSelectedKasir('');}}
                     className="flex-1 bg-gray-600 text-white py-2.5 sm:py-3 px-3 sm:px-4 text-sm sm:text-base rounded-lg hover:bg-gray-700 transition-colors font-medium"
                   >
-                    Back
+                    Kembali
                   </button>
                   <button
                     onClick={async () => {
                       if (isStartingSession) return; // Prevent double click
                       
                       if (!selectedKasir) {
-                        alert('Please select a kasir');
+                        alert('Silakan pilih kasir');
                         return;
                       }
                       
@@ -192,11 +192,11 @@ export default function LoginPage() {
                         if (response.ok) {
                           window.location.href = '/kasir';
                         } else {
-                          alert('Failed to start session');
+                          alert('Gagal memulai sesi');
                           setIsStartingSession(false);
                         }
                       } catch (error) {
-                        alert('Network error');
+                        alert('Kesalahan jaringan');
                         setIsStartingSession(false);
                       }
                     }}
@@ -206,10 +206,10 @@ export default function LoginPage() {
                     {isStartingSession ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 sm:h-5 sm:w-5 border-b-2 border-black mr-2"></div>
-                        <span className="text-sm sm:text-base">Starting...</span>
+                        <span className="text-sm sm:text-base">Memulai...</span>
                       </>
                     ) : (
-                      'Start Session'
+                      'Mulai Sesi'
                     )}
                   </button>
                 </div>

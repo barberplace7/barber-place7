@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 interface AddServiceModalProps {
   onClose: () => void;
-  onSubmit: (data: { name: string; category: string; basePrice: number; commissionRate: number }) => void;
+  onSubmit: (data: { name: string; category: string; basePrice: number; commissionAmount: number }) => void;
   isSubmitting: boolean;
 }
 
@@ -11,7 +11,7 @@ export default function AddServiceModal({ onClose, onSubmit, isSubmitting }: Add
     name: '',
     category: 'HAIRCUT',
     basePrice: '',
-    commissionRate: ''
+    commissionAmount: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -20,7 +20,7 @@ export default function AddServiceModal({ onClose, onSubmit, isSubmitting }: Add
       name: formData.name,
       category: formData.category,
       basePrice: parseInt(formData.basePrice),
-      commissionRate: parseFloat(formData.commissionRate) / 100
+      commissionAmount: parseInt(formData.commissionAmount)
     });
   };
 
@@ -71,14 +71,13 @@ export default function AddServiceModal({ onClose, onSubmit, isSubmitting }: Add
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Commission Rate (%)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Commission Amount (Rp)</label>
               <input
                 type="number"
-                step="0.1"
-                value={formData.commissionRate}
-                onChange={(e) => setFormData({ ...formData, commissionRate: e.target.value })}
+                value={formData.commissionAmount}
+                onChange={(e) => setFormData({ ...formData, commissionAmount: e.target.value })}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-black focus:border-blue-500 focus:outline-none"
-                placeholder="10"
+                placeholder="5000"
                 required
               />
             </div>

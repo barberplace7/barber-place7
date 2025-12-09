@@ -14,12 +14,12 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, category, basePrice, commissionRate } = await request.json();
+    const { name, category, basePrice, commissionAmount } = await request.json();
 
-    console.log('Received data:', { name, category, basePrice, commissionRate });
+    console.log('Received data:', { name, category, basePrice, commissionAmount });
 
-    if (!name || !basePrice || commissionRate === undefined) {
-      return NextResponse.json({ error: 'Name, basePrice, and commissionRate required' }, { status: 400 });
+    if (!name || !basePrice || commissionAmount === undefined) {
+      return NextResponse.json({ error: 'Name, basePrice, and commissionAmount required' }, { status: 400 });
     }
 
     const service = await prisma.servicePackage.create({
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
         name,
         category: category || 'HAIRCUT',
         basePrice: parseInt(basePrice),
-        commissionRate: parseFloat(commissionRate)
+        commissionAmount: parseInt(commissionAmount)
       }
     });
 
@@ -40,10 +40,10 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const { id, name, category, basePrice, commissionRate } = await request.json();
+    const { id, name, category, basePrice, commissionAmount } = await request.json();
 
-    if (!id || !name || !basePrice || commissionRate === undefined) {
-      return NextResponse.json({ error: 'ID, name, basePrice, and commissionRate required' }, { status: 400 });
+    if (!id || !name || !basePrice || commissionAmount === undefined) {
+      return NextResponse.json({ error: 'ID, name, basePrice, and commissionAmount required' }, { status: 400 });
     }
 
     const service = await prisma.servicePackage.update({
@@ -52,7 +52,7 @@ export async function PUT(request: NextRequest) {
         name,
         category: category || 'HAIRCUT',
         basePrice: parseInt(basePrice),
-        commissionRate: parseFloat(commissionRate)
+        commissionAmount: parseInt(commissionAmount)
       }
     });
 

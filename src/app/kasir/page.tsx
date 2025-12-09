@@ -79,13 +79,13 @@ export default function KasirDashboard() {
                 onClick={() => state.setConfirmModal(null)}
                 className="flex-1 px-3 py-2 text-stone-600 hover:text-stone-800 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors text-sm"
               >
-                Cancel
+                Batal
               </button>
               <button
                 onClick={state.confirmModal.onConfirm}
                 className="flex-1 px-3 py-2 bg-stone-800 text-white rounded-lg hover:bg-stone-900 transition-colors text-sm"
               >
-                Confirm
+                Konfirmasi
               </button>
             </div>
           </div>
@@ -96,7 +96,7 @@ export default function KasirDashboard() {
         <div className="fixed inset-0 bg-black/10 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-2xl flex flex-col items-center gap-3">
             <div className="w-12 h-12 border-4 border-gray-300 border-t-stone-800 rounded-full animate-spin"></div>
-            <p className="text-stone-700 font-medium">{state.isInitialLoading ? 'Loading data...' : 'Processing...'}</p>
+            <p className="text-stone-700 font-medium">{state.isInitialLoading ? 'Memuat data...' : 'Memproses...'}</p>
           </div>
         </div>
       )}

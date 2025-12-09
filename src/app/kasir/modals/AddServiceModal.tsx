@@ -3,14 +3,14 @@ export default function AddServiceModal({ state, hairCutServices, treatmentServi
     if (state.isSubmitting) return;
     
     if (!state.newCustomer.name || state.newCustomer.services.length === 0 || !state.newCustomer.capsterId) {
-      alert('Please fill in customer name, select at least one service, and assign a capster');
+      alert('Silakan isi nama pelanggan, pilih minimal satu layanan, dan tentukan capster');
       return;
     }
     
     state.setConfirmModal({
       show: true,
-      title: 'Start Service',
-      message: `Start service for ${state.newCustomer.name}?`,
+      title: 'Mulai Layanan',
+      message: `Mulai layanan untuk ${state.newCustomer.name}?`,
       onConfirm: async () => {
         state.setConfirmModal(null);
         state.setIsSubmitting(true);
@@ -52,8 +52,8 @@ export default function AddServiceModal({ state, hairCutServices, treatmentServi
                 <span className="text-white font-bold">✂</span>
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-stone-800">New Service</h2>
-                <p className="text-stone-500 text-sm">Add a new customer and start their service</p>
+                <h2 className="text-2xl font-bold text-stone-800">Layanan Baru</h2>
+                <p className="text-stone-500 text-sm">Tambah pelanggan baru dan mulai layanan</p>
               </div>
             </div>
             <button 
@@ -69,24 +69,24 @@ export default function AddServiceModal({ state, hairCutServices, treatmentServi
           <div className="bg-stone-50 rounded-xl p-6">
             <h3 className="text-lg font-semibold text-stone-800 mb-4 flex items-center">
               <span className="w-6 h-6 bg-stone-800 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3">1</span>
-              Customer Information
+              Informasi Pelanggan
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">Customer Name *</label>
+                <label className="block text-sm font-medium text-stone-700 mb-2">Nama Pelanggan *</label>
                 <input
                   type="text"
-                  placeholder="Enter customer name"
+                  placeholder="Masukkan nama pelanggan"
                   value={state.newCustomer.name}
                   onChange={(e) => state.setNewCustomer({...state.newCustomer, name: e.target.value})}
                   className="w-full border border-stone-300 rounded-lg px-4 py-3 focus:border-stone-500 focus:ring-2 focus:ring-stone-200 focus:outline-none bg-white text-stone-800 transition-all"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">Phone Number</label>
+                <label className="block text-sm font-medium text-stone-700 mb-2">Nomor Telepon</label>
                 <input
                   type="text"
-                  placeholder="Enter phone number (optional)"
+                  placeholder="Masukkan nomor telepon (opsional)"
                   value={state.newCustomer.phone}
                   onChange={(e) => state.setNewCustomer({...state.newCustomer, phone: e.target.value})}
                   className="w-full border border-stone-300 rounded-lg px-4 py-3 focus:border-stone-500 focus:ring-2 focus:ring-stone-200 focus:outline-none bg-white text-stone-800 transition-all"
@@ -98,11 +98,11 @@ export default function AddServiceModal({ state, hairCutServices, treatmentServi
           <div className="bg-stone-50 rounded-xl p-6">
             <h3 className="text-lg font-semibold text-stone-800 mb-4 flex items-center">
               <span className="w-6 h-6 bg-stone-800 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3">2</span>
-              Service Selection
+              Pilih Layanan
             </h3>
             <div className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-3">Haircut Package <span className="text-stone-500">(Optional)</span></label>
+                <label className="block text-sm font-medium text-stone-700 mb-3">Paket Potong Rambut <span className="text-stone-500">(Opsional)</span></label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {hairCutServices.map((service) => (
                     <label key={service.id} className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-all ${
@@ -127,12 +127,12 @@ export default function AddServiceModal({ state, hairCutServices, treatmentServi
                         />
                         <div>
                           <div className="font-medium text-stone-800">{service.name}</div>
-                          <div className="text-sm text-stone-500">Professional haircut service</div>
+                          <div className="text-sm text-stone-500">Layanan potong rambut profesional</div>
                         </div>
                       </div>
                       <div className="text-right">
                         <div className="font-bold text-stone-800">Rp {service.basePrice.toLocaleString()}</div>
-                        <div className="text-xs text-stone-500">Base price</div>
+                        <div className="text-xs text-stone-500">Harga dasar</div>
                       </div>
                     </label>
                   ))}
@@ -140,7 +140,7 @@ export default function AddServiceModal({ state, hairCutServices, treatmentServi
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-3">Additional Treatments <span className="text-stone-500">(Optional)</span></label>
+                <label className="block text-sm font-medium text-stone-700 mb-3">Perawatan Tambahan <span className="text-stone-500">(Opsional)</span></label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {treatmentServices.map((service) => (
                     <label key={service.id} className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-all ${
@@ -161,19 +161,19 @@ export default function AddServiceModal({ state, hairCutServices, treatmentServi
                         />
                         <div>
                           <div className="font-medium text-stone-800">{service.name}</div>
-                          <div className="text-sm text-stone-500">Premium treatment</div>
+                          <div className="text-sm text-stone-500">Perawatan premium</div>
                         </div>
                       </div>
                       <div className="text-right">
                         <div className="font-bold text-stone-800">+Rp {service.basePrice.toLocaleString()}</div>
-                        <div className="text-xs text-stone-500">Add-on</div>
+                        <div className="text-xs text-stone-500">Tambahan</div>
                       </div>
                     </label>
                   ))}
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-3">Assign Capster *</label>
+                <label className="block text-sm font-medium text-stone-700 mb-3">Pilih Capster *</label>
                 <div className="space-y-2">
                   {state.capsters.map((capster) => (
                     <label key={capster.id} className={`flex items-center space-x-3 p-4 border rounded-lg cursor-pointer transition-all ${
@@ -189,7 +189,7 @@ export default function AddServiceModal({ state, hairCutServices, treatmentServi
                       />
                       <div className="flex-1">
                         <div className="font-medium text-stone-800">{capster.name}</div>
-                        <div className="text-sm text-stone-500">Professional barber</div>
+                        <div className="text-sm text-stone-500">Tukang cukur profesional</div>
                       </div>
                     </label>
                   ))}
@@ -200,7 +200,7 @@ export default function AddServiceModal({ state, hairCutServices, treatmentServi
 
           {state.newCustomer.services.length > 0 && (
             <div className="bg-stone-800 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-4">Service Summary</h3>
+              <h3 className="text-lg font-semibold mb-4">Ringkasan Layanan</h3>
               <div className="space-y-2">
                 {state.newCustomer.services.map(serviceId => {
                   const service = state.services.find(s => s.id === serviceId);
@@ -213,7 +213,7 @@ export default function AddServiceModal({ state, hairCutServices, treatmentServi
                 })}
                 <div className="border-t border-stone-600 pt-2 mt-2">
                   <div className="flex justify-between font-bold text-lg">
-                    <span>Total Estimate</span>
+                    <span>Estimasi Total</span>
                     <span>Rp {state.newCustomer.services.reduce((total, serviceId) => {
                       const service = state.services.find(s => s.id === serviceId);
                       return total + (service?.basePrice || 0);
@@ -231,7 +231,7 @@ export default function AddServiceModal({ state, hairCutServices, treatmentServi
               onClick={() => {state.setShowAddService(false); state.setNewCustomer({ name: '', phone: '', services: [], capsterId: '' })}}
               className="flex-1 text-stone-600 hover:text-stone-800 px-6 py-3 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors font-medium"
             >
-              Cancel
+              Batal
             </button>
             <button 
               onClick={handleSubmit}
@@ -241,12 +241,12 @@ export default function AddServiceModal({ state, hairCutServices, treatmentServi
               {state.isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  <span>Starting...</span>
+                  <span>Memulai...</span>
                 </>
               ) : (
                 <>
                   <span>✂</span>
-                  <span>Start Service</span>
+                  <span>Mulai Layanan</span>
                 </>
               )}
             </button>

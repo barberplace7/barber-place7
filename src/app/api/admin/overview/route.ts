@@ -55,7 +55,17 @@ export async function GET(request: NextRequest) {
       return sum + serviceRevenue + productRevenue;
     }, 0) + todayProductSales.reduce((sum, ps) => sum + ps.totalPrice, 0);
 
+    const todayServiceCommissions = todayVisits.reduce((sum, visit) => {
+      return sum + visit.serviceTransactions.reduce((s, st) => s + st.commissionAmount, 0);
+    }, 0);
+
+    const todayProductCommissions = todayVisits.reduce((sum, visit) => {
+      return sum + visit.productTransactions.reduce((s, pt) => s + pt.commissionAmount, 0);
+    }, 0) + todayProductSales.reduce((sum, ps) => sum + ps.commissionAmount, 0);
+
+    const todayCommissions = todayServiceCommissions + todayProductCommissions;
     const todayExpensesTotal = todayExpenses.reduce((sum, exp) => sum + exp.nominal, 0);
+    const todayNetIncome = todayRevenue - todayCommissions - todayExpensesTotal;
     const todayTransactions = todayVisits.length + todayProductSales.length;
 
     // Optimize: Fetch all visits at once instead of N queries
@@ -191,7 +201,9 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       todayRevenue: todayRevenue || 0,
+      todayCommissions: todayCommissions || 0,
       todayExpenses: todayExpensesTotal || 0,
+      todayNetIncome: todayNetIncome || 0,
       todayTransactions: todayTransactions || 0,
       weeklyRevenue: revenueData.length > 0 ? revenueData : [
         ...Array.from({ length: chartDays }, (_, i) => ({

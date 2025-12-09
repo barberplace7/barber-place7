@@ -113,13 +113,13 @@ export default function HistoryTab({ state }: any) {
 
       <div className="bg-stone-50 rounded-xl p-6 mb-8">
         <div className="mb-4">
-          <label className="block text-sm font-medium text-stone-700 mb-2">Date Range</label>
+          <label className="block text-sm font-medium text-stone-700 mb-2">Rentang Tanggal</label>
           <div className="flex flex-wrap gap-2">
             {[
-              { id: 'today', name: 'Today' },
-              { id: '7days', name: 'Last 7 Days' },
-              { id: '30days', name: 'Last 30 Days' },
-              { id: 'custom', name: 'Custom Range' }
+              { id: 'today', name: 'Hari Ini' },
+              { id: '7days', name: '7 Hari Terakhir' },
+              { id: '30days', name: '30 Hari Terakhir' },
+              { id: 'custom', name: 'Rentang Kustom' }
             ].map((preset) => (
               <button
                 key={preset.id}
@@ -138,7 +138,7 @@ export default function HistoryTab({ state }: any) {
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">From Date</label>
+            <label className="block text-sm font-medium text-stone-700 mb-2">Dari Tanggal</label>
             <input
               type="date"
               value={state.historyFilters.dateFrom}
@@ -151,7 +151,7 @@ export default function HistoryTab({ state }: any) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">To Date</label>
+            <label className="block text-sm font-medium text-stone-700 mb-2">Sampai Tanggal</label>
             <input
               type="date"
               value={state.historyFilters.dateTo}
@@ -164,17 +164,17 @@ export default function HistoryTab({ state }: any) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-2">Transaction Type</label>
+            <label className="block text-sm font-medium text-stone-700 mb-2">Tipe Transaksi</label>
             <select
               value={state.historyFilters.type}
               onChange={(e) => state.setHistoryFilters({...state.historyFilters, type: e.target.value})}
               className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:border-stone-500 focus:outline-none bg-white text-stone-800"
             >
-              <option value="ALL">All Transactions</option>
-              <option value="REVENUE">Revenue Only</option>
-              <option value="SERVICE">Services Only</option>
-              <option value="PRODUCT">Products Only</option>
-              <option value="EXPENSES">Expenses Only</option>
+              <option value="ALL">Semua Transaksi</option>
+              <option value="REVENUE">Pendapatan Saja</option>
+              <option value="SERVICE">Layanan Saja</option>
+              <option value="PRODUCT">Produk Saja</option>
+              <option value="EXPENSES">Pengeluaran Saja</option>
             </select>
           </div>
           <div className="flex items-end">
@@ -182,14 +182,14 @@ export default function HistoryTab({ state }: any) {
               onClick={state.fetchHistory}
               className="w-full bg-stone-800 text-white px-4 py-2 rounded-lg hover:bg-stone-900 transition-colors font-medium"
             >
-              Apply Filters
+              Terapkan Filter
             </button>
           </div>
         </div>
       </div>
 
       <div className="mb-6 p-6 bg-stone-50 rounded-xl border border-stone-200">
-        <h3 className="font-bold text-stone-800 mb-4">Summary ({state.historyFilters.dateFrom} to {state.historyFilters.dateTo})</h3>
+        <h3 className="font-bold text-stone-800 mb-4">Ringkasan ({state.historyFilters.dateFrom} sampai {state.historyFilters.dateTo})</h3>
         {state.isHistoryLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
             {[1, 2, 3, 4, 5].map((i) => (
@@ -203,25 +203,25 @@ export default function HistoryTab({ state }: any) {
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
             <div className="text-center">
               <div className="text-xl sm:text-2xl font-bold text-green-600">Rp {summary.revenueAmount.toLocaleString()}</div>
-              <div className="text-xs sm:text-sm text-stone-600">Revenue</div>
+              <div className="text-xs sm:text-sm text-stone-600">Pendapatan Hari Ini</div>
             </div>
             <div className="text-center">
-              <div className="text-xl sm:text-2xl font-bold text-red-600">Rp {summary.expenseAmount.toLocaleString()}</div>
-              <div className="text-xs sm:text-sm text-stone-600">Expenses</div>
-            </div>
-            <div className="text-center">
-              <div className={`text-xl sm:text-2xl font-bold ${summary.netAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              <div className={`text-xl sm:text-2xl font-bold ${summary.netAmount >= 0 ? 'text-purple-600' : 'text-red-600'}`}>
                 Rp {summary.netAmount.toLocaleString()}
               </div>
-              <div className="text-xs sm:text-sm text-stone-600">Net Profit</div>
+              <div className="text-xs sm:text-sm text-stone-600">Laba Bersih</div>
             </div>
             <div className="text-center">
-              <div className="text-xl sm:text-2xl font-bold text-stone-600">Rp {summary.cashAmount.toLocaleString()}</div>
+              <div className="text-xl sm:text-2xl font-bold text-emerald-600">Rp {summary.cashAmount.toLocaleString()}</div>
               <div className="text-xs sm:text-sm text-stone-600">Cash</div>
             </div>
             <div className="text-center">
               <div className="text-xl sm:text-2xl font-bold text-blue-600">Rp {summary.qrisAmount.toLocaleString()}</div>
               <div className="text-xs sm:text-sm text-stone-600">QRIS</div>
+            </div>
+            <div className="text-center">
+              <div className="text-xl sm:text-2xl font-bold text-red-600">Rp {summary.expenseAmount.toLocaleString()}</div>
+              <div className="text-xs sm:text-sm text-stone-600">Pengeluaran</div>
             </div>
           </div>
         )}
@@ -231,7 +231,7 @@ export default function HistoryTab({ state }: any) {
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-stone-300 border-t-stone-800 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-stone-600 font-medium">Loading history...</p>
+            <p className="text-stone-600 font-medium">Memuat riwayat...</p>
           </div>
         </div>
       ) : (
@@ -239,12 +239,12 @@ export default function HistoryTab({ state }: any) {
           <table className="min-w-full">
             <thead className="bg-stone-50">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Date</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Customer</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Service/Product</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Submitted By</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Amount</th>
-                <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Payment</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Tanggal</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Pelanggan</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Layanan/Produk</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Diinput Oleh</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Jumlah</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-stone-700">Pembayaran</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-stone-100">
@@ -252,8 +252,8 @@ export default function HistoryTab({ state }: any) {
               <tr>
                 <td colSpan={6} className="px-6 py-16 text-center text-stone-500">
                   <div className="text-4xl mb-4">📊</div>
-                  <div>No transactions found</div>
-                  <div className="text-sm mt-1">Try adjusting your filters</div>
+                  <div>Tidak ada transaksi ditemukan</div>
+                  <div className="text-sm mt-1">Coba sesuaikan filter Anda</div>
                 </td>
               </tr>
             ) : (
@@ -284,7 +284,7 @@ export default function HistoryTab({ state }: any) {
                   </td>
                   <td className="px-6 py-5">
                     {transaction.type === 'EXPENSE' ? (
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">EXPENSE</span>
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">PENGELUARAN</span>
                     ) : (
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                         transaction.paymentMethod === 'CASH' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
@@ -304,7 +304,7 @@ export default function HistoryTab({ state }: any) {
       {!state.isHistoryLoading && totalPages > 1 && (
         <div className="mt-6 flex items-center justify-between">
           <div className="text-sm text-stone-700">
-            Showing {((state.currentPage - 1) * 10) + 1} to {Math.min(state.currentPage * 10, allTransactions.length)} of {allTransactions.length} transactions
+            Menampilkan {((state.currentPage - 1) * 10) + 1} sampai {Math.min(state.currentPage * 10, allTransactions.length)} dari {allTransactions.length} transaksi
           </div>
           <div className="flex space-x-2">
             <button
@@ -312,7 +312,7 @@ export default function HistoryTab({ state }: any) {
               disabled={state.currentPage === 1}
               className="px-3 py-2 text-sm font-medium text-stone-500 bg-white border border-stone-300 rounded-md hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Previous
+              Sebelumnya
             </button>
             {Array.from({ length: totalPages }, (_, i) => i + 1)
               .filter(page => page === 1 || page === totalPages || Math.abs(page - state.currentPage) <= 2)
@@ -348,7 +348,7 @@ export default function HistoryTab({ state }: any) {
               disabled={state.currentPage === totalPages}
               className="px-3 py-2 text-sm font-medium text-stone-500 bg-white border border-stone-300 rounded-md hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Next
+              Selanjutnya
             </button>
           </div>
         </div>

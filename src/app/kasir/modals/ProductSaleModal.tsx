@@ -4,16 +4,13 @@ export default function ProductSaleModal({ state, onClose }: any) {
   const handleSubmit = async () => {
     if (state.isSubmitting) return;
     if (!state.productSaleData.customerName || state.productSaleData.products.length === 0) {
-      alert('Please enter customer name and select at least one product');
+      alert('Silakan masukkan nama pelanggan dan pilih minimal satu produk');
       return;
     }
     
     state.setIsSubmitting(true);
     try {
-      await state.mutations.addProductSale.mutateAsync({
-        ...state.productSaleData,
-        completedBy: state.productSaleData.completedBy || state.currentKasir
-      });
+      await state.mutations.addProductSale.mutateAsync(state.productSaleData);
       state.setProductSaleData({ customerName: '', customerPhone: '', products: [], paymentMethod: 'CASH', completedBy: '', recommendedBy: '' });
       onClose();
       state.showToast('Penjualan produk berhasil!', 'success');
@@ -47,8 +44,8 @@ export default function ProductSaleModal({ state, onClose }: any) {
                 <span className="text-white font-bold">📦</span>
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-stone-800">Product Sale</h2>
-                <p className="text-stone-500 text-sm">Sell products directly to customers</p>
+                <h2 className="text-2xl font-bold text-stone-800">Penjualan Produk</h2>
+                <p className="text-stone-500 text-sm">Jual produk langsung ke pelanggan</p>
               </div>
             </div>
             <button onClick={onClose} className="text-stone-400 hover:text-stone-600 text-2xl w-8 h-8 flex items-center justify-center">×</button>
@@ -59,24 +56,24 @@ export default function ProductSaleModal({ state, onClose }: any) {
           <div className="bg-stone-50 rounded-xl p-6">
             <h3 className="text-lg font-semibold text-stone-800 mb-4 flex items-center">
               <span className="w-6 h-6 bg-stone-600 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3">1</span>
-              Customer Information
+              Informasi Pelanggan
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">Customer Name *</label>
+                <label className="block text-sm font-medium text-stone-700 mb-2">Nama Pelanggan *</label>
                 <input
                   type="text"
-                  placeholder="Enter customer name"
+                  placeholder="Masukkan nama pelanggan"
                   value={state.productSaleData.customerName}
                   onChange={(e) => state.setProductSaleData({...state.productSaleData, customerName: e.target.value})}
                   className="w-full border border-stone-300 rounded-lg px-4 py-3 focus:border-stone-500 focus:ring-2 focus:ring-stone-200 focus:outline-none bg-white text-stone-800 transition-all"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">Phone Number</label>
+                <label className="block text-sm font-medium text-stone-700 mb-2">Nomor Telepon</label>
                 <input
                   type="text"
-                  placeholder="Enter phone number (optional)"
+                  placeholder="Masukkan nomor telepon (opsional)"
                   value={state.productSaleData.customerPhone}
                   onChange={(e) => state.setProductSaleData({...state.productSaleData, customerPhone: e.target.value})}
                   className="w-full border border-stone-300 rounded-lg px-4 py-3 focus:border-stone-500 focus:ring-2 focus:ring-stone-200 focus:outline-none bg-white text-stone-800 transition-all"
@@ -88,7 +85,7 @@ export default function ProductSaleModal({ state, onClose }: any) {
           <div className="bg-stone-50 rounded-xl p-6">
             <h3 className="text-lg font-semibold text-stone-800 mb-4 flex items-center">
               <span className="w-6 h-6 bg-stone-600 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3">2</span>
-              Product Selection
+              Pilih Produk
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
               {state.products.map((product: any) => {
@@ -114,7 +111,7 @@ export default function ProductSaleModal({ state, onClose }: any) {
                         />
                         <div>
                           <div className="font-medium text-stone-800">{product.name}</div>
-                          <div className="text-sm text-stone-500">Hair care product</div>
+                          <div className="text-sm text-stone-500">Produk perawatan rambut</div>
                         </div>
                       </div>
                       <div className="text-right">
@@ -146,38 +143,38 @@ export default function ProductSaleModal({ state, onClose }: any) {
           <div className="bg-stone-50 rounded-xl p-6">
             <h3 className="text-lg font-semibold text-stone-800 mb-4 flex items-center">
               <span className="w-6 h-6 bg-stone-600 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3">3</span>
-              Payment Details
+              Detail Pembayaran
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">Recommend By</label>
+                <label className="block text-sm font-medium text-stone-700 mb-2">Direkomendasi Oleh</label>
                 <select
                   value={state.productSaleData.recommendedBy}
                   onChange={(e) => state.setProductSaleData({...state.productSaleData, recommendedBy: e.target.value})}
                   className="w-full border border-stone-300 rounded-lg px-4 py-3 focus:border-stone-500 focus:ring-2 focus:ring-stone-200 focus:outline-none bg-white text-stone-800 transition-all"
                 >
-                  <option value="">Select recommender</option>
+                  <option value="">Pilih yang merekomendasikan</option>
                   {[...state.capsters, ...state.kasirList].map((person: any) => (
-                    <option key={person.id} value={person.id}>{person.name}{person.name === state.branchInfo.kasirName ? ' (You)' : ''}</option>
+                    <option key={person.id} value={person.id}>{person.name}{person.name === state.branchInfo.kasirName ? ' (Anda)' : ''}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-stone-700 mb-2">Transaction Responsible</label>
+                <label className="block text-sm font-medium text-stone-700 mb-2">Penanggung Jawab Transaksi</label>
                 <select
                   value={state.productSaleData.completedBy}
                   onChange={(e) => state.setProductSaleData({...state.productSaleData, completedBy: e.target.value})}
                   className="w-full border border-stone-300 rounded-lg px-4 py-3 focus:border-stone-500 focus:ring-2 focus:ring-stone-200 focus:outline-none bg-white text-stone-800 transition-all"
                 >
-                  <option value="">Select responsible person</option>
+                  <option value="">Pilih penanggung jawab</option>
                   {[...state.capsters, ...state.kasirList].map((person: any) => (
-                    <option key={person.id} value={person.id}>{person.name}{person.name === state.branchInfo.kasirName ? ' (You)' : ''}</option>
+                    <option key={person.id} value={person.id}>{person.name}{person.name === state.branchInfo.kasirName ? ' (Anda)' : ''}</option>
                   ))}
                 </select>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-3">Payment Method</label>
+              <label className="block text-sm font-medium text-stone-700 mb-3">Metode Pembayaran</label>
               <div className="space-y-2">
                 {['CASH', 'QRIS'].map((method) => (
                   <label key={method} className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer transition-all ${state.productSaleData.paymentMethod === method ? 'border-stone-500 bg-stone-100 ring-2 ring-stone-200' : 'border-stone-300 hover:border-stone-400 hover:bg-stone-50'}`}>
@@ -191,7 +188,7 @@ export default function ProductSaleModal({ state, onClose }: any) {
                     />
                     <div>
                       <div className="font-medium text-stone-800">{method}</div>
-                      <div className="text-sm text-stone-500">{method === 'CASH' ? 'Cash payment' : 'Digital payment'}</div>
+                      <div className="text-sm text-stone-500">{method === 'CASH' ? 'Pembayaran tunai' : 'Pembayaran digital'}</div>
                     </div>
                   </label>
                 ))}
@@ -201,7 +198,7 @@ export default function ProductSaleModal({ state, onClose }: any) {
 
           {state.productSaleData.products.length > 0 && (
             <div className="bg-stone-600 rounded-xl p-6 text-white">
-              <h3 className="text-lg font-semibold mb-4">Bill Summary</h3>
+              <h3 className="text-lg font-semibold mb-4">Ringkasan Tagihan</h3>
               <div className="space-y-2">
                 {state.productSaleData.products.map((selectedProduct: any) => {
                   const product = state.products.find((p: any) => p.id === selectedProduct.id);
@@ -216,7 +213,7 @@ export default function ProductSaleModal({ state, onClose }: any) {
                 })}
                 <div className="border-t border-stone-500 pt-2 mt-2">
                   <div className="flex justify-between font-bold text-lg">
-                    <span>Total Amount</span>
+                    <span>Total Jumlah</span>
                     <span>Rp {state.productSaleData.products.reduce((total: number, selectedProduct: any) => {
                       const product = state.products.find((p: any) => p.id === selectedProduct.id);
                       return total + (product ? product.basePrice * selectedProduct.quantity : 0);
@@ -230,17 +227,17 @@ export default function ProductSaleModal({ state, onClose }: any) {
 
         <div className="sticky bottom-0 bg-white border-t border-stone-200 px-8 py-6 rounded-b-2xl">
           <div className="flex gap-4">
-            <button onClick={onClose} className="flex-1 text-stone-600 hover:text-stone-800 px-6 py-3 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors font-medium">Cancel</button>
+            <button onClick={onClose} className="flex-1 text-stone-600 hover:text-stone-800 px-6 py-3 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors font-medium">Batal</button>
             <button onClick={handleSubmit} disabled={!state.productSaleData.customerName || state.productSaleData.products.length === 0 || state.isSubmitting} className="flex-1 bg-stone-600 text-white px-6 py-3 rounded-lg hover:bg-stone-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2">
               {state.isSubmitting ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  <span>Processing...</span>
+                  <span>Memproses...</span>
                 </>
               ) : (
                 <>
                   <span>📦</span>
-                  <span>Complete Sale</span>
+                  <span>Selesaikan Penjualan</span>
                 </>
               )}
             </button>

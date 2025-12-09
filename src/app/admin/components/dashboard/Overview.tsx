@@ -55,13 +55,13 @@ export default function Overview({
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Business Overview</h2>
-          <p className="text-gray-600 mt-1">Real-time insights and performance metrics</p>
+          <h2 className="text-3xl font-bold text-gray-900">Ringkasan Bisnis</h2>
+          <p className="text-gray-600 mt-1">Wawasan dan metrik performa real-time</p>
         </div>
         <div className="text-right">
-          <div className="text-sm text-gray-500">Last updated</div>
+          <div className="text-sm text-gray-500">Terakhir diperbarui</div>
           <div className="text-lg font-semibold text-gray-900">
-            {currentTime || 'Loading...'}
+            {currentTime || 'Memuat...'}
           </div>
         </div>
       </div>
@@ -146,11 +146,11 @@ export default function Overview({
       ) : (
         <div className="space-y-8">
           {/* Key Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             <div className="bg-white p-6 rounded-xl border-l-4 border-green-500 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
-                  <p className="text-gray-500 text-sm font-medium mb-2">Today's Revenue</p>
+                  <p className="text-gray-500 text-sm font-medium mb-2">Pendapatan Hari Ini</p>
                   <p className={`font-bold text-gray-900 break-words ${
                     (overviewData?.todayRevenue?.toLocaleString() || '0').length > 15 ? 'text-xl' : 
                     (overviewData?.todayRevenue?.toLocaleString() || '0').length > 12 ? 'text-2xl' : 'text-3xl'
@@ -164,10 +164,45 @@ export default function Overview({
               </div>
             </div>
             
+            <div className="bg-white p-6 rounded-xl border-l-4 border-purple-500 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div className="flex-1 min-w-0">
+                  <p className="text-gray-500 text-sm font-medium mb-2">Laba Bersih Hari Ini</p>
+                  <p className={`font-bold text-purple-700 break-words ${
+                    (overviewData?.todayNetIncome?.toLocaleString() || '0').length > 15 ? 'text-xl' : 
+                    (overviewData?.todayNetIncome?.toLocaleString() || '0').length > 12 ? 'text-2xl' : 'text-3xl'
+                  }`}>Rp {overviewData?.todayNetIncome?.toLocaleString() || '0'}</p>
+                  <p className="text-xs text-gray-500 mt-1">Setelah komisi & pengeluaran</p>
+                </div>
+                <div className="w-12 h-12 bg-white border-2 border-purple-500 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-white p-6 rounded-xl border-l-4 border-orange-500 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div className="flex-1 min-w-0">
+                  <p className="text-gray-500 text-sm font-medium mb-2">Komisi Staf</p>
+                  <p className={`font-bold text-gray-900 break-words ${
+                    (overviewData?.todayCommissions?.toLocaleString() || '0').length > 15 ? 'text-xl' : 
+                    (overviewData?.todayCommissions?.toLocaleString() || '0').length > 12 ? 'text-2xl' : 'text-3xl'
+                  }`}>Rp {overviewData?.todayCommissions?.toLocaleString() || '0'}</p>
+                </div>
+                <div className="w-12 h-12 bg-white border-2 border-orange-500 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            
             <div className="bg-white p-6 rounded-xl border-l-4 border-red-500 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
-                  <p className="text-gray-500 text-sm font-medium mb-2">Today's Expenses</p>
+                  <p className="text-gray-500 text-sm font-medium mb-2">Pengeluaran Hari Ini</p>
                   <p className={`font-bold text-gray-900 break-words ${
                     (overviewData?.todayExpenses?.toLocaleString() || '0').length > 15 ? 'text-xl' : 
                     (overviewData?.todayExpenses?.toLocaleString() || '0').length > 12 ? 'text-2xl' : 'text-3xl'
@@ -183,29 +218,13 @@ export default function Overview({
             
             <div className="bg-white p-6 rounded-xl border-l-4 border-blue-500 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
-                <div className="flex-1 min-w-0">
-                  <p className="text-gray-500 text-sm font-medium mb-2">Net Profit Today</p>
-                  <p className={`font-bold text-gray-900 break-words ${
-                    (((overviewData?.todayRevenue || 0) - (overviewData?.todayExpenses || 0)).toLocaleString()).length > 15 ? 'text-xl' : 
-                    (((overviewData?.todayRevenue || 0) - (overviewData?.todayExpenses || 0)).toLocaleString()).length > 12 ? 'text-2xl' : 'text-3xl'
-                  }`}>Rp {((overviewData?.todayRevenue || 0) - (overviewData?.todayExpenses || 0)).toLocaleString()}</p>
+                <div>
+                  <p className="text-gray-500 text-sm font-medium mb-2">Transaksi Hari Ini</p>
+                  <p className="text-3xl font-bold text-gray-900">{overviewData?.todayTransactions || 0}</p>
+                  <p className="text-xs text-gray-500 mt-1">Semua cabang</p>
                 </div>
                 <div className="w-12 h-12 bg-white border-2 border-blue-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white p-6 rounded-xl border-l-4 border-purple-500 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-500 text-sm font-medium mb-2">Transactions Today</p>
-                  <p className="text-3xl font-bold text-gray-900">{overviewData?.todayTransactions || 0}</p>
-                </div>
-                <div className="w-12 h-12 bg-white border-2 border-purple-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
@@ -217,13 +236,13 @@ export default function Overview({
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
             <div className="flex justify-between items-center mb-6">
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Revenue Trend</h3>
-                <p className="text-sm text-gray-500 mt-1">Daily revenue performance</p>
+                <h3 className="text-lg font-bold text-gray-900">Tren Pendapatan</h3>
+                <p className="text-sm text-gray-500 mt-1">Performa pendapatan harian</p>
               </div>
               <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
                 {[
-                  { id: '7days', name: '7 Days' },
-                  { id: '30days', name: '30 Days' }
+                  { id: '7days', name: '7 Hari' },
+                  { id: '30days', name: '30 Hari' }
                 ].map((period) => (
                   <button
                     key={period.id}
@@ -272,14 +291,14 @@ export default function Overview({
             </div>
             {chartPeriod === '30days' && (
               <div className="mt-3 text-center text-xs text-gray-500">
-                💡 Scroll horizontally to view all days
+                💡 Geser horizontal untuk melihat semua hari
               </div>
             )}
           </div>
 
           {/* Top Services - Moved Below */}
           <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Top Services</h3>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Layanan Terpopuler</h3>
             <div className="space-y-4">
               {overviewData.topServices.map((service: any, index: number) => (
                 <div key={index} className="flex items-center justify-between">
@@ -291,7 +310,7 @@ export default function Overview({
                     </div>
                     <div>
                       <div className="font-medium text-gray-900">{service.name}</div>
-                      <div className="text-sm text-gray-500">{service.count} transactions</div>
+                      <div className="text-sm text-gray-500">{service.count} transaksi</div>
                     </div>
                   </div>
                   <div className="text-right">
@@ -307,12 +326,12 @@ export default function Overview({
             {/* Branch Performance */}
             <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-bold text-gray-900">Branch Performance</h3>
+                <h3 className="text-lg font-bold text-gray-900">Performa Cabang</h3>
                 <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
                   {[
-                    { id: 'today', name: 'Today' },
-                    { id: '7days', name: '7 Days' },
-                    { id: '30days', name: '30 Days' }
+                    { id: 'today', name: 'Hari Ini' },
+                    { id: '7days', name: '7 Hari' },
+                    { id: '30days', name: '30 Hari' }
                   ].map((period) => (
                     <button
                       key={period.id}
@@ -337,12 +356,12 @@ export default function Overview({
                       </div>
                       <div>
                         <div className="font-medium text-gray-900">{branch.name}</div>
-                        <div className="text-sm text-gray-500">{branch.transactions} transactions</div>
+                        <div className="text-sm text-gray-500">{branch.transactions} transaksi</div>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="font-bold text-gray-900">Rp {branch.revenue.toLocaleString()}</div>
-                      <div className="text-sm text-gray-500">{branch.staff} staff active</div>
+                      <div className="text-sm text-gray-500">{branch.staff} staf aktif</div>
                     </div>
                   </div>
                 ))}
@@ -351,10 +370,10 @@ export default function Overview({
 
             {/* Quick Stats */}
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Stats</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">Statistik Cepat</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center p-3 border-2 border-orange-600 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Total Branches</span>
+                  <span className="text-sm font-medium text-gray-700">Total Cabang</span>
                   <span className="text-xl font-bold text-orange-600">{branchList.length}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 border-2 border-blue-600 rounded-lg">
@@ -366,7 +385,7 @@ export default function Overview({
                   <span className="text-xl font-bold text-green-600">{kasirList.length}</span>
                 </div>
                 <div className="flex justify-between items-center p-3 border-2 border-purple-600 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Services & Products</span>
+                  <span className="text-sm font-medium text-gray-700">Layanan & Produk</span>
                   <span className="text-xl font-bold text-purple-600">{(serviceList?.length || 0) + (productList?.length || 0)}</span>
                 </div>
               </div>

@@ -17,8 +17,8 @@ export default function CommissionTab({ adminData }: any) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-xl font-bold text-black">Commission Monitor</h2>
-          <p className="text-gray-600 text-sm">Track capster commissions and performance</p>
+          <h2 className="text-xl font-bold text-black">Monitor Komisi</h2>
+          <p className="text-gray-600 text-sm">Pantau komisi dan performa capster</p>
         </div>
       </div>
 
@@ -33,13 +33,13 @@ export default function CommissionTab({ adminData }: any) {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Staff</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Staf</label>
             <select
               value={capsterId}
               onChange={(e) => setCapsterId(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:outline-none bg-white text-black"
             >
-              <option value="">All Staff</option>
+              <option value="">Semua Staf</option>
               <optgroup label="Capsters">
                 {adminData.capsterList.map((capster: any) => (
                   <option key={capster.id} value={capster.id}>{capster.name}</option>
@@ -53,13 +53,13 @@ export default function CommissionTab({ adminData }: any) {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Branch</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Cabang</label>
             <select
               value={branchId}
               onChange={(e) => setBranchId(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-blue-500 focus:outline-none bg-white text-black"
             >
-              <option value="">All Branches</option>
+              <option value="">Semua Cabang</option>
               {adminData.cabangList.map((cabang: any) => (
                 <option key={cabang.id} value={cabang.id}>{cabang.name}</option>
               ))}
@@ -69,7 +69,7 @@ export default function CommissionTab({ adminData }: any) {
       </div>
 
       <div className="mb-6 p-6 bg-blue-50 rounded-lg border border-blue-200">
-        <h3 className="font-bold text-black mb-4">Commission Summary</h3>
+        <h3 className="font-bold text-black mb-4">Ringkasan Komisi</h3>
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
@@ -85,19 +85,19 @@ export default function CommissionTab({ adminData }: any) {
               <div className="text-2xl font-bold text-green-600">
                 Rp {commissionData.reduce((sum, item) => sum + (item.serviceCommission || 0) + (item.productCommission || 0), 0).toLocaleString()}
               </div>
-              <div className="text-sm text-gray-600">Total Commission</div>
+              <div className="text-sm text-gray-600">Total Komisi</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">
                 Rp {commissionData.reduce((sum, item) => sum + (item.serviceCommission || 0), 0).toLocaleString()}
               </div>
-              <div className="text-sm text-gray-600">Service Commission</div>
+              <div className="text-sm text-gray-600">Komisi Layanan</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-600">
                 Rp {commissionData.reduce((sum, item) => sum + (item.productCommission || 0), 0).toLocaleString()}
               </div>
-              <div className="text-sm text-gray-600">Product Commission</div>
+              <div className="text-sm text-gray-600">Komisi Produk</div>
             </div>
           </div>
         ) : (
@@ -109,7 +109,7 @@ export default function CommissionTab({ adminData }: any) {
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600 font-medium">Loading commission data...</p>
+            <p className="text-gray-600 font-medium">Memuat data komisi...</p>
           </div>
         </div>
       ) : (
@@ -117,21 +117,21 @@ export default function CommissionTab({ adminData }: any) {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Staff</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Branch</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service Commission</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Product Commission</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Commission</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transactions</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Staf</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Peran</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cabang</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Komisi Layanan</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Komisi Produk</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Komisi</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transaksi</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {commissionData.length === 0 ? (
               <tr>
                 <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
-                  No commission data found for the selected period.
+                  Tidak ada data komisi untuk periode yang dipilih.
                 </td>
               </tr>
             ) : (
@@ -156,7 +156,7 @@ export default function CommissionTab({ adminData }: any) {
                     Rp {((item.serviceCommission || 0) + (item.productCommission || 0)).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.serviceCount || 0} services, {item.productCount || 0} products
+                    {item.serviceCount || 0} layanan, {item.productCount || 0} produk
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <button
@@ -166,7 +166,7 @@ export default function CommissionTab({ adminData }: any) {
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
-                      Payroll
+                      Penggajian
                     </button>
                   </td>
                 </tr>
