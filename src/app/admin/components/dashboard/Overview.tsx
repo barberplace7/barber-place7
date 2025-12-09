@@ -146,85 +146,75 @@ export default function Overview({
       ) : (
         <div className="space-y-8">
           {/* Key Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-            <div className="bg-white p-6 rounded-xl border-l-4 border-green-500 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div className="flex-1 min-w-0">
-                  <p className="text-gray-500 text-sm font-medium mb-2">Pendapatan Hari Ini</p>
-                  <p className={`font-bold text-gray-900 break-words ${
-                    (overviewData?.todayRevenue?.toLocaleString() || '0').length > 15 ? 'text-xl' : 
-                    (overviewData?.todayRevenue?.toLocaleString() || '0').length > 12 ? 'text-2xl' : 'text-3xl'
-                  }`}>Rp {overviewData?.todayRevenue?.toLocaleString() || '0'}</p>
-                </div>
-                <div className="w-12 h-12 bg-white border-2 border-green-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="bg-white p-4 rounded-xl border-l-4 border-green-500 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-gray-500 text-xs font-medium mb-2">Pendapatan Hari Ini</p>
+              <div className="flex items-end justify-between gap-2">
+                <p className={`font-bold text-gray-900 leading-tight ${
+                  (overviewData?.todayRevenue?.toLocaleString() || '0').length > 12 ? 'text-sm' : 
+                  (overviewData?.todayRevenue?.toLocaleString() || '0').length > 9 ? 'text-base' : 'text-lg'
+                }`}>Rp {overviewData?.todayRevenue?.toLocaleString() || '0'}</p>
+                <div className="w-10 h-10 bg-white border-2 border-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-xl border-l-4 border-purple-500 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div className="flex-1 min-w-0">
-                  <p className="text-gray-500 text-sm font-medium mb-2">Laba Bersih Hari Ini</p>
-                  <p className={`font-bold text-purple-700 break-words ${
-                    (overviewData?.todayNetIncome?.toLocaleString() || '0').length > 15 ? 'text-xl' : 
-                    (overviewData?.todayNetIncome?.toLocaleString() || '0').length > 12 ? 'text-2xl' : 'text-3xl'
-                  }`}>Rp {overviewData?.todayNetIncome?.toLocaleString() || '0'}</p>
-                  <p className="text-xs text-gray-500 mt-1">Setelah komisi & pengeluaran</p>
-                </div>
-                <div className="w-12 h-12 bg-white border-2 border-purple-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white p-4 rounded-xl border-l-4 border-purple-500 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-gray-500 text-xs font-medium mb-1">Laba Bersih Hari Ini</p>
+              <p className="text-[10px] text-gray-400 mb-1">Setelah komisi & pengeluaran</p>
+              <div className="flex items-end justify-between gap-2">
+                <p className={`font-bold text-purple-700 leading-tight ${
+                  (overviewData?.todayNetIncome?.toLocaleString() || '0').length > 12 ? 'text-sm' : 
+                  (overviewData?.todayNetIncome?.toLocaleString() || '0').length > 9 ? 'text-base' : 'text-lg'
+                }`}>Rp {overviewData?.todayNetIncome?.toLocaleString() || '0'}</p>
+                <div className="w-10 h-10 bg-white border-2 border-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                   </svg>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-xl border-l-4 border-orange-500 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div className="flex-1 min-w-0">
-                  <p className="text-gray-500 text-sm font-medium mb-2">Komisi Staf</p>
-                  <p className={`font-bold text-gray-900 break-words ${
-                    (overviewData?.todayCommissions?.toLocaleString() || '0').length > 15 ? 'text-xl' : 
-                    (overviewData?.todayCommissions?.toLocaleString() || '0').length > 12 ? 'text-2xl' : 'text-3xl'
-                  }`}>Rp {overviewData?.todayCommissions?.toLocaleString() || '0'}</p>
-                </div>
-                <div className="w-12 h-12 bg-white border-2 border-orange-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white p-4 rounded-xl border-l-4 border-orange-500 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-gray-500 text-xs font-medium mb-2">Komisi Staf</p>
+              <div className="flex items-end justify-between gap-2">
+                <p className={`font-bold text-gray-900 leading-tight ${
+                  (overviewData?.todayCommissions?.toLocaleString() || '0').length > 12 ? 'text-sm' : 
+                  (overviewData?.todayCommissions?.toLocaleString() || '0').length > 9 ? 'text-base' : 'text-lg'
+                }`}>Rp {overviewData?.todayCommissions?.toLocaleString() || '0'}</p>
+                <div className="w-10 h-10 bg-white border-2 border-orange-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-xl border-l-4 border-red-500 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div className="flex-1 min-w-0">
-                  <p className="text-gray-500 text-sm font-medium mb-2">Pengeluaran Hari Ini</p>
-                  <p className={`font-bold text-gray-900 break-words ${
-                    (overviewData?.todayExpenses?.toLocaleString() || '0').length > 15 ? 'text-xl' : 
-                    (overviewData?.todayExpenses?.toLocaleString() || '0').length > 12 ? 'text-2xl' : 'text-3xl'
-                  }`}>Rp {overviewData?.todayExpenses?.toLocaleString() || '0'}</p>
-                </div>
-                <div className="w-12 h-12 bg-white border-2 border-red-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white p-4 rounded-xl border-l-4 border-red-500 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-gray-500 text-xs font-medium mb-2">Pengeluaran Hari Ini</p>
+              <div className="flex items-end justify-between gap-2">
+                <p className={`font-bold text-gray-900 leading-tight ${
+                  (overviewData?.todayExpenses?.toLocaleString() || '0').length > 12 ? 'text-sm' : 
+                  (overviewData?.todayExpenses?.toLocaleString() || '0').length > 9 ? 'text-base' : 'text-lg'
+                }`}>Rp {overviewData?.todayExpenses?.toLocaleString() || '0'}</p>
+                <div className="w-10 h-10 bg-white border-2 border-red-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-xl border-l-4 border-blue-500 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-gray-500 text-sm font-medium mb-2">Transaksi Hari Ini</p>
-                  <p className="text-3xl font-bold text-gray-900">{overviewData?.todayTransactions || 0}</p>
-                  <p className="text-xs text-gray-500 mt-1">Semua cabang</p>
-                </div>
-                <div className="w-12 h-12 bg-white border-2 border-blue-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-white p-4 rounded-xl border-l-4 border-blue-500 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-gray-500 text-xs font-medium mb-1">Transaksi Hari Ini</p>
+              <p className="text-[10px] text-gray-400 mb-1">Semua cabang</p>
+              <div className="flex items-end justify-between gap-2">
+                <p className="text-lg font-bold text-gray-900 leading-tight">{overviewData?.todayTransactions || 0}</p>
+                <div className="w-10 h-10 bg-white border-2 border-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
@@ -322,9 +312,9 @@ export default function Overview({
           </div>
 
           {/* Branch Performance & Quick Stats */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Branch Performance */}
-            <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-bold text-gray-900">Performa Cabang</h3>
                 <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
@@ -349,17 +339,17 @@ export default function Overview({
               </div>
               <div className="space-y-4">
                 {overviewData.branchPerformance.map((branch: any, index: number) => (
-                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg gap-4">
+                    <div className="flex items-center space-x-4 flex-1 min-w-0">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
                         <span className="text-blue-600 font-bold">#{index + 1}</span>
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <div className="font-medium text-gray-900">{branch.name}</div>
                         <div className="text-sm text-gray-500">{branch.transactions} transaksi</div>
                       </div>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right flex-shrink-0">
                       <div className="font-bold text-gray-900">Rp {branch.revenue.toLocaleString()}</div>
                       <div className="text-sm text-gray-500">{branch.staff} staf aktif</div>
                     </div>
