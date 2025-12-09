@@ -48,7 +48,7 @@ export default function AdminDashboard() {
 
       <div className="flex-1 flex flex-col h-full">
         <div className="flex-1 p-6 overflow-y-auto">
-          <div className={`bg-white rounded-lg shadow-md p-6 ${!sidebarOpen ? 'mt-16' : ''}`}>
+          <div className={`bg-white rounded-lg shadow-md p-6 mr-6 ${!sidebarOpen ? 'mt-16' : ''}`}>
             {activeTab === 'overview' && <OverviewTab adminData={adminData} />}
             {activeTab === 'transactions' && <TransactionsTab cabangList={adminData.cabangList} />}
             {activeTab === 'commission' && <CommissionTab adminData={adminData} />}

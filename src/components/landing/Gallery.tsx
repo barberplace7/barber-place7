@@ -12,6 +12,11 @@ const montserrat = Montserrat({
 
 export default function Gallery() {
   const [galleryImages, setGalleryImages] = useState(GALLERY_IMAGES);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // Clone first image at the end for infinite loop
+  const slides = [...galleryImages, galleryImages[0]];
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -29,24 +34,24 @@ export default function Gallery() {
     fetchGallery();
   }, []);
 
-  const handleNavigation = (direction: 'prev' | 'next') => {
-    const slider = document.getElementById('gallerySlider');
-    if (!slider) return;
+  const handleNext = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentSlide(prev => prev + 1);
+  };
 
-    const imageWidth = 510; // 500px + 10px margin
-    const currentTransform = slider.style.transform || 'translateX(0px)';
-    const currentX = parseInt(currentTransform.match(/-?\d+/) || [0]);
-    const totalImages = 6; // Total 6 photos
-
-    if (direction === 'prev') {
-      let newX = currentX + imageWidth;
-      if (newX > 0) newX = -(imageWidth * (totalImages - 1));
-      slider.style.transform = `translateX(${newX}px)`;
-    } else {
-      const maxScroll = -(imageWidth * (totalImages - 1));
-      let newX = currentX - imageWidth;
-      if (newX < maxScroll) newX = 0;
-      slider.style.transform = `translateX(${newX}px)`;
+  const handlePrev = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentSlide(prev => prev - 1);
+  };
+  
+  const handleTransitionEnd = () => {
+    setIsTransitioning(false);
+    if (currentSlide === slides.length - 1) {
+      setCurrentSlide(0);
+    } else if (currentSlide === -1) {
+      setCurrentSlide(galleryImages.length - 1);
     }
   };
 
@@ -77,7 +82,7 @@ export default function Gallery() {
             <div className="flex gap-2 pt-2 sm:pt-4">
               <button 
                 className="bg-gray-800/50 border-2 border-gray-600 rounded-full p-2 sm:p-3 hover:bg-gray-700 transition-all duration-200"
-                onClick={() => handleNavigation('prev')}
+                onClick={handlePrev}
               >
                 <svg className="w-4 sm:w-5 h-4 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -86,7 +91,7 @@ export default function Gallery() {
               
               <button 
                 className="bg-gray-800/50 border-2 border-gray-600 rounded-full p-2 sm:p-3 hover:bg-gray-700 transition-all duration-200"
-                onClick={() => handleNavigation('next')}
+                onClick={handleNext}
               >
                 <svg className="w-4 sm:w-5 h-4 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -98,17 +103,18 @@ export default function Gallery() {
           {/* Right Images */}
           <div className="relative flex-1">
             <div className="overflow-hidden w-full ml-0 sm:ml-4 md:ml-8">
-              <div id="gallerySlider" className="flex transition-transform duration-300">
-                {galleryImages.map((image, index) => (
+              <div 
+                className="flex"
+                style={{
+                  transform: `translateX(-${currentSlide * 100}%)`,
+                  transition: isTransitioning ? 'transform 500ms ease-in-out' : 'none'
+                }}
+                onTransitionEnd={handleTransitionEnd}
+              >
+                {slides.map((image, index) => (
                   <div 
                     key={index} 
-                    className="flex-shrink-0 bg-gray-800 rounded-xl sm:rounded-2xl overflow-hidden" 
-                    style={{ 
-                      width: '280px', 
-                      height: '280px', 
-                      marginRight: '10px' 
-                    }}
-                    className="flex-shrink-0 bg-gray-800 rounded-xl sm:rounded-2xl overflow-hidden w-[280px] sm:w-[350px] md:w-[450px] lg:w-[500px] h-[280px] sm:h-[350px] md:h-[450px] lg:h-[500px] mr-2 sm:mr-3"
+                    className="flex-shrink-0 bg-gray-800 rounded-xl sm:rounded-2xl overflow-hidden w-full h-[280px] sm:h-[350px] md:h-[450px] lg:h-[500px]"
                   >
                     <img 
                       src={image} 

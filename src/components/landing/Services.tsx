@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Montserrat } from 'next/font/google';
 import { SERVICE_CARDS } from '@/constants/data';
 import SectionHeader from '@/components/ui/SectionHeader';
@@ -14,6 +14,15 @@ export default function Services() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [desktopPosition, setDesktopPosition] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const cardWidth = 384 + 24;
   const maxScroll = -(cardWidth * (SERVICE_CARDS.length - 3.2));
@@ -102,7 +111,7 @@ export default function Services() {
           
           {((isMobile && currentIndex > 0) || (!isMobile && desktopPosition < 0)) && (
             <button 
-              className="md:hidden absolute left-0 sm:left-2 top-1/2 transform -translate-y-1/2 bg-gray-800/50 border border-gray-600/50 rounded-full p-2 sm:p-3 text-gray-300 active:bg-gray-700 active:border-gray-500 transition-all duration-200 z-10 backdrop-blur-sm"
+              className="absolute left-0 sm:left-2 top-1/2 transform -translate-y-1/2 bg-gray-800/50 border border-gray-600/50 rounded-full p-2 sm:p-3 text-gray-300 hover:bg-gray-700 hover:border-gray-500 active:bg-gray-700 active:border-gray-500 transition-all duration-200 z-10 backdrop-blur-sm"
               onClick={() => handleSliderNavigation('prev')}
             >
               <svg className="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,7 +122,7 @@ export default function Services() {
           
           {((isMobile && currentIndex < SERVICE_CARDS.length - 1) || (!isMobile && desktopPosition > maxScroll)) && (
             <button 
-              className="md:hidden absolute right-0 sm:right-2 top-1/2 transform -translate-y-1/2 bg-gray-800/50 border border-gray-600/50 rounded-full p-2 sm:p-3 text-gray-300 active:bg-gray-700 active:border-gray-500 transition-all duration-200 z-10 backdrop-blur-sm"
+              className="absolute right-0 sm:right-2 top-1/2 transform -translate-y-1/2 bg-gray-800/50 border border-gray-600/50 rounded-full p-2 sm:p-3 text-gray-300 hover:bg-gray-700 hover:border-gray-500 active:bg-gray-700 active:border-gray-500 transition-all duration-200 z-10 backdrop-blur-sm"
               onClick={() => handleSliderNavigation('next')}
             >
               <svg className="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

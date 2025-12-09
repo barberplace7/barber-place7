@@ -2,7 +2,7 @@
 
 export default function KasirSidebar({ state, onLogout }: any) {
   return (
-    <div className={`bg-white shadow-lg transition-all duration-300 ${state.sidebarOpen ? 'w-64' : 'w-0'} flex flex-col h-screen overflow-hidden`}>
+    <div className={`bg-white shadow-lg transition-all duration-300 ${state.sidebarOpen ? 'w-64' : 'w-0'} flex flex-col h-screen overflow-hidden flex-shrink-0`}>
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className={`flex items-center space-x-3 ${!state.sidebarOpen && 'justify-center'}`}>
@@ -29,69 +29,19 @@ export default function KasirSidebar({ state, onLogout }: any) {
           <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-3">Menu</div>
         )}
         
-        <div>
-          <button
-            onClick={() => state.setActiveTab('transactions')}
-            className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors ${
-              state.activeTab === 'transactions' ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'
-            } ${state.sidebarOpen ? '' : 'justify-center'}`}
-          >
-            <div className="flex items-center space-x-3">
-              <span className={state.activeTab === 'transactions' ? 'text-white' : 'text-gray-600'}>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </span>
-              {state.sidebarOpen && <span className="font-semibold">Live Transactions</span>}
-            </div>
-          </button>
-          {state.sidebarOpen && (
-            <div className="ml-8 mt-2 space-y-1">
-              <button
-                onClick={() => {
-                  state.setActiveTab('transactions');
-                  state.setShowAddService(true);
-                }}
-                className="w-full flex items-center space-x-2 text-left p-2 rounded-md text-sm transition-colors text-gray-600 hover:bg-gray-100"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Input Services</span>
-              </button>
-              <button
-                onClick={() => {
-                  state.setActiveTab('transactions');
-                  state.setShowProductSale(true);
-                  if (!state.productSaleData.completedBy && state.branchInfo.kasirName) {
-                    const sessionKasir = state.kasirList.find(k => k.name === state.branchInfo.kasirName);
-                    if (sessionKasir) {
-                      state.setProductSaleData(prev => ({...prev, completedBy: sessionKasir.id, recommendedBy: sessionKasir.id}));
-                    }
-                  }
-                }}
-                className="w-full flex items-center space-x-2 text-left p-2 rounded-md text-sm transition-colors text-gray-600 hover:bg-gray-100"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Input Produk</span>
-              </button>
-              <button
-                onClick={() => {
-                  state.setActiveTab('transactions');
-                  state.setShowExpense(true);
-                }}
-                className="w-full flex items-center space-x-2 text-left p-2 rounded-md text-sm transition-colors text-gray-600 hover:bg-gray-100"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Input Pengeluaran</span>
-              </button>
-            </div>
-          )}
-        </div>
+        <button
+          onClick={() => state.setActiveTab('transactions')}
+          className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
+            state.activeTab === 'transactions' ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'
+          } ${!state.sidebarOpen && 'justify-center'}`}
+        >
+          <span className={state.activeTab === 'transactions' ? 'text-white' : 'text-gray-600'}>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </span>
+          {state.sidebarOpen && <span className="font-medium">Live Transactions</span>}
+        </button>
         
         <button
           onClick={() => state.setActiveTab('history')}
@@ -104,7 +54,7 @@ export default function KasirSidebar({ state, onLogout }: any) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </span>
-          {state.sidebarOpen && <span className="font-semibold">Transaction History</span>}
+          {state.sidebarOpen && <span className="font-medium">Transaction History</span>}
         </button>
       </nav>
       

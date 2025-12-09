@@ -82,7 +82,7 @@ export default function Sidebar({
 
   return (
     <>
-    <div className={`bg-white shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-0'} flex flex-col h-full overflow-hidden`}>
+    <div className={`bg-white shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-0'} flex flex-col h-full overflow-hidden flex-shrink-0`}>
       {/* Sidebar Header */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
@@ -152,12 +152,13 @@ export default function Sidebar({
                       <button
                         key={subItem.id}
                         onClick={() => setActiveTab(subItem.id)}
-                        className={`w-full text-left p-2 rounded-md text-sm transition-colors ${
+                        className={`w-full text-left p-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
                           activeTab === subItem.id
                             ? 'bg-black text-white'
                             : 'text-gray-600 hover:bg-gray-100'
                         }`}
                       >
+                        <span className="font-bold">•</span>
                         {subItem.name}
                       </button>
                     ))}

@@ -64,6 +64,34 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
     }
   });
 
+  const uploadGalleryMutation = useMutation({
+    mutationFn: async ({ file, position }: { file: File; position: number }) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('position', position.toString());
+      const res = await fetch('/api/admin/gallery', {
+        method: 'POST',
+        body: formData
+      });
+      if (!res.ok) throw new Error('Failed to upload');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'gallery'] });
+    }
+  });
+
+  const deleteGalleryMutation = useMutation({
+    mutationFn: async (position: number) => {
+      const res = await fetch(`/api/admin/gallery?position=${position}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'gallery'] });
+    }
+  });
+
   if (activeTab === 'services') {
     return (
       <>
@@ -215,34 +243,6 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
       </>
     );
   }
-
-  const uploadGalleryMutation = useMutation({
-    mutationFn: async ({ file, position }: { file: File; position: number }) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('position', position.toString());
-      const res = await fetch('/api/admin/gallery', {
-        method: 'POST',
-        body: formData
-      });
-      if (!res.ok) throw new Error('Failed to upload');
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'gallery'] });
-    }
-  });
-
-  const deleteGalleryMutation = useMutation({
-    mutationFn: async (position: number) => {
-      const res = await fetch(`/api/admin/gallery?position=${position}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete');
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'gallery'] });
-    }
-  });
 
   if (activeTab === 'gallery') {
     const galleries = adminData.galleries || [];

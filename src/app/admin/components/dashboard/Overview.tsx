@@ -157,7 +157,7 @@ export default function Overview({
                   }`}>Rp {overviewData?.todayRevenue?.toLocaleString() || '0'}</p>
                 </div>
                 <div className="w-12 h-12 bg-white border-2 border-green-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
@@ -174,7 +174,7 @@ export default function Overview({
                   }`}>Rp {overviewData?.todayExpenses?.toLocaleString() || '0'}</p>
                 </div>
                 <div className="w-12 h-12 bg-white border-2 border-red-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
@@ -191,7 +191,7 @@ export default function Overview({
                   }`}>Rp {((overviewData?.todayRevenue || 0) - (overviewData?.todayExpenses || 0)).toLocaleString()}</p>
                 </div>
                 <div className="w-12 h-12 bg-white border-2 border-blue-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                   </svg>
                 </div>
@@ -205,7 +205,7 @@ export default function Overview({
                   <p className="text-3xl font-bold text-gray-900">{overviewData?.todayTransactions || 0}</p>
                 </div>
                 <div className="w-12 h-12 bg-white border-2 border-purple-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </div>
@@ -353,19 +353,19 @@ export default function Overview({
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
               <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Stats</h3>
               <div className="space-y-4">
-                <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                <div className="flex justify-between items-center p-3 border-2 border-orange-600 rounded-lg">
                   <span className="text-sm font-medium text-gray-700">Total Branches</span>
                   <span className="text-xl font-bold text-orange-600">{branchList.length}</span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                <div className="flex justify-between items-center p-3 border-2 border-blue-600 rounded-lg">
                   <span className="text-sm font-medium text-gray-700">Total Capsters</span>
                   <span className="text-xl font-bold text-blue-600">{capsterList.length}</span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                <div className="flex justify-between items-center p-3 border-2 border-green-600 rounded-lg">
                   <span className="text-sm font-medium text-gray-700">Total Kasir</span>
                   <span className="text-xl font-bold text-green-600">{kasirList.length}</span>
                 </div>
-                <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                <div className="flex justify-between items-center p-3 border-2 border-purple-600 rounded-lg">
                   <span className="text-sm font-medium text-gray-700">Services & Products</span>
                   <span className="text-xl font-bold text-purple-600">{(serviceList?.length || 0) + (productList?.length || 0)}</span>
                 </div>

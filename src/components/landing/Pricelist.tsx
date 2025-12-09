@@ -20,11 +20,11 @@ function PriceItem({ name }: { name: string }) {
 
   return (
     <div className="flex items-start gap-2">
-      <span className="text-gray-400 mt-1">•</span>
+      <span className="text-white font-bold text-lg leading-6">•</span>
       <div className="flex flex-col">
-        <span className="text-sm sm:text-base font-medium text-gray-300">{mainName}</span>
+        <span className="text-sm sm:text-base font-medium text-white">{mainName}</span>
         {hasParentheses && (
-          <span className="text-xs sm:text-sm text-gray-400 mt-0.5">{subName}</span>
+          <span className="text-xs sm:text-sm text-white/80 mt-0.5">{subName}</span>
         )}
       </div>
     </div>
@@ -43,19 +43,27 @@ function PriceCategory({ title, items }: PriceCategoryProps) {
     return 'ri-shopping-bag-fill';
   };
 
+  const getBgImage = () => {
+    if (title.includes('Hair Cut')) return 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800';
+    if (title.includes('Treatment')) return 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800';
+    return 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=800';
+  };
+
   return (
-    <div className="group bg-zinc-900 backdrop-blur-sm p-4 sm:p-5 md:p-6 rounded-sm transition-all duration-300 hover:shadow-lg hover:shadow-gray-900/50 border-2 border-gray-400 hover:border-gray-600 h-full relative overflow-hidden cursor-pointer">
-      <div className="absolute top-0 left-0 right-0 h-3 bg-gradient-to-b from-gray-800/30 to-transparent"></div>
-      <div className="absolute bottom-0 left-0 right-0 h-3 bg-gradient-to-t from-gray-800/30 to-transparent"></div>
-      <div className="flex items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-5 md:mb-6 pb-3 sm:pb-4 border-b-2 border-dashed border-gray-700">
-        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 bg-gradient-to-br from-blue-100 via-white to-red-100 rounded-full flex items-center justify-center">
+    <div className="group backdrop-blur-sm p-4 sm:p-5 md:p-6 rounded-sm transition-all duration-300 hover:shadow-lg hover:shadow-gray-900/50 border-2 border-white hover:border-white h-full relative overflow-hidden cursor-pointer">
+      <div className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-50 transition-opacity duration-300" style={{backgroundImage: `url('${getBgImage()}')`}}></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-zinc-900/75 via-zinc-900/70 to-zinc-800/75"></div>
+      <div className="absolute top-0 left-0 right-0 h-3 bg-gradient-to-b from-gray-800/30 to-transparent z-10"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-3 bg-gradient-to-t from-gray-800/30 to-transparent z-10"></div>
+      <div className="relative z-10 flex items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-5 md:mb-6 pb-3 sm:pb-4 border-b-2 border-dashed border-white">
+        <div className="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 bg-white border-2 border-white rounded-full flex items-center justify-center">
           <i className={`${getIconClass()} text-xl sm:text-2xl text-gray-700`}></i>
         </div>
         <h3 className={`text-base sm:text-lg md:text-xl font-bold text-white ${montserrat.className}`}>
           {title}
         </h3>
       </div>
-      <div className="space-y-2 sm:space-y-3">
+      <div className="relative z-10 space-y-2 sm:space-y-3">
         {items.map((item, index) => (
           <PriceItem key={index} name={item.name} />
         ))}

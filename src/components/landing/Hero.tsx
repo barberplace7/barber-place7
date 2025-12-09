@@ -24,20 +24,37 @@ interface HeroProps {
 
 export default function Hero({ isMenuOpen, setIsMenuOpen, isNavVisible, isScrolled }: HeroProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // Clone first and last images for seamless loop
+  const slides = [...HERO_IMAGES, HERO_IMAGES[0]];
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % HERO_IMAGES.length);
+      handleNext();
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [currentSlide]);
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % HERO_IMAGES.length);
+  const handleNext = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentSlide(prev => prev + 1);
   };
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + HERO_IMAGES.length) % HERO_IMAGES.length);
+  const handlePrev = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrentSlide(prev => prev - 1);
+  };
+  
+  const handleTransitionEnd = () => {
+    setIsTransitioning(false);
+    if (currentSlide === slides.length - 1) {
+      setCurrentSlide(0);
+    } else if (currentSlide === -1) {
+      setCurrentSlide(HERO_IMAGES.length - 1);
+    }
   };
   return (
     <>
@@ -93,21 +110,46 @@ export default function Hero({ isMenuOpen, setIsMenuOpen, isNavVisible, isScroll
         
         {/* Image Slider */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          {HERO_IMAGES.map((image, index) => (
-            <div
-              key={index}
-              className={`absolute inset-0 w-full h-full bg-cover bg-center transition-opacity duration-1000 ${
-                index === currentSlide ? 'opacity-100' : 'opacity-0'
-              }`}
-              style={{
-                backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("${image}")`,
-              }}
-            ></div>
-          ))}
+          <div 
+            className="flex h-full"
+            style={{ 
+              transform: `translateX(-${currentSlide * 100}%)`,
+              transition: isTransitioning ? 'transform 700ms ease-in-out' : 'none'
+            }}
+            onTransitionEnd={handleTransitionEnd}
+          >
+            {slides.map((image, index) => (
+              <div
+                key={index}
+                className="min-w-full h-full bg-cover bg-center flex-shrink-0"
+                style={{
+                  backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("${image}")`,
+                }}
+              ></div>
+            ))}
+          </div>
           <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black to-transparent opacity-80"></div>
         </div>
+        
+        {/* Navigation Buttons */}
+        <button
+          onClick={handlePrev}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-3 rounded-full transition-all"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <button
+          onClick={handleNext}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-3 rounded-full transition-all"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
 
-        <div className="relative z-10 w-full px-4 sm:px-6 md:px-8 pt-64 sm:pt-72 md:pt-80 lg:pt-96 pb-12 sm:pb-14 md:pb-16">
+        <div className="relative z-10 w-full px-4 sm:px-6 md:px-8 pt-64 sm:pt-72 md:pt-80 lg:pt-96 pb-12 sm:pb-14 md:pb-16 pointer-events-none">
           <div className="max-w-2xl ml-4 sm:ml-6 md:ml-8 lg:ml-16">
             <h1 className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6 md:mb-8 leading-tight text-left ${montserrat.className}`}>
               Barber Place
@@ -118,7 +160,7 @@ export default function Hero({ isMenuOpen, setIsMenuOpen, isNavVisible, isScroll
             <div className="flex justify-start">
               <button 
                 onClick={() => window.open(CONTACT_INFO.whatsapp.url, '_blank')}
-                className={`group relative px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 border-2 border-white rounded-full text-white text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-all duration-300 flex items-center gap-2 shadow-2xl hover:shadow-white/20 ${montserrat.className}`}
+                className={`group relative px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 md:py-4 border-2 border-white rounded-full text-white text-sm sm:text-base font-medium tracking-wider hover:bg-white hover:text-black transition-all duration-300 flex items-center gap-2 shadow-2xl hover:shadow-white/20 pointer-events-auto ${montserrat.className}`}
               >
                 Book Now
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
