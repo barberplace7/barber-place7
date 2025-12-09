@@ -28,35 +28,35 @@ export default function KasirManager({
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold text-black">Manage Kasir</h2>
+        <h2 className="text-xl font-bold text-black">Kelola Kasir</h2>
         <button 
           onClick={() => setShowKasirForm(true)}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
         >
           <span className="text-xl">+</span>
-          Add New Kasir
+          Tambah Kasir Baru
         </button>
       </div>
       
       {showKasirForm && (
         <div className="mb-6 p-4 bg-gray-50 rounded-lg border">
-          <h3 className="font-bold text-black mb-4">Add New Kasir</h3>
+          <h3 className="font-bold text-black mb-4">Tambah Kasir Baru</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-bold text-black mb-1">Full Name</label>
+              <label className="block text-sm font-bold text-black mb-1">Nama Lengkap</label>
               <input
                 type="text"
-                placeholder="Enter kasir name"
+                placeholder="Masukkan nama kasir"
                 value={newKasir.name}
                 onChange={(e) => setNewKasir({...newKasir, name: e.target.value})}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-green-500 focus:outline-none bg-white text-black"
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-black mb-1">Phone Number</label>
+              <label className="block text-sm font-bold text-black mb-1">Nomor Telepon</label>
               <input
                 type="text"
-                placeholder="Enter phone number"
+                placeholder="Masukkan nomor telepon"
                 value={newKasir.phone}
                 onChange={(e) => setNewKasir({...newKasir, phone: e.target.value})}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:border-green-500 focus:outline-none bg-white text-black"
@@ -68,13 +68,13 @@ export default function KasirManager({
               onClick={handleAddKasir}
               className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
             >
-              Save Kasir
+              Simpan Kasir
             </button>
             <button 
               onClick={() => {setShowKasirForm(false); setNewKasir({name: '', phone: ''})}}
               className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors"
             >
-              Cancel
+              Batal
             </button>
           </div>
         </div>
@@ -84,16 +84,16 @@ export default function KasirManager({
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Telepon</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {kasirList.length === 0 ? (
               <tr>
                 <td colSpan={3} className="px-6 py-12 text-center text-gray-500">
-                  No kasir yet. Add your first kasir to get started.
+                  Belum ada kasir. Tambahkan kasir pertama untuk memulai.
                 </td>
               </tr>
             ) : (
@@ -106,7 +106,7 @@ export default function KasirManager({
                       onClick={() => handleDeleteKasir(kasir.id)}
                       className="text-red-600 hover:text-red-900"
                     >
-                      Delete
+                      Hapus
                     </button>
                   </td>
                 </tr>

@@ -110,7 +110,7 @@ export default function UsersTab({ activeTab, adminData }: any) {
         setNewCapster={setNewCapster}
         handleAddCapster={() => addCapsterMutation.mutate(newCapster)}
         handleDeleteCapster={(id) => {
-          if (confirm('Delete capster?')) deleteCapsterMutation.mutate(id);
+          if (confirm('Hapus capster?')) deleteCapsterMutation.mutate(id);
         }}
       />
     );
@@ -126,7 +126,7 @@ export default function UsersTab({ activeTab, adminData }: any) {
         setNewKasir={setNewKasir}
         handleAddKasir={() => addKasirMutation.mutate(newKasir)}
         handleDeleteKasir={(id) => {
-          if (confirm('Delete kasir?')) deleteKasirMutation.mutate(id);
+          if (confirm('Hapus kasir?')) deleteKasirMutation.mutate(id);
         }}
       />
     );
@@ -136,51 +136,51 @@ export default function UsersTab({ activeTab, adminData }: any) {
     return (
       <div>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-black">Branch Login Accounts</h2>
+          <h2 className="text-xl font-bold text-black">Akun Login Cabang</h2>
           <button
             onClick={() => setShowBranchForm(true)}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
           >
             <span className="text-xl">+</span>
-            Add Branch Login
+            Tambah Login Cabang
           </button>
         </div>
 
         {showBranchForm && (
           <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="text-lg font-semibold mb-4 text-black">Create Branch Login Account</h3>
+            <h3 className="text-lg font-semibold mb-4 text-black">Buat Akun Login Cabang</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Select Branch</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Cabang</label>
                 <select
                   value={newBranch.cabangId}
                   onChange={(e) => setNewBranch({ ...newBranch, cabangId: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                 >
-                  <option value="">-- Select Branch --</option>
+                  <option value="">-- Pilih Cabang --</option>
                   {adminData.cabangList.map((cabang: any) => (
                     <option key={cabang.id} value={cabang.id}>{cabang.name}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Pengguna</label>
                 <input
                   type="text"
                   value={newBranch.username}
                   onChange={(e) => setNewBranch({ ...newBranch, username: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
-                  placeholder="Enter username"
+                  placeholder="Masukkan nama pengguna"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Kata Sandi</label>
                 <input
                   type="password"
                   value={newBranch.password}
                   onChange={(e) => setNewBranch({ ...newBranch, password: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
-                  placeholder="Enter password"
+                  placeholder="Masukkan kata sandi"
                 />
               </div>
               <div className="flex gap-2">
@@ -189,7 +189,7 @@ export default function UsersTab({ activeTab, adminData }: any) {
                   disabled={!newBranch.cabangId || !newBranch.username || !newBranch.password || addBranchMutation.isPending}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                 >
-                  {addBranchMutation.isPending ? 'Creating...' : 'Create Account'}
+                  {addBranchMutation.isPending ? 'Membuat...' : 'Buat Akun'}
                 </button>
                 <button
                   onClick={() => {
@@ -198,7 +198,7 @@ export default function UsersTab({ activeTab, adminData }: any) {
                   }}
                   className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors"
                 >
-                  Cancel
+                  Batal
                 </button>
               </div>
             </div>
@@ -209,17 +209,17 @@ export default function UsersTab({ activeTab, adminData }: any) {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Branch</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Login Username</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cabang</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Pengguna</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dibuat</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {adminData.branchList.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-6 py-12 text-center text-gray-500">
-                    No login accounts yet.
+                    Belum ada akun login.
                   </td>
                 </tr>
               ) : (
@@ -231,7 +231,7 @@ export default function UsersTab({ activeTab, adminData }: any) {
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button
                         onClick={() => {
-                          if (confirm('Delete branch login?')) deleteBranchMutation.mutate(branch.id);
+                          if (confirm('Hapus login cabang?')) deleteBranchMutation.mutate(branch.id);
                         }}
                         disabled={deleteBranchMutation.isPending}
                         className="text-red-600 hover:text-red-800 disabled:opacity-50"
@@ -251,5 +251,5 @@ export default function UsersTab({ activeTab, adminData }: any) {
     );
   }
 
-  return <div>Tab not found</div>;
+  return <div>Tab tidak ditemukan</div>;
 }
