@@ -82,14 +82,14 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="px-6 py-4 border-b border-gray-200 print:hidden">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto">
+        <div className="px-3 sm:px-6 py-4 border-b border-gray-200 print:hidden">
           <div className="flex justify-between items-center">
-            <h3 className="text-xl font-bold text-black">Detail Penggajian Staf</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-black">Detail Penggajian Staf</h3>
             <button 
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-2xl w-8 h-8 flex items-center justify-center"
+              className="text-gray-400 hover:text-gray-600 text-2xl w-10 h-10 flex items-center justify-center min-h-[44px] min-w-[44px]"
             >
               ×
             </button>
@@ -97,70 +97,68 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
         </div>
 
         {/* Printable Content */}
-        <div className="px-6 py-6 print:p-8" id="payroll-content">
+        <div className="px-3 sm:px-6 py-4 sm:py-6 print:p-4" id="payroll-content">
           {/* Header */}
-          <div className="text-center mb-6 pb-4 border-b-2 border-black">
-            <img src="/logo_barberplace.png" alt="Barber Place" className="h-20 mx-auto mb-3" />
-            <div className="mt-4">
-              <p className="text-lg font-bold text-black">SLIP GAJI</p>
-              <p className="text-sm text-gray-600 mt-1">
-                Periode: {new Date(dateFrom).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })} - {new Date(dateTo).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}
+          <div className="text-center mb-4 pb-3 border-b-2 border-black">
+            <img src="/logo_barberplace.png" alt="Barber Place" className="h-12 sm:h-16 mx-auto mb-2" />
+            <div className="mt-2">
+              <p className="text-base sm:text-lg font-bold text-black">SLIP GAJI</p>
+              <p className="text-xs sm:text-sm text-gray-600 mt-1">
+                Periode: {new Date(dateFrom).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })} - {new Date(dateTo).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}
               </p>
             </div>
           </div>
 
           {/* Staff Info */}
-          <div className="mb-6 border border-gray-300 rounded-lg">
-            <div className="bg-gray-100 px-4 py-2 border-b border-gray-300">
-              <p className="font-bold text-black text-sm">INFORMASI KARYAWAN</p>
+          <div className="mb-3 border border-gray-300 rounded-lg">
+            <div className="bg-gray-100 px-3 py-1.5 border-b border-gray-300">
+              <p className="font-bold text-black text-xs">INFORMASI KARYAWAN</p>
             </div>
-            <div className="p-4">
-              <table className="w-full text-sm">
-                <tbody>
-                  <tr className="border-b border-gray-200">
-                    <td className="py-2 text-gray-600 w-1/3">Nama Karyawan</td>
-                    <td className="py-2 font-bold text-black">: {staff.capsterName}</td>
-                  </tr>
-                  <tr className="border-b border-gray-200">
-                    <td className="py-2 text-gray-600">Posisi</td>
-                    <td className="py-2 font-medium text-black">: {staff.role || 'CAPSTER'}</td>
-                  </tr>
-                  <tr className="border-b border-gray-200">
-                    <td className="py-2 text-gray-600">Cabang</td>
-                    <td className="py-2 font-medium text-black">: {staff.branchName}</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 text-gray-600">Tanggal Pembayaran</td>
-                    <td className="py-2 font-medium text-black">: {new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div className="p-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Nama:</span>
+                  <span className="font-bold text-black">{staff.capsterName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Posisi:</span>
+                  <span className="font-medium text-black">{staff.role || 'CAPSTER'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Cabang:</span>
+                  <span className="font-medium text-black">{staff.branchName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Tgl Bayar:</span>
+                  <span className="font-medium text-black">{new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Transaction Details */}
-          <div className="mb-6">
-            <div className="bg-gray-100 px-4 py-2 border border-gray-300 rounded-t-lg">
-              <p className="font-bold text-black text-sm">DETAIL TRANSAKSI</p>
+          <div className="mb-3">
+            <div className="bg-gray-100 px-3 py-1.5 border border-gray-300 rounded-t-lg">
+              <p className="font-bold text-black text-xs">DETAIL TRANSAKSI</p>
             </div>
             {isLoading ? (
               <div className="text-center py-8 text-gray-500 border border-t-0 border-gray-300 rounded-b-lg">Memuat transaksi...</div>
             ) : transactions.length === 0 ? (
               <div className="text-center py-8 text-gray-500 border border-t-0 border-gray-300 rounded-b-lg">Tidak ada transaksi ditemukan</div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 border border-t-0 border-gray-300 rounded-b-lg">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 p-3 border border-t-0 border-gray-300 rounded-b-lg">
                 {/* Services Section */}
                 <div className="border border-gray-300 rounded-lg">
-                  <div className="bg-blue-50 px-3 py-2 border-b border-gray-300">
+                  <div className="bg-blue-50 px-2 py-1 border-b border-gray-300">
                     <p className="font-bold text-blue-700 text-xs">LAYANAN</p>
                   </div>
-                  <div className="max-h-80 overflow-y-auto">
+                  <div className="max-h-32 overflow-y-auto">
                     <table className="w-full text-xs">
                       <thead className="bg-gray-50 sticky top-0">
                         <tr className="border-b border-gray-200">
-                          <th className="py-2 px-2 text-left text-gray-600 font-semibold">Nama Layanan</th>
-                          <th className="py-2 px-2 text-center text-gray-600 font-semibold">Jml</th>
-                          <th className="py-2 px-2 text-right text-gray-600 font-semibold">Komisi</th>
+                          <th className="py-1 px-1 text-left text-gray-600 font-semibold">Layanan</th>
+                          <th className="py-1 px-1 text-center text-gray-600 font-semibold">Jml</th>
+                          <th className="py-1 px-1 text-right text-gray-600 font-semibold">Komisi</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -170,10 +168,10 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
                           </tr>
                         ) : (
                           transactions.filter((item: any) => item.type === 'SERVICE').map((item: any, idx: number) => (
-                            <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
-                              <td className="py-2 px-2 text-gray-700">{item.itemName}</td>
-                              <td className="py-2 px-2 text-center text-gray-700">{item.count}x</td>
-                              <td className="py-2 px-2 text-right font-bold text-blue-600">Rp {item.totalCommission.toLocaleString()}</td>
+                            <tr key={idx} className="border-b border-gray-100">
+                              <td className="py-1 px-1 text-gray-700 text-xs truncate">{item.itemName}</td>
+                              <td className="py-1 px-1 text-center text-gray-700">{item.count}x</td>
+                              <td className="py-1 px-1 text-right font-bold text-blue-600">Rp {item.totalCommission.toLocaleString()}</td>
                             </tr>
                           ))
                         )}
@@ -184,16 +182,16 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
 
                 {/* Products Section */}
                 <div className="border border-gray-300 rounded-lg">
-                  <div className="bg-orange-50 px-3 py-2 border-b border-gray-300">
+                  <div className="bg-orange-50 px-2 py-1 border-b border-gray-300">
                     <p className="font-bold text-orange-700 text-xs">PRODUK</p>
                   </div>
-                  <div className="max-h-80 overflow-y-auto">
+                  <div className="max-h-32 overflow-y-auto">
                     <table className="w-full text-xs">
                       <thead className="bg-gray-50 sticky top-0">
                         <tr className="border-b border-gray-200">
-                          <th className="py-2 px-2 text-left text-gray-600 font-semibold">Nama Produk</th>
-                          <th className="py-2 px-2 text-center text-gray-600 font-semibold">Jml</th>
-                          <th className="py-2 px-2 text-right text-gray-600 font-semibold">Komisi</th>
+                          <th className="py-1 px-1 text-left text-gray-600 font-semibold">Produk</th>
+                          <th className="py-1 px-1 text-center text-gray-600 font-semibold">Jml</th>
+                          <th className="py-1 px-1 text-right text-gray-600 font-semibold">Komisi</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -203,10 +201,10 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
                           </tr>
                         ) : (
                           transactions.filter((item: any) => item.type === 'PRODUCT').map((item: any, idx: number) => (
-                            <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
-                              <td className="py-2 px-2 text-gray-700">{item.itemName}</td>
-                              <td className="py-2 px-2 text-center text-gray-700">{item.count}x</td>
-                              <td className="py-2 px-2 text-right font-bold text-orange-600">Rp {item.totalCommission.toLocaleString()}</td>
+                            <tr key={idx} className="border-b border-gray-100">
+                              <td className="py-1 px-1 text-gray-700 text-xs truncate">{item.itemName}</td>
+                              <td className="py-1 px-1 text-center text-gray-700">{item.count}x</td>
+                              <td className="py-1 px-1 text-right font-bold text-orange-600">Rp {item.totalCommission.toLocaleString()}</td>
                             </tr>
                           ))
                         )}
@@ -219,29 +217,25 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
           </div>
 
           {/* Commission Summary */}
-          <div className="mb-6 border border-gray-300 rounded-lg">
-            <div className="bg-gray-100 px-4 py-2 border-b border-gray-300">
-              <p className="font-bold text-black text-sm">RINGKASAN PENDAPATAN</p>
+          <div className="mb-3 border border-gray-300 rounded-lg">
+            <div className="bg-gray-100 px-3 py-1.5 border-b border-gray-300">
+              <p className="font-bold text-black text-xs">RINGKASAN PENDAPATAN</p>
             </div>
-            <div className="p-4">
-              <table className="w-full text-sm">
-                <tbody>
-                  <tr className="border-b border-gray-200">
-                    <td className="py-3 text-gray-700">Komisi Layanan</td>
-                    <td className="py-3 text-gray-500 text-xs">({staff.serviceCount || 0} transaksi)</td>
-                    <td className="py-3 text-right font-bold text-black">Rp {(staff.serviceCommission || 0).toLocaleString()}</td>
-                  </tr>
-                  <tr className="border-b border-gray-200">
-                    <td className="py-3 text-gray-700">Komisi Produk</td>
-                    <td className="py-3 text-gray-500 text-xs">({staff.productCount || 0} transaksi)</td>
-                    <td className="py-3 text-right font-bold text-black">Rp {(staff.productCommission || 0).toLocaleString()}</td>
-                  </tr>
-                  <tr className="border-b-2 border-gray-300">
-                    <td className="py-3 text-gray-700 font-bold" colSpan={2}>Gaji Kotor</td>
-                    <td className="py-3 text-right font-bold text-black">Rp {totalCommission.toLocaleString()}</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div className="p-3">
+              <div className="space-y-2 text-xs">
+                <div className="flex justify-between items-center border-b border-gray-200 pb-1">
+                  <span className="text-gray-700">Komisi Layanan <span className="text-gray-500">({staff.serviceCount || 0}x)</span></span>
+                  <span className="font-bold text-black">Rp {(staff.serviceCommission || 0).toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-gray-200 pb-1">
+                  <span className="text-gray-700">Komisi Produk <span className="text-gray-500">({staff.productCount || 0}x)</span></span>
+                  <span className="font-bold text-black">Rp {(staff.productCommission || 0).toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center border-b-2 border-gray-300 pb-1 pt-1">
+                  <span className="text-gray-700 font-bold">Gaji Kotor</span>
+                  <span className="font-bold text-black">Rp {totalCommission.toLocaleString()}</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -359,36 +353,29 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
           )}
 
           {/* Total */}
-          <div className="mb-8 border-2 border-black rounded-lg bg-gray-50">
-            <div className="p-4">
+          <div className="mb-4 border-2 border-black rounded-lg bg-gray-50">
+            <div className="p-3">
               {kasbonDeduction > 0 && (
-                <div className="mb-3 pb-3 border-b border-gray-300">
-                  <div className="flex justify-between text-sm">
+                <div className="mb-2 pb-2 border-b border-gray-300">
+                  <div className="flex justify-between text-xs">
                     <span className="text-gray-700">Gaji Kotor</span>
                     <span className="font-bold text-black">Rp {totalCommission.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between text-sm text-red-600 mt-1">
+                  <div className="flex justify-between text-xs text-red-600 mt-1">
                     <span>Potongan Kasbon</span>
                     <span className="font-bold">- Rp {kasbonDeduction.toLocaleString()}</span>
                   </div>
-                  {deductedKasbon?.date && (
-                    <div className="text-xs text-gray-500 mt-1">
-                      Dipotong: {new Date(deductedKasbon.date).toLocaleDateString('id-ID')}
-                    </div>
-                  )}
                 </div>
               )}
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="text-sm font-bold text-black">TOTAL GAJI BERSIH</p>
+                  <p className="text-xs font-bold text-black">TOTAL GAJI BERSIH</p>
                   <p className="text-xs text-gray-600 mt-1">
-                    {(staff.serviceCount || 0) + (staff.productCount || 0)} total transaksi
-                    {kasbonDeduction > 0 && (
-                      <span className="text-red-600 font-medium"> • {deductions.length || 1} potongan kasbon</span>
-                    )}
+                    {(staff.serviceCount || 0) + (staff.productCount || 0)} transaksi
+                    {kasbonDeduction > 0 && <span className="text-red-600"> • Dipotong kasbon</span>}
                   </p>
                 </div>
-                <p className="text-3xl font-bold text-black">
+                <p className="text-xl sm:text-2xl font-bold text-black">
                   Rp {netSalary.toLocaleString()}
                 </p>
               </div>
@@ -396,32 +383,31 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
           </div>
 
           {/* Footer */}
-          <div className="text-center text-xs text-gray-500 pt-4 border-t border-gray-300">
-            <p className="font-medium">Ini adalah slip gaji resmi dari Barber Place</p>
-            <p className="mt-1">Dibuat pada {new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+          <div className="text-center text-xs text-gray-500 pt-2 border-t border-gray-300">
+            <p className="font-medium">Slip gaji resmi Barber Place</p>
+            <p className="mt-1">Dibuat: {new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
             {kasbonDeduction > 0 && (
-              <p className="mt-2 text-xs text-red-600 font-medium">
-                ⚠️ Potongan kasbon sebesar Rp {kasbonDeduction.toLocaleString()} telah diterapkan pada penggajian ini
+              <p className="mt-1 text-xs text-red-600 font-medium">
+                ⚠️ Dipotong kasbon Rp {kasbonDeduction.toLocaleString()}
               </p>
             )}
-            <p className="mt-2 text-xs">Untuk pertanyaan, silakan hubungi Bagian SDM</p>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="px-6 py-4 border-t border-gray-200 flex gap-3 print:hidden">
+        <div className="px-3 sm:px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row gap-3 print:hidden">
           <button
             onClick={handlePrint}
-            className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2"
+            className="flex-1 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2 min-h-[44px]"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
             </svg>
-            Cetak / Simpan sebagai PDF
+            <span>Cetak / Simpan PDF</span>
           </button>
           <button
             onClick={onClose}
-            className="px-6 py-2.5 border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-medium"
+            className="px-6 py-3 border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-medium min-h-[44px]"
           >
             Tutup
           </button>
@@ -430,6 +416,10 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
 
       <style jsx global>{`
         @media print {
+          @page {
+            size: A4;
+            margin: 0.4in;
+          }
           body * {
             visibility: hidden;
           }
@@ -441,12 +431,63 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
             left: 0;
             top: 0;
             width: 100%;
+            font-size: 10px;
+            line-height: 1.2;
+          }
+          /* Header section - keep together */
+          #payroll-content > div:first-child {
+            page-break-inside: avoid;
+            page-break-after: avoid;
+          }
+          /* Employee info - keep together */
+          #payroll-content > div:nth-child(2) {
+            page-break-inside: avoid;
+          }
+          /* Transaction details - allow break if needed */
+          #payroll-content > div:nth-child(3) {
+            page-break-inside: auto;
+          }
+          /* Summary sections - keep together */
+          #payroll-content > div:nth-child(4),
+          #payroll-content > div:nth-child(5),
+          #payroll-content > div:nth-child(6),
+          #payroll-content > div:nth-child(7) {
+            page-break-inside: avoid;
+          }
+          /* Footer - keep together */
+          #payroll-content > div:last-child {
+            page-break-inside: avoid;
+          }
+          /* Table styling */
+          #payroll-content table {
+            font-size: 9px;
+            page-break-inside: auto;
+          }
+          #payroll-content table thead {
+            display: table-header-group;
+          }
+          #payroll-content table tbody tr {
+            page-break-inside: avoid;
+          }
+          /* Text size overrides */
+          #payroll-content .text-xl {
+            font-size: 14px !important;
+          }
+          #payroll-content .text-2xl {
+            font-size: 16px !important;
+          }
+          #payroll-content .text-3xl {
+            font-size: 18px !important;
+          }
+          /* Kasbon section - allow break if very long */
+          #payroll-content .border-orange-300 {
+            page-break-inside: auto;
           }
           .print\\:hidden {
             display: none !important;
           }
-          .print\\:p-8 {
-            padding: 2rem;
+          .print\\:p-4 {
+            padding: 0.3rem;
           }
         }
       `}</style>
