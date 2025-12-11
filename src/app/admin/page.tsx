@@ -46,9 +46,9 @@ export default function AdminDashboard() {
         setShowLogoutModal={setShowLogoutModal}
       />
 
-      <div className="flex-1 flex flex-col h-full">
-        <div className="flex-1 p-6 overflow-y-auto">
-          <div className={`bg-white rounded-lg shadow-md p-6 mr-6 ${!sidebarOpen ? 'mt-16' : ''}`}>
+      <div className="flex-1 flex flex-col h-full min-w-0">
+        <div className="flex-1 p-3 sm:p-4 lg:p-6 overflow-y-auto">
+          <div className={`bg-white rounded-lg shadow-md p-3 sm:p-4 lg:p-6 ${!sidebarOpen ? 'mt-16 lg:mt-0' : ''} ${sidebarOpen ? 'lg:mr-0' : ''}`}>
             {activeTab === 'overview' && <OverviewTab adminData={adminData} />}
             {activeTab === 'transactions' && <TransactionsTab cabangList={adminData.cabangList} />}
             {activeTab === 'commission' && <CommissionTab adminData={adminData} />}

@@ -54,14 +54,14 @@ export default function Overview({
   return (
     <div className="w-full h-screen overflow-auto">
       <div className="w-full p-4 space-y-4 sm:space-y-6 lg:space-y-8">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900">Ringkasan Bisnis</h2>
-          <p className="text-gray-600 mt-1">Wawasan dan metrik performa real-time</p>
+      <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 lg:gap-6">
+        <div className="flex-1">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">Ringkasan Bisnis</h2>
+          <p className="text-sm sm:text-base text-gray-600">Wawasan dan metrik performa real-time</p>
         </div>
-        <div className="text-right">
-          <div className="text-sm text-gray-500">Terakhir diperbarui</div>
-          <div className="text-lg font-semibold text-gray-900">
+        <div className="text-left lg:text-right">
+          <div className="text-xs sm:text-sm text-gray-500 mb-1">Terakhir diperbarui</div>
+          <div className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900">
             {currentTime || 'Memuat...'}
           </div>
         </div>
@@ -147,78 +147,66 @@ export default function Overview({
       ) : (
         <div className="space-y-8">
           {/* Key Metrics */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-            <div className="bg-white p-3 sm:p-4 rounded-lg sm:rounded-xl border-l-4 border-green-500 shadow-sm hover:shadow-md transition-shadow relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4">
+            <div className="bg-white p-4 rounded-xl border-l-4 border-green-500 shadow-sm hover:shadow-md transition-shadow relative min-h-[100px]">
               <div className="absolute top-3 right-3">
                 <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <p className="text-gray-500 text-xs font-semibold mb-1 pr-6">Pendapatan Hari Ini</p>
-              <div className="h-2 sm:h-3 mb-1"></div>
-              <p className="font-bold text-gray-900 leading-tight text-sm sm:text-base break-words">Rp {overviewData?.todayRevenue?.toLocaleString() || '0'}</p>
+              <p className="text-gray-500 text-xs font-semibold mb-2 pr-6">Pendapatan Hari Ini</p>
+              <p className="font-bold text-gray-900 leading-tight text-sm sm:text-base lg:text-lg break-words">Rp {overviewData?.todayRevenue?.toLocaleString() || '0'}</p>
             </div>
             
-            <div className="bg-white p-4 rounded-xl border-l-4 border-purple-500 shadow-sm hover:shadow-md transition-shadow relative">
+            <div className="bg-white p-4 rounded-xl border-l-4 border-purple-500 shadow-sm hover:shadow-md transition-shadow relative min-h-[100px]">
               <div className="absolute top-3 right-3">
                 <svg className="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
               </div>
               <p className="text-gray-500 text-xs font-semibold mb-1">Laba Bersih Hari Ini</p>
-              <p className="text-[10px] text-gray-400 mb-1">Setelah komisi & pengeluaran</p>
-              <p className={`font-bold leading-tight ${
-                (overviewData?.todayNetIncome?.toLocaleString() || '0').length > 12 ? 'text-sm' : 
-                (overviewData?.todayNetIncome?.toLocaleString() || '0').length > 9 ? 'text-base' : 'text-lg'
-              }`}><span className="text-gray-900">Rp</span> <span className={overviewData?.todayNetIncome ? "text-purple-700" : "text-gray-900"}>{overviewData?.todayNetIncome?.toLocaleString() || '0'}</span></p>
+              <p className="text-[10px] text-gray-400 mb-2">Setelah komisi & pengeluaran</p>
+              <p className="font-bold leading-tight text-sm sm:text-base lg:text-lg"><span className="text-gray-900">Rp</span> <span className={overviewData?.todayNetIncome ? "text-purple-700" : "text-gray-900"}>{overviewData?.todayNetIncome?.toLocaleString() || '0'}</span></p>
             </div>
             
-            <div className="bg-white p-4 rounded-xl border-l-4 border-orange-500 shadow-sm hover:shadow-md transition-shadow relative">
+            <div className="bg-white p-4 rounded-xl border-l-4 border-orange-500 shadow-sm hover:shadow-md transition-shadow relative min-h-[100px]">
               <div className="absolute top-3 right-3">
                 <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <p className="text-gray-500 text-xs font-semibold mb-1">Komisi Staf</p>
-              <div className="h-3 mb-1"></div>
-              <p className={`font-bold text-gray-900 leading-tight ${
-                (overviewData?.todayCommissions?.toLocaleString() || '0').length > 12 ? 'text-sm' : 
-                (overviewData?.todayCommissions?.toLocaleString() || '0').length > 9 ? 'text-base' : 'text-lg'
-              }`}>Rp {overviewData?.todayCommissions?.toLocaleString() || '0'}</p>
+              <p className="text-gray-500 text-xs font-semibold mb-2">Komisi Staf</p>
+              <p className="font-bold text-gray-900 leading-tight text-sm sm:text-base lg:text-lg">Rp {overviewData?.todayCommissions?.toLocaleString() || '0'}</p>
             </div>
             
-            <div className="bg-white p-4 rounded-xl border-l-4 border-red-500 shadow-sm hover:shadow-md transition-shadow relative">
+            <div className="bg-white p-4 rounded-xl border-l-4 border-red-500 shadow-sm hover:shadow-md transition-shadow relative min-h-[100px]">
               <div className="absolute top-3 right-3">
                 <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
-              <p className="text-gray-500 text-xs font-semibold mb-1">Pengeluaran Hari Ini</p>
-              <div className="h-3 mb-1"></div>
-              <p className={`font-bold text-gray-900 leading-tight ${
-                (overviewData?.todayExpenses?.toLocaleString() || '0').length > 12 ? 'text-sm' : 
-                (overviewData?.todayExpenses?.toLocaleString() || '0').length > 9 ? 'text-base' : 'text-lg'
-              }`}>Rp {overviewData?.todayExpenses?.toLocaleString() || '0'}</p>
+              <p className="text-gray-500 text-xs font-semibold mb-2">Pengeluaran Hari Ini</p>
+              <p className="font-bold text-gray-900 leading-tight text-sm sm:text-base lg:text-lg">Rp {overviewData?.todayExpenses?.toLocaleString() || '0'}</p>
             </div>
             
-            <div className="bg-white p-4 rounded-xl border-l-4 border-blue-500 shadow-sm hover:shadow-md transition-shadow relative">
+            <div className="bg-white p-4 rounded-xl border-l-4 border-blue-500 shadow-sm hover:shadow-md transition-shadow relative min-h-[100px]">
               <div className="absolute top-3 right-3">
                 <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
               <p className="text-gray-500 text-xs font-semibold mb-1">Transaksi Hari Ini</p>
-              <p className="text-[10px] text-gray-400 mb-1">Semua cabang</p>
-              <p className="text-lg font-bold text-gray-900 leading-tight">{overviewData?.todayTransactions || 0}</p>
+              <p className="text-[10px] text-gray-400 mb-2">Semua cabang</p>
+              <p className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 leading-tight">{overviewData?.todayTransactions || 0}</p>
             </div>
           </div>
 
           {/* Revenue Chart - Full Width */}
-          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <div className="flex justify-between items-center mb-6">
+          <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Tren Pendapatan</h3>
-                <p className="text-sm text-gray-500 mt-1">Performa pendapatan harian</p>
+                <h3 className="text-base sm:text-lg font-bold text-gray-900">Tren Pendapatan</h3>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">Performa pendapatan harian</p>
               </div>
               <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
                 {[
@@ -228,7 +216,7 @@ export default function Overview({
                   <button
                     key={period.id}
                     onClick={() => setChartPeriod(period.id)}
-                    className={`px-4 py-2 text-xs font-medium rounded-md transition-colors ${
+                    className={`px-3 sm:px-4 py-2 text-xs font-medium rounded-md transition-colors min-h-[44px] sm:min-h-0 ${
                       chartPeriod === period.id
                         ? 'bg-blue-600 text-white shadow-sm'
                         : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
@@ -278,32 +266,40 @@ export default function Overview({
           </div>
 
           {/* Top Services - Moved Below */}
-          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Layanan Terpopuler</h3>
-            <div className="space-y-4">
-              {overviewData.topServices.map((service: any, index: number) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 rounded-full border-2 border-gray-300 bg-gray-50 flex items-center justify-center">
-                      <span className="text-sm font-bold text-gray-700">
-                        {index + 1}
-                      </span>
+          <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm">
+            <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-4">Layanan Terpopuler</h3>
+            <div className="max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              <div className="space-y-3 sm:space-y-4 pr-2">
+                {overviewData.topServices.map((service: any, index: number) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full border-2 border-gray-300 bg-gray-50 flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs sm:text-sm font-bold text-gray-700">
+                          {index + 1}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div 
+                          className="font-medium text-gray-900 text-sm sm:text-base truncate cursor-help break-words overflow-hidden" 
+                          title={service.name}
+                          style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}
+                        >
+                          {service.name}
+                        </div>
+                        <div className="text-xs sm:text-sm text-gray-500">{service.count} transaksi</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-medium text-gray-900">{service.name}</div>
-                      <div className="text-sm text-gray-500">{service.count} transaksi</div>
+                    <div className="text-right flex-shrink-0">
+                      <div className="font-bold text-gray-900 text-sm sm:text-base">Rp {service.revenue.toLocaleString()}</div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="font-bold text-gray-900">Rp {service.revenue.toLocaleString()}</div>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Branch Performance & Quick Stats */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
             {/* Branch Performance */}
             <div className="bg-white p-4 sm:p-6 rounded-lg sm:rounded-xl border border-gray-200 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 space-y-2 sm:space-y-0">
@@ -317,7 +313,7 @@ export default function Overview({
                     <button
                       key={period.id}
                       onClick={() => setBranchPeriod(period.id)}
-                      className={`px-2 sm:px-3 py-1 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
+                      className={`px-2 sm:px-3 py-1 text-xs font-medium rounded-md transition-colors whitespace-nowrap min-h-[44px] sm:min-h-0 ${
                         branchPeriod === period.id
                           ? 'bg-blue-600 text-white'
                           : 'text-gray-600 hover:text-gray-900'
@@ -353,21 +349,21 @@ export default function Overview({
             <div className="bg-white p-4 sm:p-6 rounded-lg sm:rounded-xl border border-gray-200 shadow-sm">
               <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3 sm:mb-4">Statistik Cepat</h3>
               <div className="space-y-3 sm:space-y-4">
-                <div className="flex justify-between items-center p-2 sm:p-3 border-2 border-orange-600 rounded-lg">
+                <div className="flex justify-between items-center p-3 border-2 border-orange-600 rounded-lg min-h-[60px]">
                   <span className="text-xs sm:text-sm font-medium text-gray-700">Total Cabang</span>
                   <span className="text-lg sm:text-xl font-bold text-orange-600">{branchList.length}</span>
                 </div>
-                <div className="flex justify-between items-center p-3 border-2 border-blue-600 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Total Capsters</span>
-                  <span className="text-xl font-bold text-blue-600">{capsterList.length}</span>
+                <div className="flex justify-between items-center p-3 border-2 border-blue-600 rounded-lg min-h-[60px]">
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">Total Capsters</span>
+                  <span className="text-lg sm:text-xl font-bold text-blue-600">{capsterList.length}</span>
                 </div>
-                <div className="flex justify-between items-center p-3 border-2 border-green-600 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Total Kasir</span>
-                  <span className="text-xl font-bold text-green-600">{kasirList.length}</span>
+                <div className="flex justify-between items-center p-3 border-2 border-green-600 rounded-lg min-h-[60px]">
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">Total Kasir</span>
+                  <span className="text-lg sm:text-xl font-bold text-green-600">{kasirList.length}</span>
                 </div>
-                <div className="flex justify-between items-center p-3 border-2 border-purple-600 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700">Layanan & Produk</span>
-                  <span className="text-xl font-bold text-purple-600">{(serviceList?.length || 0) + (productList?.length || 0)}</span>
+                <div className="flex justify-between items-center p-3 border-2 border-purple-600 rounded-lg min-h-[60px]">
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">Layanan & Produk</span>
+                  <span className="text-lg sm:text-xl font-bold text-purple-600">{(serviceList?.length || 0) + (productList?.length || 0)}</span>
                 </div>
               </div>
             </div>

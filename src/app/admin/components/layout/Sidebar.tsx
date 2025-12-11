@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -19,6 +20,28 @@ export default function Sidebar({
   setExpandedMenus,
   setShowLogoutModal
 }: SidebarProps) {
+  // Auto-collapse pada mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setSidebarOpen(false);
+      } else if (window.innerWidth >= 1024) {
+        setSidebarOpen(true);
+      }
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [setSidebarOpen]);
+
+  // Close sidebar saat klik menu di mobile
+  const handleMenuClick = (tabId: string) => {
+    setActiveTab(tabId);
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  };
   const toggleMenu = (menuKey: string) => {
     setExpandedMenus(prev => ({
       ...prev,
@@ -82,7 +105,18 @@ export default function Sidebar({
 
   return (
     <>
-    <div className={`bg-white shadow-lg transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-0'} flex flex-col h-full overflow-hidden flex-shrink-0`}>
+    {/* Mobile Overlay */}
+    {sidebarOpen && (
+      <div 
+        className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+        onClick={() => setSidebarOpen(false)}
+      />
+    )}
+    
+    <div className={`bg-white shadow-lg transition-all duration-300 flex-shrink-0 flex flex-col h-full overflow-hidden
+      ${sidebarOpen ? 'w-64' : 'w-0'} 
+      lg:relative fixed z-50 lg:z-auto
+    `}>
       {/* Sidebar Header */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
@@ -151,8 +185,8 @@ export default function Sidebar({
                     {item.submenu.map((subItem) => (
                       <button
                         key={subItem.id}
-                        onClick={() => setActiveTab(subItem.id)}
-                        className={`w-full text-left p-2 rounded-md text-sm transition-colors flex items-center gap-2 ${
+                        onClick={() => handleMenuClick(subItem.id)}
+                        className={`w-full text-left p-2 rounded-md text-sm transition-colors flex items-center gap-2 min-h-[44px] ${
                           activeTab === subItem.id
                             ? 'bg-black text-white'
                             : 'text-gray-600 hover:bg-gray-100'
@@ -167,8 +201,8 @@ export default function Sidebar({
               </div>
             ) : (
               <button
-                onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
+                onClick={() => handleMenuClick(item.id)}
+                className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors min-h-[44px] ${
                   activeTab === item.id
                     ? 'bg-black text-white'
                     : 'text-gray-600 hover:bg-gray-100'
@@ -202,7 +236,7 @@ export default function Sidebar({
     {!sidebarOpen && (
       <button
         onClick={() => setSidebarOpen(true)}
-        className="fixed top-6 left-6 z-50 p-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-300 group backdrop-blur-sm"
+        className="fixed top-4 left-4 z-50 p-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-300 group backdrop-blur-sm min-h-[44px] min-w-[44px] flex items-center justify-center"
       >
         <svg className="w-6 h-6 text-white group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />

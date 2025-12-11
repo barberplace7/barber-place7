@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import AddServiceModal from '../components/AddServiceModal';
 import AddProductModal from '../components/AddProductModal';
@@ -8,8 +8,35 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
   const [showServiceForm, setShowServiceForm] = useState(false);
   const [showProductForm, setShowProductForm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<{show: boolean, type: 'service'|'product', id: string, name: string}>({show: false, type: 'service', id: '', name: ''});
+  const [servicePage, setServicePage] = useState(1);
+  const [productPage, setProductPage] = useState(1);
+  const itemsPerPage = 15;
   
   const queryClient = useQueryClient();
+
+  // Pagination logic for services
+  const paginatedServices = useMemo(() => {
+    const services = adminData.serviceList || [];
+    const startIndex = (servicePage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return {
+      data: services.slice(startIndex, endIndex),
+      totalPages: Math.ceil(services.length / itemsPerPage),
+      totalItems: services.length
+    };
+  }, [adminData.serviceList, servicePage]);
+
+  // Pagination logic for products
+  const paginatedProducts = useMemo(() => {
+    const products = adminData.productList || [];
+    const startIndex = (productPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return {
+      data: products.slice(startIndex, endIndex),
+      totalPages: Math.ceil(products.length / itemsPerPage),
+      totalItems: products.length
+    };
+  }, [adminData.productList, productPage]);
   
   const addServiceMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -105,64 +132,111 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
         )}
         
         <div>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-black">Paket Layanan</h2>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-black">Paket Layanan</h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Menampilkan {paginatedServices.data.length} dari {paginatedServices.totalItems} layanan
+              </p>
+            </div>
             <button 
               onClick={() => setShowServiceForm(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 min-h-[44px] justify-center"
             >
               <span className="text-xl">+</span>
-              Tambah Layanan Baru
+              <span className="hidden sm:inline">Tambah Layanan Baru</span>
+              <span className="sm:hidden">Tambah</span>
             </button>
           </div>
           
-          <div className="overflow-hidden rounded-lg border border-gray-200">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Layanan</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kategori</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Harga Dasar</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Komisi</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {adminData.serviceList.length === 0 ? (
+          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50 sticky top-0">
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-gray-500">
-                      Belum ada layanan. Tambahkan layanan pertama untuk memulai.
-                    </td>
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Layanan</th>
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Kategori</th>
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga</th>
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Komisi</th>
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                   </tr>
-                ) : (
-                  adminData.serviceList.map((service: any) => (
-                    <tr key={service.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-black">{service.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          service.category === 'HAIRCUT' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
-                        }`}>
-                          {service.category === 'HAIRCUT' ? 'Potong Rambut' : 'Perawatan'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp {service.basePrice.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp {service.commissionAmount.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <button
-                          onClick={() => setDeleteConfirm({show: true, type: 'service', id: service.id, name: service.name})}
-                          disabled={deleteServiceMutation.isPending}
-                          className="text-red-600 hover:text-red-800 disabled:opacity-50"
-                        >
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {paginatedServices.totalItems === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-3 sm:px-6 py-12 text-center text-gray-500">
+                        Belum ada layanan. Tambahkan layanan pertama untuk memulai.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    paginatedServices.data.map((service: any) => (
+                      <tr key={service.id} className="hover:bg-gray-50">
+                        <td className="px-3 sm:px-6 py-4 text-sm">
+                          <div className="font-bold text-black">{service.name}</div>
+                          <div className="sm:hidden mt-1">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              service.category === 'HAIRCUT' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                            }`}>
+                              {service.category === 'HAIRCUT' ? 'Potong Rambut' : 'Perawatan'}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden sm:table-cell">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            service.category === 'HAIRCUT' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                          }`}>
+                            {service.category === 'HAIRCUT' ? 'Potong Rambut' : 'Perawatan'}
+                          </span>
+                        </td>
+                        <td className="px-3 sm:px-6 py-4 text-sm">
+                          <div className="text-gray-900 font-medium">Rp {service.basePrice.toLocaleString()}</div>
+                          <div className="md:hidden text-xs text-gray-500 mt-1">Komisi: Rp {service.commissionAmount.toLocaleString()}</div>
+                        </td>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">Rp {service.commissionAmount.toLocaleString()}</td>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm">
+                          <button
+                            onClick={() => setDeleteConfirm({show: true, type: 'service', id: service.id, name: service.name})}
+                            disabled={deleteServiceMutation.isPending}
+                            className="text-red-600 hover:text-red-800 disabled:opacity-50 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                          >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Pagination */}
+            {paginatedServices.totalPages > 1 && (
+              <div className="px-3 sm:px-6 py-4 border-t border-gray-200 bg-gray-50">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                  <div className="text-sm text-gray-700">
+                    Halaman {servicePage} dari {paginatedServices.totalPages}
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setServicePage(prev => Math.max(prev - 1, 1))}
+                      disabled={servicePage === 1}
+                      className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                    >
+                      Sebelumnya
+                    </button>
+                    <button
+                      onClick={() => setServicePage(prev => Math.min(prev + 1, paginatedServices.totalPages))}
+                      disabled={servicePage === paginatedServices.totalPages}
+                      className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                    >
+                      Selanjutnya
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         
@@ -216,56 +290,94 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
         )}
         
         <div>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-black">Produk</h2>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-black">Produk</h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Menampilkan {paginatedProducts.data.length} dari {paginatedProducts.totalItems} produk
+              </p>
+            </div>
             <button 
               onClick={() => setShowProductForm(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2 min-h-[44px] justify-center"
             >
               <span className="text-xl">+</span>
-              Tambah Produk Baru
+              <span className="hidden sm:inline">Tambah Produk Baru</span>
+              <span className="sm:hidden">Tambah</span>
             </button>
           </div>
           
-          <div className="overflow-hidden rounded-lg border border-gray-200">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nama Produk</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Harga Dasar</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Komisi Per Unit</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {adminData.productList.length === 0 ? (
+          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50 sticky top-0">
                   <tr>
-                    <td colSpan={3} className="px-6 py-12 text-center text-gray-500">
-                      Belum ada produk. Tambahkan produk pertama untuk memulai.
-                    </td>
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Produk</th>
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga</th>
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Komisi</th>
+                    <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                   </tr>
-                ) : (
-                  adminData.productList.map((product: any) => (
-                    <tr key={product.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-black">{product.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp {product.basePrice.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Rp {product.commissionPerUnit.toLocaleString()}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <button
-                          onClick={() => setDeleteConfirm({show: true, type: 'product', id: product.id, name: product.name})}
-                          disabled={deleteProductMutation.isPending}
-                          className="text-red-600 hover:text-red-800 disabled:opacity-50"
-                        >
-                          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {paginatedProducts.totalItems === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="px-3 sm:px-6 py-12 text-center text-gray-500">
+                        Belum ada produk. Tambahkan produk pertama untuk memulai.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    paginatedProducts.data.map((product: any) => (
+                      <tr key={product.id} className="hover:bg-gray-50">
+                        <td className="px-3 sm:px-6 py-4 text-sm font-bold text-black">{product.name}</td>
+                        <td className="px-3 sm:px-6 py-4 text-sm">
+                          <div className="text-gray-900 font-medium">Rp {product.basePrice.toLocaleString()}</div>
+                          <div className="md:hidden text-xs text-gray-500 mt-1">Komisi: Rp {product.commissionPerUnit.toLocaleString()}</div>
+                        </td>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">Rp {product.commissionPerUnit.toLocaleString()}</td>
+                        <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm">
+                          <button
+                            onClick={() => setDeleteConfirm({show: true, type: 'product', id: product.id, name: product.name})}
+                            disabled={deleteProductMutation.isPending}
+                            className="text-red-600 hover:text-red-800 disabled:opacity-50 p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                          >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+            
+            {/* Pagination */}
+            {paginatedProducts.totalPages > 1 && (
+              <div className="px-3 sm:px-6 py-4 border-t border-gray-200 bg-gray-50">
+                <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+                  <div className="text-sm text-gray-700">
+                    Halaman {productPage} dari {paginatedProducts.totalPages}
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setProductPage(prev => Math.max(prev - 1, 1))}
+                      disabled={productPage === 1}
+                      className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                    >
+                      Sebelumnya
+                    </button>
+                    <button
+                      onClick={() => setProductPage(prev => Math.min(prev + 1, paginatedProducts.totalPages))}
+                      disabled={productPage === paginatedProducts.totalPages}
+                      className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                    >
+                      Selanjutnya
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
         
@@ -317,7 +429,7 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
           <h2 className="text-xl font-bold text-black">Gambar Galeri (6 slot)</h2>
           <p className="text-gray-600 text-sm">Unggah gambar untuk galeri halaman utama</p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1,2,3,4,5,6].map((slot) => {
             const gallery = galleryMap.get(slot);
             return (

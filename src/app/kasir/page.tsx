@@ -23,7 +23,7 @@ export default function KasirDashboard() {
       {!state.sidebarOpen && (
         <button
           onClick={() => state.setSidebarOpen(true)}
-          className="fixed top-6 left-6 z-50 p-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-300 group backdrop-blur-sm"
+          className="fixed top-4 left-4 z-50 p-3 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl shadow-xl hover:shadow-2xl hover:scale-110 transition-all duration-300 group backdrop-blur-sm min-h-[44px] min-w-[44px] flex items-center justify-center"
         >
           <svg className="w-6 h-6 text-white group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16M4 18h16" />
@@ -31,9 +31,9 @@ export default function KasirDashboard() {
         </button>
       )}
 
-      <div className="flex-1 overflow-auto">
-        <div className={`p-6 transition-all duration-300 ${!state.sidebarOpen ? 'mt-16' : ''}`}>
-          <div className="bg-white rounded-lg shadow-md p-6 border border-gray-300">
+      <div className="flex-1 overflow-auto min-w-0">
+        <div className={`p-3 sm:p-4 lg:p-6 transition-all duration-300 ${!state.sidebarOpen ? 'mt-16 lg:mt-0' : ''}`}>
+          <div className="bg-white rounded-lg shadow-md p-3 sm:p-4 lg:p-6 border border-gray-300">
             {state.activeTab === 'transactions' && <TransactionsTab state={state} />}
             {state.activeTab === 'history' && <HistoryTab state={state} />}
           </div>

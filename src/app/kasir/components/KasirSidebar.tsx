@@ -1,8 +1,43 @@
 'use client';
+import { useEffect } from 'react';
 
 export default function KasirSidebar({ state, onLogout }: any) {
+  // Auto-collapse pada mobile
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        state.setSidebarOpen(false);
+      } else if (window.innerWidth >= 1024) {
+        state.setSidebarOpen(true);
+      }
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [state.setSidebarOpen]);
+
+  const handleMenuClick = (tabId: string) => {
+    state.setActiveTab(tabId);
+    if (window.innerWidth < 768) {
+      state.setSidebarOpen(false);
+    }
+  };
+
   return (
-    <div className={`bg-white shadow-lg transition-all duration-300 ${state.sidebarOpen ? 'w-64' : 'w-0'} flex flex-col h-screen overflow-hidden flex-shrink-0`}>
+    <>
+    {/* Mobile Overlay */}
+    {state.sidebarOpen && (
+      <div 
+        className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+        onClick={() => state.setSidebarOpen(false)}
+      />
+    )}
+    
+    <div className={`bg-white shadow-lg transition-all duration-300 flex-shrink-0 flex flex-col h-screen overflow-hidden
+      ${state.sidebarOpen ? 'w-64' : 'w-0'} 
+      lg:relative fixed z-50 lg:z-auto
+    `}>
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className={`flex items-center space-x-3 ${!state.sidebarOpen && 'justify-center'}`}>
@@ -30,8 +65,8 @@ export default function KasirSidebar({ state, onLogout }: any) {
         )}
         
         <button
-          onClick={() => state.setActiveTab('transactions')}
-          className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
+          onClick={() => handleMenuClick('transactions')}
+          className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors min-h-[44px] ${
             state.activeTab === 'transactions' ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'
           } ${!state.sidebarOpen && 'justify-center'}`}
         >
@@ -44,8 +79,8 @@ export default function KasirSidebar({ state, onLogout }: any) {
         </button>
         
         <button
-          onClick={() => state.setActiveTab('history')}
-          className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
+          onClick={() => handleMenuClick('history')}
+          className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors min-h-[44px] ${
             state.activeTab === 'history' ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'
           } ${!state.sidebarOpen && 'justify-center'}`}
         >
@@ -61,7 +96,7 @@ export default function KasirSidebar({ state, onLogout }: any) {
       <div className="p-4 border-t border-gray-200">
         <button 
           onClick={onLogout}
-          className={`w-full flex items-center space-x-3 p-3 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors ${
+          className={`w-full flex items-center space-x-3 p-3 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors min-h-[44px] ${
             !state.sidebarOpen && 'justify-center'
           }`}
         >
@@ -72,5 +107,6 @@ export default function KasirSidebar({ state, onLogout }: any) {
         </button>
       </div>
     </div>
+    </>
   );
 }

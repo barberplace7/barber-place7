@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useDateFilter } from '@/hooks/useDateFilter';
 import { useAdminCommission } from '@/hooks/useAdminQueries';
 import { DateFilter } from '@/components/shared/DateFilter';
@@ -9,16 +9,31 @@ export default function CommissionTab({ adminData }: any) {
   const [capsterId, setCapsterId] = useState('');
   const [branchId, setBranchId] = useState('');
   const [selectedStaff, setSelectedStaff] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15;
   
   const { datePreset, dateFrom, dateTo, setDatePreset, setCustomDates } = useDateFilter('7days');
   const { data: commissionData = [], isLoading } = useAdminCommission({ dateFrom, dateTo, capsterId, branchId });
 
+  // Pagination logic
+  const paginatedCommissions = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return {
+      data: commissionData.slice(startIndex, endIndex),
+      totalPages: Math.ceil(commissionData.length / itemsPerPage),
+      totalItems: commissionData.length
+    };
+  }, [commissionData, currentPage]);
+
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
         <div>
           <h2 className="text-xl font-bold text-black">Monitor Komisi</h2>
-          <p className="text-gray-600 text-sm">Pantau komisi dan performa capster</p>
+          <p className="text-gray-600 text-sm">
+            Menampilkan {paginatedCommissions.data.length} dari {paginatedCommissions.totalItems} data komisi
+          </p>
         </div>
       </div>
 
@@ -113,68 +128,107 @@ export default function CommissionTab({ adminData }: any) {
           </div>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-gray-200">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Staf</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Peran</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Cabang</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Komisi Layanan</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Komisi Produk</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total Komisi</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Transaksi</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
-              </tr>
-            </thead>
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50 sticky top-0">
+                <tr>
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Staf</th>
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell">Peran</th>
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell">Cabang</th>
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Komisi</th>
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell">Transaksi</th>
+                  <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                </tr>
+              </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {commissionData.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
-                  Tidak ada data komisi untuk periode yang dipilih.
-                </td>
-              </tr>
-            ) : (
-              commissionData.map((item: any, index: number) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-black">{item.capsterName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      item.role === 'CAPSTER' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
-                    }`}>
-                      {item.role || 'CAPSTER'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.branchName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-medium">
-                    Rp {(item.serviceCommission || 0).toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-orange-600 font-medium">
-                    Rp {(item.productCommission || 0).toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-bold">
-                    Rp {((item.serviceCommission || 0) + (item.productCommission || 0)).toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {item.serviceCount || 0} layanan, {item.productCount || 0} produk
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <button
-                      onClick={() => setSelectedStaff(item)}
-                      className="px-3 py-1.5 border-2 border-green-400 text-green-600 rounded-lg hover:bg-green-50 text-xs font-medium transition-all duration-200 flex items-center gap-1.5"
-                    >
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      Penggajian
-                    </button>
+              {paginatedCommissions.totalItems === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-3 sm:px-6 py-12 text-center text-gray-500">
+                    Tidak ada data komisi untuk periode yang dipilih.
                   </td>
                 </tr>
-              ))
+              ) : (
+                paginatedCommissions.data.map((item: any, index: number) => (
+                  <tr key={index} className="hover:bg-gray-50">
+                    <td className="px-3 sm:px-6 py-4 text-sm">
+                      <div className="font-bold text-black">{item.capsterName}</div>
+                      <div className="sm:hidden mt-1">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          item.role === 'CAPSTER' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                        }`}>
+                          {item.role || 'CAPSTER'}
+                        </span>
+                      </div>
+                      <div className="md:hidden text-xs text-gray-500 mt-1">{item.branchName}</div>
+                    </td>
+                    <td className="px-3 sm:px-6 py-4 text-sm hidden sm:table-cell">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        item.role === 'CAPSTER' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                      }`}>
+                        {item.role || 'CAPSTER'}
+                      </span>
+                    </td>
+                    <td className="px-3 sm:px-6 py-4 text-sm text-gray-500 hidden md:table-cell">{item.branchName}</td>
+                    <td className="px-3 sm:px-6 py-4 text-sm">
+                      <div className="text-green-600 font-bold">
+                        Rp {((item.serviceCommission || 0) + (item.productCommission || 0)).toLocaleString()}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-1">
+                        Layanan: Rp {(item.serviceCommission || 0).toLocaleString()}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Produk: Rp {(item.productCommission || 0).toLocaleString()}
+                      </div>
+                    </td>
+                    <td className="px-3 sm:px-6 py-4 text-sm text-gray-500 hidden lg:table-cell">
+                      {item.serviceCount || 0} layanan, {item.productCount || 0} produk
+                    </td>
+                    <td className="px-3 sm:px-6 py-4 text-sm">
+                      <button
+                        onClick={() => setSelectedStaff(item)}
+                        className="px-3 py-2 border border-green-400 text-green-600 rounded-lg hover:bg-green-50 text-xs font-medium transition-colors flex items-center gap-2 min-h-[44px] justify-center w-full"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>Penggajian</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
         </div>
+        
+        {/* Pagination */}
+        {paginatedCommissions.totalPages > 1 && (
+          <div className="px-3 sm:px-6 py-4 border-t border-gray-200 bg-gray-50">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+              <div className="text-sm text-gray-700">
+                Halaman {currentPage} dari {paginatedCommissions.totalPages}
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                >
+                  Sebelumnya
+                </button>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, paginatedCommissions.totalPages))}
+                  disabled={currentPage === paginatedCommissions.totalPages}
+                  className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
+                >
+                  Selanjutnya
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
       )}
 
       {selectedStaff && (

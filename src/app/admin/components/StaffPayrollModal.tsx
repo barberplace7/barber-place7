@@ -281,74 +281,79 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
             </div>
           )}
 
-          {/* Kasbon Deduction */}
+          {/* Kasbon Section - Only show in print if there's remaining kasbon */}
           {totalKasbon > 0 && (
             <div className="mb-6 border-2 border-orange-300 rounded-lg bg-orange-50">
               <div className="bg-orange-100 px-4 py-2 border-b border-orange-300">
                 <p className="font-bold text-orange-800 text-sm">⚠️ SISA KASBON</p>
               </div>
               <div className="p-4">
+                {/* Always show remaining kasbon amount */}
                 <div className="mb-3">
-                  <p className="text-sm text-gray-700">Total Kasbon: <span className="font-bold text-orange-600">Rp {totalKasbon.toLocaleString()}</span></p>
+                  <p className="text-sm text-gray-700">Sisa Kasbon: <span className="font-bold text-orange-600">Rp {totalKasbon.toLocaleString()}</span></p>
                 </div>
-                <div className="flex items-center gap-3 mb-3">
-                  <input
-                    type="checkbox"
-                    id="deductKasbon"
-                    checked={deductKasbon}
-                    onChange={(e) => {
-                      setDeductKasbon(e.target.checked);
-                      if (e.target.checked) {
-                        setDeductAmount(maxDeduct.toString());
-                      } else {
-                        setDeductAmount('');
-                      }
-                    }}
-                    className="w-4 h-4"
-                  />
-                  <label htmlFor="deductKasbon" className="text-sm font-medium text-gray-700 cursor-pointer">
-                    Potong kasbon dari gaji ini?
-                  </label>
-                </div>
-                {deductKasbon && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Jumlah Potongan (Maks: Rp {maxDeduct.toLocaleString()})</label>
+                
+                {/* Checkbox and input - HIDDEN in print */}
+                <div className="print:hidden">
+                  <div className="flex items-center gap-3 mb-3">
                     <input
-                      type="number"
-                      value={deductAmount}
+                      type="checkbox"
+                      id="deductKasbon"
+                      checked={deductKasbon}
                       onChange={(e) => {
-                        const val = parseInt(e.target.value) || 0;
-                        setDeductAmount(Math.min(val, maxDeduct).toString());
-                      }}
-                      max={maxDeduct}
-                      className="w-full border border-gray-300 rounded px-3 py-2 text-black"
-                    />
-                    <button
-                      onClick={async () => {
-                        if (!deductAmount || parseInt(deductAmount) <= 0) return;
-                        const advance = advances[0];
-                        if (!advance) return;
-                        if (confirm(`Potong kasbon Rp ${parseInt(deductAmount).toLocaleString()}?`)) {
-                          try {
-                            await deductMutation.mutateAsync({
-                              advanceId: advance.id,
-                              amount: parseInt(deductAmount),
-                              deductedBy: 'admin',
-                              deductedByName: 'Admin'
-                            });
-                            alert('Kasbon berhasil dipotong! Detail tersimpan di slip gaji.');
-                          } catch (error) {
-                            alert('Gagal memotong kasbon');
-                          }
+                        setDeductKasbon(e.target.checked);
+                        if (e.target.checked) {
+                          setDeductAmount(maxDeduct.toString());
+                        } else {
+                          setDeductAmount('');
                         }
                       }}
-                      disabled={deductMutation.isPending}
-                      className="mt-2 w-full bg-orange-600 text-white py-2 rounded hover:bg-orange-700 disabled:opacity-50"
-                    >
-                      {deductMutation.isPending ? 'Memproses...' : 'Konfirmasi Potong Kasbon'}
-                    </button>
+                      className="w-4 h-4"
+                    />
+                    <label htmlFor="deductKasbon" className="text-sm font-medium text-gray-700 cursor-pointer">
+                      Potong kasbon dari gaji ini?
+                    </label>
                   </div>
-                )}
+                  {deductKasbon && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Jumlah Potongan (Maks: Rp {maxDeduct.toLocaleString()})</label>
+                      <input
+                        type="number"
+                        value={deductAmount}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value) || 0;
+                          setDeductAmount(Math.min(val, maxDeduct).toString());
+                        }}
+                        max={maxDeduct}
+                        className="w-full border border-gray-300 rounded px-3 py-2 text-black"
+                      />
+                      <button
+                        onClick={async () => {
+                          if (!deductAmount || parseInt(deductAmount) <= 0) return;
+                          const advance = advances[0];
+                          if (!advance) return;
+                          if (confirm(`Potong kasbon Rp ${parseInt(deductAmount).toLocaleString()}?`)) {
+                            try {
+                              await deductMutation.mutateAsync({
+                                advanceId: advance.id,
+                                amount: parseInt(deductAmount),
+                                deductedBy: 'admin',
+                                deductedByName: 'Admin'
+                              });
+                              alert('Kasbon berhasil dipotong! Detail tersimpan di slip gaji.');
+                            } catch (error) {
+                              alert('Gagal memotong kasbon');
+                            }
+                          }
+                        }}
+                        disabled={deductMutation.isPending}
+                        className="mt-2 w-full bg-orange-600 text-white py-2 rounded hover:bg-orange-700 disabled:opacity-50"
+                      >
+                        {deductMutation.isPending ? 'Memproses...' : 'Konfirmasi Potong Kasbon'}
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
