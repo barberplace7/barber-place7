@@ -47,13 +47,19 @@ export default function TransactionsTab({ state }: any) {
             ))}
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3 items-center mt-1">
           <button 
             onClick={() => state.setShowAddService(true)}
-            className="bg-stone-800 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-stone-900 transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
+            className="group relative bg-gradient-to-br from-gray-800 to-gray-900 text-white px-4 py-2 rounded-xl hover:from-gray-900 hover:to-black transition-all duration-300 font-medium flex items-center gap-2 text-sm shadow-lg hover:shadow-xl hover:-translate-y-0.5 border border-gray-700 hover:border-gray-600"
           >
-            <span>✂</span> <span className="hidden sm:inline">Tambah Layanan</span><span className="sm:hidden">Layanan</span>
+            <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg shadow-md group-hover:shadow-blue-500/25 transition-all duration-300 group-hover:scale-110">
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+              </svg>
+            </div>
+            <span>Tambah Layanan</span>
           </button>
+          
           <button 
             onClick={() => {
               state.setShowProductSale(true);
@@ -64,21 +70,38 @@ export default function TransactionsTab({ state }: any) {
                 }
               }
             }}
-            className="bg-stone-600 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-stone-700 transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
+            className="group relative bg-gradient-to-br from-gray-800 to-gray-900 text-white px-4 py-2 rounded-xl hover:from-gray-900 hover:to-black transition-all duration-300 font-medium flex items-center gap-2 text-sm shadow-lg hover:shadow-xl hover:-translate-y-0.5 border border-gray-700 hover:border-gray-600"
           >
-            <span>📦</span> <span className="hidden sm:inline">Tambah Produk</span><span className="sm:hidden">Produk</span>
+            <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-lg shadow-md group-hover:shadow-emerald-500/25 transition-all duration-300 group-hover:scale-110">
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+            </div>
+            <span>Tambah Produk</span>
           </button>
+          
           <button 
             onClick={() => state.setShowExpense(true)}
-            className="bg-stone-500 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-stone-600 transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
+            className="group relative bg-gradient-to-br from-gray-800 to-gray-900 text-white px-4 py-2 rounded-xl hover:from-gray-900 hover:to-black transition-all duration-300 font-medium flex items-center gap-2 text-sm shadow-lg hover:shadow-xl hover:-translate-y-0.5 border border-gray-700 hover:border-gray-600"
           >
-            <span>💸</span> <span className="hidden sm:inline">Tambah Pengeluaran</span><span className="sm:hidden">Pengeluaran</span>
+            <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-br from-rose-400 to-rose-600 rounded-lg shadow-md group-hover:shadow-rose-500/25 transition-all duration-300 group-hover:scale-110">
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            <span>Pengeluaran</span>
           </button>
+          
           <button 
             onClick={() => state.setShowAdvance(true)}
-            className="bg-orange-600 text-white px-4 sm:px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
+            className="group relative bg-gradient-to-br from-gray-800 to-gray-900 text-white px-4 py-2 rounded-xl hover:from-gray-900 hover:to-black transition-all duration-300 font-medium flex items-center gap-2 text-sm shadow-lg hover:shadow-xl hover:-translate-y-0.5 border border-gray-700 hover:border-gray-600"
           >
-            <span>💰</span> <span className="hidden sm:inline">Kasbon</span><span className="sm:hidden">Kasbon</span>
+            <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-br from-amber-400 to-amber-600 rounded-lg shadow-md group-hover:shadow-amber-500/25 transition-all duration-300 group-hover:scale-110">
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+              </svg>
+            </div>
+            <span>Kasbon</span>
           </button>
         </div>
       </div>
@@ -156,8 +179,13 @@ export default function TransactionsTab({ state }: any) {
                               const currentServices = customer.visitServices?.map(vs => vs.service.id) || [];
                               state.setEditServices(currentServices);
                             }}
-                            className="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                            className="group relative bg-gradient-to-br from-gray-700 to-gray-800 text-white px-3 py-2 rounded-xl hover:from-gray-800 hover:to-gray-900 transition-all duration-200 text-sm font-medium shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2 border border-gray-600 hover:border-gray-500"
                           >
+                            <div className="w-4 h-4 bg-gradient-to-br from-sky-400 to-sky-600 rounded-md flex items-center justify-center group-hover:scale-110 transition-transform">
+                              <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                              </svg>
+                            </div>
                             Edit
                           </button>
                           <button 
@@ -170,8 +198,13 @@ export default function TransactionsTab({ state }: any) {
                                 state.setCompletedBy(state.currentKasir);
                               }
                             }}
-                            className="bg-stone-800 text-white px-4 py-2 rounded-lg hover:bg-stone-900 transition-colors text-sm font-medium"
+                            className="group relative bg-gradient-to-br from-gray-700 to-gray-800 text-white px-4 py-2 rounded-xl hover:from-gray-800 hover:to-gray-900 transition-all duration-200 text-sm font-medium shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2 border border-gray-600 hover:border-gray-500"
                           >
+                            <div className="w-4 h-4 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-md flex items-center justify-center group-hover:scale-110 transition-transform">
+                              <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                              </svg>
+                            </div>
                             Selesai
                           </button>
                           <button 
@@ -188,8 +221,13 @@ export default function TransactionsTab({ state }: any) {
                                 }
                               }
                             }}
-                            className="text-stone-500 hover:text-red-600 px-3 py-2 border border-stone-300 rounded-lg hover:border-red-300 transition-colors text-sm"
+                            className="group relative bg-gradient-to-br from-gray-700 to-gray-800 text-white px-3 py-2 rounded-xl hover:from-gray-800 hover:to-gray-900 transition-all duration-200 text-sm font-medium shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2 border border-gray-600 hover:border-gray-500"
                           >
+                            <div className="w-4 h-4 bg-gradient-to-br from-rose-400 to-rose-600 rounded-md flex items-center justify-center group-hover:scale-110 transition-transform">
+                              <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                              </svg>
+                            </div>
                             Batal
                           </button>
                         </div>

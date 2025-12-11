@@ -12,6 +12,7 @@ export default function UsersTab({ activeTab, adminData }: any) {
   const [newCapster, setNewCapster] = useState({ name: '', phone: '' });
   const [newKasir, setNewKasir] = useState({ name: '', phone: '' });
   const [newBranch, setNewBranch] = useState({ cabangId: '', username: '', password: '' });
+  const [deleteConfirm, setDeleteConfirm] = useState<{show: boolean, type: 'capster'|'kasir'|'branch', id: string, name: string}>({show: false, type: 'capster', id: '', name: ''});
 
   const addCapsterMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -102,33 +103,109 @@ export default function UsersTab({ activeTab, adminData }: any) {
 
   if (activeTab === 'capster') {
     return (
-      <CapsterManager
-        capsterList={adminData.capsterList}
-        showCapsterForm={showCapsterForm}
-        setShowCapsterForm={setShowCapsterForm}
-        newCapster={newCapster}
-        setNewCapster={setNewCapster}
-        handleAddCapster={() => addCapsterMutation.mutate(newCapster)}
-        handleDeleteCapster={(id) => {
-          if (confirm('Hapus capster?')) deleteCapsterMutation.mutate(id);
-        }}
-      />
+      <>
+        <CapsterManager
+          capsterList={adminData.capsterList}
+          showCapsterForm={showCapsterForm}
+          setShowCapsterForm={setShowCapsterForm}
+          newCapster={newCapster}
+          setNewCapster={setNewCapster}
+          handleAddCapster={() => addCapsterMutation.mutate(newCapster)}
+          handleDeleteCapster={(id) => {
+            const capster = adminData.capsterList.find((c: any) => c.id === id);
+            setDeleteConfirm({show: true, type: 'capster', id, name: capster?.name || 'capster'});
+          }}
+        />
+        
+        {/* Delete Confirmation Modal */}
+        {deleteConfirm.show && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteConfirm({show: false, type: 'capster', id: '', name: ''})}></div>
+            <div className="relative bg-white rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Hapus Capster</h3>
+                <p className="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus "{deleteConfirm.name}"? Tindakan ini tidak dapat dibatalkan.</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setDeleteConfirm({show: false, type: 'capster', id: '', name: ''})}
+                    className="flex-1 bg-gray-200 text-gray-800 py-2.5 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={() => {
+                      deleteCapsterMutation.mutate(deleteConfirm.id);
+                      setDeleteConfirm({show: false, type: 'capster', id: '', name: ''});
+                    }}
+                    className="flex-1 bg-red-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                  >
+                    Hapus
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 
   if (activeTab === 'kasir') {
     return (
-      <KasirManager
-        kasirList={adminData.kasirList}
-        showKasirForm={showKasirForm}
-        setShowKasirForm={setShowKasirForm}
-        newKasir={newKasir}
-        setNewKasir={setNewKasir}
-        handleAddKasir={() => addKasirMutation.mutate(newKasir)}
-        handleDeleteKasir={(id) => {
-          if (confirm('Hapus kasir?')) deleteKasirMutation.mutate(id);
-        }}
-      />
+      <>
+        <KasirManager
+          kasirList={adminData.kasirList}
+          showKasirForm={showKasirForm}
+          setShowKasirForm={setShowKasirForm}
+          newKasir={newKasir}
+          setNewKasir={setNewKasir}
+          handleAddKasir={() => addKasirMutation.mutate(newKasir)}
+          handleDeleteKasir={(id) => {
+            const kasir = adminData.kasirList.find((k: any) => k.id === id);
+            setDeleteConfirm({show: true, type: 'kasir', id, name: kasir?.name || 'kasir'});
+          }}
+        />
+        
+        {/* Delete Confirmation Modal */}
+        {deleteConfirm.show && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteConfirm({show: false, type: 'kasir', id: '', name: ''})}></div>
+            <div className="relative bg-white rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Hapus Kasir</h3>
+                <p className="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus "{deleteConfirm.name}"? Tindakan ini tidak dapat dibatalkan.</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setDeleteConfirm({show: false, type: 'kasir', id: '', name: ''})}
+                    className="flex-1 bg-gray-200 text-gray-800 py-2.5 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={() => {
+                      deleteKasirMutation.mutate(deleteConfirm.id);
+                      setDeleteConfirm({show: false, type: 'kasir', id: '', name: ''});
+                    }}
+                    className="flex-1 bg-red-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                  >
+                    Hapus
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 
@@ -230,9 +307,7 @@ export default function UsersTab({ activeTab, adminData }: any) {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(branch.createdAt).toLocaleDateString()}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button
-                        onClick={() => {
-                          if (confirm('Hapus login cabang?')) deleteBranchMutation.mutate(branch.id);
-                        }}
+                        onClick={() => setDeleteConfirm({show: true, type: 'branch', id: branch.id, name: branch.branchName})}
                         disabled={deleteBranchMutation.isPending}
                         className="text-red-600 hover:text-red-800 disabled:opacity-50"
                       >
@@ -247,9 +322,89 @@ export default function UsersTab({ activeTab, adminData }: any) {
             </tbody>
           </table>
         </div>
+        
+        {/* Delete Confirmation Modal */}
+        {deleteConfirm.show && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteConfirm({show: false, type: 'branch', id: '', name: ''})}></div>
+            <div className="relative bg-white rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Hapus Login Cabang</h3>
+                <p className="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus login cabang "{deleteConfirm.name}"? Tindakan ini tidak dapat dibatalkan.</p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setDeleteConfirm({show: false, type: 'branch', id: '', name: ''})}
+                    className="flex-1 bg-gray-200 text-gray-800 py-2.5 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={() => {
+                      deleteBranchMutation.mutate(deleteConfirm.id);
+                      setDeleteConfirm({show: false, type: 'branch', id: '', name: ''});
+                    }}
+                    className="flex-1 bg-red-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                  >
+                    Hapus
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
 
-  return <div>Tab tidak ditemukan</div>;
+  return (
+    <>
+      <div>Tab tidak ditemukan</div>
+      
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm.show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteConfirm({show: false, type: 'capster', id: '', name: ''})}></div>
+          <div className="relative bg-white rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Hapus {deleteConfirm.type === 'capster' ? 'Capster' : deleteConfirm.type === 'kasir' ? 'Kasir' : 'Login Cabang'}</h3>
+              <p className="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus "{deleteConfirm.name}"? Tindakan ini tidak dapat dibatalkan.</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeleteConfirm({show: false, type: 'capster', id: '', name: ''})}
+                  className="flex-1 bg-gray-200 text-gray-800 py-2.5 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={() => {
+                    if (deleteConfirm.type === 'capster') {
+                      deleteCapsterMutation.mutate(deleteConfirm.id);
+                    } else if (deleteConfirm.type === 'kasir') {
+                      deleteKasirMutation.mutate(deleteConfirm.id);
+                    } else {
+                      deleteBranchMutation.mutate(deleteConfirm.id);
+                    }
+                    setDeleteConfirm({show: false, type: 'capster', id: '', name: ''});
+                  }}
+                  className="flex-1 bg-red-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-red-700 transition-colors"
+                >
+                  Hapus
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }

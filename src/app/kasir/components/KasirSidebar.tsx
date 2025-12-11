@@ -29,69 +29,19 @@ export default function KasirSidebar({ state, onLogout }: any) {
           <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-3">Menu</div>
         )}
         
-        <div>
-          <button
-            onClick={() => state.setActiveTab('transactions')}
-            className={`w-full flex items-center justify-between p-3 rounded-lg text-left transition-colors ${
-              state.activeTab === 'transactions' ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'
-            } ${state.sidebarOpen ? '' : 'justify-center'}`}
-          >
-            <div className="flex items-center space-x-3">
-              <span className={state.activeTab === 'transactions' ? 'text-white' : 'text-gray-600'}>
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </span>
-              {state.sidebarOpen && <span className="font-semibold">Transaksi Aktif</span>}
-            </div>
-          </button>
-          {state.sidebarOpen && (
-            <div className="ml-8 mt-2 space-y-1">
-              <button
-                onClick={() => {
-                  state.setActiveTab('transactions');
-                  state.setShowAddService(true);
-                }}
-                className="w-full flex items-center space-x-2 text-left p-2 rounded-md text-sm transition-colors text-gray-600 hover:bg-gray-100"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Input Layanan</span>
-              </button>
-              <button
-                onClick={() => {
-                  state.setActiveTab('transactions');
-                  state.setShowProductSale(true);
-                  if (!state.productSaleData.completedBy && state.branchInfo.kasirName) {
-                    const sessionKasir = state.kasirList.find(k => k.name === state.branchInfo.kasirName);
-                    if (sessionKasir) {
-                      state.setProductSaleData(prev => ({...prev, completedBy: sessionKasir.id, recommendedBy: sessionKasir.id}));
-                    }
-                  }
-                }}
-                className="w-full flex items-center space-x-2 text-left p-2 rounded-md text-sm transition-colors text-gray-600 hover:bg-gray-100"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Input Produk</span>
-              </button>
-              <button
-                onClick={() => {
-                  state.setActiveTab('transactions');
-                  state.setShowExpense(true);
-                }}
-                className="w-full flex items-center space-x-2 text-left p-2 rounded-md text-sm transition-colors text-gray-600 hover:bg-gray-100"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Input Pengeluaran</span>
-              </button>
-            </div>
-          )}
-        </div>
+        <button
+          onClick={() => state.setActiveTab('transactions')}
+          className={`w-full flex items-center space-x-3 p-3 rounded-lg text-left transition-colors ${
+            state.activeTab === 'transactions' ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'
+          } ${!state.sidebarOpen && 'justify-center'}`}
+        >
+          <span className={state.activeTab === 'transactions' ? 'text-white' : 'text-gray-600'}>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </span>
+          {state.sidebarOpen && <span className="font-semibold">Transaksi Aktif</span>}
+        </button>
         
         <button
           onClick={() => state.setActiveTab('history')}

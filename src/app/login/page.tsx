@@ -16,6 +16,8 @@ export default function LoginPage() {
   const [branchData, setBranchData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isStartingSession, setIsStartingSession] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const fetchKasirList = async () => {
     try {
@@ -42,6 +44,12 @@ export default function LoginPage() {
         body: JSON.stringify({ username, password })
       });
       
+      if (response.status === 401) {
+        setErrorMessage('Username atau password salah. Silakan coba lagi.');
+        setShowErrorModal(true);
+        return;
+      }
+      
       const data = await response.json();
       
       if (data.success) {
@@ -54,10 +62,12 @@ export default function LoginPage() {
           await fetchKasirList();
         }
       } else {
-        alert('Login gagal: ' + data.error);
+        setErrorMessage(data.error || 'Login gagal. Silakan coba lagi.');
+        setShowErrorModal(true);
       }
     } catch (error) {
-      alert('Kesalahan login');
+      setErrorMessage('Terjadi kesalahan jaringan. Silakan coba lagi.');
+      setShowErrorModal(true);
     } finally {
       setIsLoading(false);
     }
@@ -218,6 +228,30 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+
+      {/* Error Modal */}
+      {showErrorModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowErrorModal(false)}></div>
+          <div className="relative bg-white rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Login Gagal</h3>
+              <p className="text-gray-600 mb-6">{errorMessage}</p>
+              <button
+                onClick={() => setShowErrorModal(false)}
+                className="w-full bg-red-600 text-white py-2.5 px-4 rounded-lg font-medium hover:bg-red-700 transition-colors"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
