@@ -418,7 +418,16 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
         @media print {
           @page {
             size: A4;
-            margin: 0.4in;
+            margin: 0.5in;
+            @bottom-center {
+              content: "Halaman " counter(page) " dari " counter(pages);
+              font-size: 8px;
+              color: #666;
+            }
+          }
+          html, body {
+            height: auto !important;
+            overflow: visible !important;
           }
           body * {
             visibility: hidden;
@@ -427,67 +436,80 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
             visibility: visible;
           }
           #payroll-content {
-            position: absolute;
-            left: 0;
-            top: 0;
+            position: static !important;
             width: 100%;
             font-size: 10px;
             line-height: 1.2;
+            height: auto !important;
+            overflow: visible !important;
           }
-          /* Header section - keep together */
+          /* Remove all page-break restrictions to allow natural flow */
+          #payroll-content * {
+            page-break-inside: auto;
+            page-break-before: auto;
+            page-break-after: auto;
+          }
+          /* Only keep header together */
           #payroll-content > div:first-child {
             page-break-inside: avoid;
-            page-break-after: avoid;
           }
-          /* Employee info - keep together */
-          #payroll-content > div:nth-child(2) {
-            page-break-inside: avoid;
+          /* Remove height restrictions */
+          #payroll-content .max-h-32,
+          #payroll-content .max-h-\\[95vh\\],
+          #payroll-content .h-screen,
+          #payroll-content .min-h-screen {
+            max-height: none !important;
+            height: auto !important;
+            min-height: auto !important;
           }
-          /* Transaction details - allow break if needed */
-          #payroll-content > div:nth-child(3) {
-            page-break-inside: auto;
-          }
-          /* Summary sections - keep together */
-          #payroll-content > div:nth-child(4),
-          #payroll-content > div:nth-child(5),
-          #payroll-content > div:nth-child(6),
-          #payroll-content > div:nth-child(7) {
-            page-break-inside: avoid;
-          }
-          /* Footer - keep together */
-          #payroll-content > div:last-child {
-            page-break-inside: avoid;
+          #payroll-content .overflow-y-auto,
+          #payroll-content .overflow-hidden,
+          #payroll-content .overflow-auto {
+            overflow: visible !important;
           }
           /* Table styling */
           #payroll-content table {
             font-size: 9px;
-            page-break-inside: auto;
+            width: 100%;
+            border-collapse: collapse;
           }
           #payroll-content table thead {
             display: table-header-group;
           }
-          #payroll-content table tbody tr {
-            page-break-inside: avoid;
+          #payroll-content table tbody {
+            display: table-row-group;
           }
-          /* Text size overrides */
+          /* Text size adjustments */
           #payroll-content .text-xl {
             font-size: 14px !important;
           }
           #payroll-content .text-2xl {
             font-size: 16px !important;
           }
-          #payroll-content .text-3xl {
-            font-size: 18px !important;
+          #payroll-content .text-lg {
+            font-size: 12px !important;
           }
-          /* Kasbon section - allow break if very long */
-          #payroll-content .border-orange-300 {
-            page-break-inside: auto;
+          /* Grid layout for print */
+          #payroll-content .grid-cols-1.lg\\:grid-cols-2 {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 0.5rem !important;
+          }
+          /* Ensure sections have proper spacing */
+          #payroll-content > div {
+            margin-bottom: 6px;
+          }
+          /* Footer positioning */
+          #payroll-content > div:last-child {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #ccc;
           }
           .print\\:hidden {
             display: none !important;
           }
           .print\\:p-4 {
-            padding: 0.3rem;
+            padding: 0.25rem !important;
           }
         }
       `}</style>

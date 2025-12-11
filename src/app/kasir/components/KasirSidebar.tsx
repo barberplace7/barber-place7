@@ -59,7 +59,7 @@ export default function KasirSidebar({ state, onLogout }: any) {
         </div>
       </div>
       
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {state.sidebarOpen && (
           <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-3">Menu</div>
         )}

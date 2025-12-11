@@ -437,8 +437,8 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
                 {gallery ? (
                   <>
                     <img src={gallery.url} alt={`Gallery ${slot}`} className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                      <label className="bg-blue-600 text-white px-3 py-1 rounded text-sm cursor-pointer hover:bg-blue-700">
+                    <div className="absolute bottom-2 left-2 right-2 flex gap-2">
+                      <label className="flex-1 bg-blue-600 text-white px-3 py-2 rounded text-sm cursor-pointer hover:bg-blue-700 min-h-[44px] flex items-center justify-center">
                         Ganti
                         <input
                           type="file"
@@ -454,7 +454,7 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
                         onClick={() => {
                           if (confirm('Hapus gambar ini?')) deleteGalleryMutation.mutate(slot);
                         }}
-                        className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
+                        className="flex-1 bg-red-600 text-white px-3 py-2 rounded text-sm hover:bg-red-700 min-h-[44px] flex items-center justify-center"
                       >
                         Hapus
                       </button>
@@ -463,7 +463,7 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center">
                     <span className="text-gray-500 mb-2">Slot {slot}</span>
-                    <label className="bg-purple-600 text-white px-3 py-1 rounded text-sm cursor-pointer hover:bg-purple-700">
+                    <label className="bg-purple-600 text-white px-3 py-2 rounded text-sm cursor-pointer hover:bg-purple-700 min-h-[44px] flex items-center justify-center">
                       Unggah Gambar
                       <input
                         type="file"

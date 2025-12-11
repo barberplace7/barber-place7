@@ -113,7 +113,7 @@ export default function Sidebar({
       />
     )}
     
-    <div className={`bg-white shadow-lg transition-all duration-300 flex-shrink-0 flex flex-col h-full overflow-hidden
+    <div className={`bg-white shadow-lg transition-all duration-300 flex-shrink-0 flex flex-col h-screen overflow-hidden
       ${sidebarOpen ? 'w-64' : 'w-0'} 
       lg:relative fixed z-50 lg:z-auto
     `}>
@@ -147,7 +147,7 @@ export default function Sidebar({
       </div>
 
       {/* Navigation Menu */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {sidebarOpen && (
           <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 px-3">
             Menu
@@ -181,7 +181,7 @@ export default function Sidebar({
                   )}
                 </button>
                 {sidebarOpen && expandedMenus[item.id] && (
-                  <div className="ml-11 mt-2 space-y-1">
+                  <div className="ml-11 mt-1 space-y-0.5">
                     {item.submenu.map((subItem) => (
                       <button
                         key={subItem.id}
