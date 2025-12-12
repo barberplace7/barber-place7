@@ -88,3 +88,4 @@ Copy `.env.example` ke `.env.local` dan isi dengan:
 2. Update `DATABASE_URL` di `.env.local`
 3. Run `npx prisma db push` (setelah schema dibuat)
 4. Run `npx prisma generate`
+# barber-place7
