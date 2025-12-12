@@ -17,7 +17,9 @@ export const metadata: Metadata = {
   title: "Barberplace",
   description: "Berbagai layanan lengkap untuk kebutuhan grooming dan perawatan rambut Anda dengan standar profesional tertinggi",
   icons: {
-    icon: '/barberplace.png',
+    icon: '/logo_barberplace.png',
+    shortcut: '/logo_barberplace.png',
+    apple: '/logo_barberplace.png',
   },
 };
 
@@ -29,6 +31,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href="/logo_barberplace.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon-precomposed.png" />
         <link
           href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
           rel="stylesheet"
