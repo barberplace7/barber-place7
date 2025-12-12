@@ -8,6 +8,7 @@ import UsersTab from './tabs/UsersTab';
 import MasterDataTab from './tabs/MasterDataTab';
 import KasbonTab from './tabs/KasbonTab';
 import { useAdminData } from '@/hooks/useAdminData';
+import { useAuth } from '@/hooks/useAuth';
 import { GlobalLoadingSpinner } from '@/components/shared/LoadingSpinner';
 
 export default function AdminDashboard() {
@@ -16,9 +17,10 @@ export default function AdminDashboard() {
   const [expandedMenus, setExpandedMenus] = useState<{[key: string]: boolean}>({});
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   
+  const { user, loading: authLoading, logout } = useAuth('ADMIN');
   const adminData = useAdminData();
 
-  // Auto-expand menus based on active tab
+  // Auto-expand menus based on active tab - MOVED BEFORE CONDITIONAL RETURNS
   useEffect(() => {
     if (['services', 'products', 'gallery'].includes(activeTab)) {
       setExpandedMenus(prev => ({ ...prev, 'data-master': true }));
@@ -29,9 +31,25 @@ export default function AdminDashboard() {
     }
   }, [activeTab]);
 
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-xl shadow-2xl flex flex-col items-center gap-3">
+          <div className="w-12 h-12 border-4 border-gray-300 border-t-blue-600 rounded-full animate-spin"></div>
+          <p className="text-gray-700 font-medium">Memverifikasi akses...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If not authenticated, useAuth will redirect to login
+  if (!user) {
+    return null;
+  }
+
   const handleLogout = () => {
-    document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    window.location.href = '/login';
+    logout();
   };
 
   return (

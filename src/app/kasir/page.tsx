@@ -6,14 +6,32 @@ import Toast from '@/components/shared/Toast';
 import ApiErrorAlert from '@/components/shared/ApiErrorAlert';
 import ManualTransactionGuide from './components/ManualTransactionGuide';
 import { useKasirStateV2 } from './hooks/useKasirStateV2';
+import { useAuth } from '@/hooks/useAuth';
 
 
 export default function KasirDashboard() {
+  const { user, loading: authLoading, logout } = useAuth('KASIR');
   const state = useKasirStateV2();
 
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-xl shadow-2xl flex flex-col items-center gap-3">
+          <div className="w-12 h-12 border-4 border-gray-300 border-t-stone-800 rounded-full animate-spin"></div>
+          <p className="text-stone-700 font-medium">Memverifikasi akses...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If not authenticated, useAuth will redirect to login
+  if (!user) {
+    return null;
+  }
+
   const handleLogout = () => {
-    document.cookie = 'session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    window.location.href = '/login';
+    logout();
   };
 
   return (

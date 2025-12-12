@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       cabangId: user.cabangId
     })
     .setProtectedHeader({ alg: 'HS256' })
-    .setExpirationTime('24h')
+    .setExpirationTime('12h')
     .sign(secret)
 
     const response = NextResponse.json({ 
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     response.cookies.set('session', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 // 24 hours
+      maxAge: 60 * 60 * 12 // 12 hours
     })
 
     return response
