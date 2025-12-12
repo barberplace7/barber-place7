@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Staff ID required' }, { status: 400 });
     }
 
-    const transactions = [];
+    const transactions: any[] = [];
 
     // Build date filter
     const dateFilter = dateFrom && dateTo ? {

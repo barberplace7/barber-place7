@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const branchId = searchParams.get('branchId');
     const type = searchParams.get('type');
 
-    const transactions = [];
+    const transactions: any[] = [];
 
     // Build date filter
     const dateFilter = dateFrom && dateTo ? {

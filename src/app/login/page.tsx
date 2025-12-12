@@ -35,6 +35,7 @@ export default function LoginPage() {
 
   const handleBranchLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isLoading) return; // Prevent double click
     setIsLoading(true);
     
     try {

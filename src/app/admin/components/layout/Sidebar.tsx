@@ -7,7 +7,7 @@ interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   expandedMenus: {[key: string]: boolean};
-  setExpandedMenus: (menus: {[key: string]: boolean}) => void;
+  setExpandedMenus: React.Dispatch<React.SetStateAction<{[key: string]: boolean}>>;
   setShowLogoutModal: (show: boolean) => void;
 }
 

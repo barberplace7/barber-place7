@@ -21,9 +21,7 @@ export const queryClient = new QueryClient({
         if (error?.status >= 400 && error?.status < 500) return false;
         return failureCount < 2;
       },
-      onError: (error: any) => {
-        console.error('Query error:', error);
-      },
+
     },
     mutations: {
       retry: 0,

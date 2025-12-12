@@ -436,7 +436,7 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
               <div key={slot} className="aspect-square bg-gray-100 rounded-lg border border-gray-200 overflow-hidden relative group">
                 {gallery ? (
                   <>
-                    <img src={gallery.url} alt={`Gallery ${slot}`} className="w-full h-full object-cover" />
+                    <img src={(gallery as any)?.url} alt={`Gallery ${slot}`} className="w-full h-full object-cover" />
                     <div className="absolute bottom-2 left-2 right-2 flex gap-2">
                       <label className="flex-1 bg-blue-600 text-white px-3 py-2 rounded text-sm cursor-pointer hover:bg-blue-700 min-h-[44px] flex items-center justify-center">
                         Ganti

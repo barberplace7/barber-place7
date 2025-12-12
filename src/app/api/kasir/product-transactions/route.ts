@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
     const productTransactions = await prisma.productTransaction.findMany({
       where: {
-        cabangId: session.cabangId,
+        cabangId: session.cabangId || undefined,
         createdAt: {
           gte: today,
           lt: tomorrow

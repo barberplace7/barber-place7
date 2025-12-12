@@ -98,19 +98,19 @@ export default function CommissionTab({ adminData }: any) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                Rp {commissionData.reduce((sum, item) => sum + (item.serviceCommission || 0) + (item.productCommission || 0), 0).toLocaleString()}
+                Rp {commissionData.reduce((sum: number, item: any) => sum + (item.serviceCommission || 0) + (item.productCommission || 0), 0).toLocaleString()}
               </div>
               <div className="text-sm text-gray-600">Total Komisi</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">
-                Rp {commissionData.reduce((sum, item) => sum + (item.serviceCommission || 0), 0).toLocaleString()}
+                Rp {commissionData.reduce((sum: number, item: any) => sum + (item.serviceCommission || 0), 0).toLocaleString()}
               </div>
               <div className="text-sm text-gray-600">Komisi Layanan</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-600">
-                Rp {commissionData.reduce((sum, item) => sum + (item.productCommission || 0), 0).toLocaleString()}
+                Rp {commissionData.reduce((sum: number, item: any) => sum + (item.productCommission || 0), 0).toLocaleString()}
               </div>
               <div className="text-sm text-gray-600">Komisi Produk</div>
             </div>

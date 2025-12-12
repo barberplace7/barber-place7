@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, ServiceCategory } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -15,24 +15,24 @@ async function main() {
 
   // Hair Cut Services
   const haircuts = [
-    { name: 'Reguler (Hair cut only)', basePrice: 30000, commissionAmount: 12000, category: 'HAIRCUT' },
-    { name: 'Premium (Cut and Hair wash)', basePrice: 40000, commissionAmount: 16000, category: 'HAIRCUT' },
-    { name: 'Platinum (Cut and Hair wash 2x)', basePrice: 50000, commissionAmount: 20000, category: 'HAIRCUT' },
-    { name: 'Diamond (Cut, Hair wash and Black mask)', basePrice: 90000, commissionAmount: 35000, category: 'HAIRCUT' },
+    { name: 'Reguler (Hair cut only)', basePrice: 30000, commissionAmount: 12000, category: ServiceCategory.HAIRCUT },
+    { name: 'Premium (Cut and Hair wash)', basePrice: 40000, commissionAmount: 16000, category: ServiceCategory.HAIRCUT },
+    { name: 'Platinum (Cut and Hair wash 2x)', basePrice: 50000, commissionAmount: 20000, category: ServiceCategory.HAIRCUT },
+    { name: 'Diamond (Cut, Hair wash and Black mask)', basePrice: 90000, commissionAmount: 35000, category: ServiceCategory.HAIRCUT },
   ];
 
   // Treatment Services
   const treatments = [
-    { name: 'Black Mask', basePrice: 50000, commissionAmount: 15000, category: 'TREATMENT' },
-    { name: 'Gold Mask', basePrice: 60000, commissionAmount: 20000, category: 'TREATMENT' },
-    { name: 'Shaving', basePrice: 10000, commissionAmount: 4000, category: 'TREATMENT' },
-    { name: 'Hair Wash', basePrice: 15000, commissionAmount: 5000, category: 'TREATMENT' },
-    { name: 'Creambath', basePrice: 50000, commissionAmount: 20000, category: 'TREATMENT' },
-    { name: 'Black Colouring', basePrice: 80000, commissionAmount: 26000, category: 'TREATMENT' },
-    { name: 'Highlight Colouring', basePrice: 250000, commissionAmount: 83000, category: 'TREATMENT' },
-    { name: 'Full Colouring', basePrice: 350000, commissionAmount: 116000, category: 'TREATMENT' },
-    { name: 'Perming Hair', basePrice: 250000, commissionAmount: 83000, category: 'TREATMENT' },
-    { name: 'Down Perm', basePrice: 200000, commissionAmount: 66000, category: 'TREATMENT' },
+    { name: 'Black Mask', basePrice: 50000, commissionAmount: 15000, category: ServiceCategory.TREATMENT },
+    { name: 'Gold Mask', basePrice: 60000, commissionAmount: 20000, category: ServiceCategory.TREATMENT },
+    { name: 'Shaving', basePrice: 10000, commissionAmount: 4000, category: ServiceCategory.TREATMENT },
+    { name: 'Hair Wash', basePrice: 15000, commissionAmount: 5000, category: ServiceCategory.TREATMENT },
+    { name: 'Creambath', basePrice: 50000, commissionAmount: 20000, category: ServiceCategory.TREATMENT },
+    { name: 'Black Colouring', basePrice: 80000, commissionAmount: 26000, category: ServiceCategory.TREATMENT },
+    { name: 'Highlight Colouring', basePrice: 250000, commissionAmount: 83000, category: ServiceCategory.TREATMENT },
+    { name: 'Full Colouring', basePrice: 350000, commissionAmount: 116000, category: ServiceCategory.TREATMENT },
+    { name: 'Perming Hair', basePrice: 250000, commissionAmount: 83000, category: ServiceCategory.TREATMENT },
+    { name: 'Down Perm', basePrice: 200000, commissionAmount: 66000, category: ServiceCategory.TREATMENT },
   ];
 
   // Insert all services

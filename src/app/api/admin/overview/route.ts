@@ -132,7 +132,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    const serviceStats = {};
+    const serviceStats: {[key: string]: {count: number, revenue: number}} = {};
     periodVisits.forEach(visit => {
       if (visit.serviceTransactions.length > 0) {
         const serviceName = visit.serviceTransactions[0].paketName;
@@ -146,8 +146,8 @@ export async function GET(request: NextRequest) {
     });
 
     const topServices = Object.entries(serviceStats)
-      .map(([name, stats]) => ({ name, ...stats }))
-      .sort((a, b) => b.revenue - a.revenue)
+      .map(([name, stats]: [string, any]) => ({ name, ...stats }))
+      .sort((a: any, b: any) => b.revenue - a.revenue)
       .slice(0, 5);
 
     // Branch performance today
