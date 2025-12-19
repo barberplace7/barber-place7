@@ -19,26 +19,11 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    if (capsterId) {
-      visitWhere.capsterId = capsterId;
-    }
-
     if (branchId) {
       visitWhere.cabangId = branchId;
     }
 
-    // Get completed visits with service transactions
-    const visits = await prisma.customerVisit.findMany({
-      where: visitWhere,
-      include: {
-        capster: true,
-        cabang: true,
-        serviceTransactions: true,
-        productTransactions: true
-      }
-    }).catch(() => []);
-
-    // Get all capsters and kasirs for recommender lookup
+    // Get all capsters and kasirs for lookup
     const allCapsters = await prisma.capsterMaster.findMany().catch(() => []);
     const allKasirs = await prisma.cashierMaster.findMany().catch(() => []);
     const allStaff = [...allCapsters.map(c => ({...c, role: 'CAPSTER'})), ...allKasirs.map(k => ({...k, role: 'KASIR'}))];
@@ -46,17 +31,43 @@ export async function GET(request: NextRequest) {
     // Group by person and calculate commissions
     const commissionMap = new Map();
 
-    // Process visits for capster commissions
-    visits.forEach(visit => {
-      if (!visit.capster || !visit.cabang) return;
+    // Get service transactions with proper date filtering
+    const serviceTransactionWhere: any = {};
+    if (dateFrom && dateTo) {
+      serviceTransactionWhere.createdAt = {
+        gte: new Date(dateFrom + 'T00:00:00.000Z'),
+        lte: new Date(dateTo + 'T23:59:59.999Z')
+      };
+    }
+    if (capsterId) {
+      serviceTransactionWhere.capsterId = capsterId;
+    }
+    if (branchId) {
+      serviceTransactionWhere.cabangId = branchId;
+    }
+
+    const serviceTransactions = await prisma.serviceTransaction.findMany({
+      where: serviceTransactionWhere,
+      include: {
+        cabang: true
+      }
+    }).catch(() => []);
+
+    // Process service transactions and group by capster
+    const capsterCommissions = new Map();
+    serviceTransactions.forEach(st => {
+      if (!st.cabang) return;
       
-      const key = `${visit.capsterId}-capster`;
-      if (!commissionMap.has(key)) {
-        commissionMap.set(key, {
-          staffId: visit.capsterId,
-          capsterId: visit.capsterId,
-          capsterName: visit.capster.name,
-          branchName: visit.cabang.name,
+      const capster = allCapsters.find(c => c.id === st.capsterId);
+      if (!capster) return;
+      
+      const key = st.capsterId;
+      if (!capsterCommissions.has(key)) {
+        capsterCommissions.set(key, {
+          staffId: st.capsterId,
+          capsterId: st.capsterId,
+          capsterName: capster.name,
+          branchName: st.cabang.name,
           role: 'CAPSTER',
           serviceCommission: 0,
           productCommission: 0,
@@ -65,22 +76,17 @@ export async function GET(request: NextRequest) {
         });
       }
       
-      const commission = commissionMap.get(key);
-      
-      // Add service commissions
-      visit.serviceTransactions?.forEach(st => {
-        commission.serviceCommission += st.commissionAmount || 0;
-        commission.serviceCount += 1;
-      });
-      
-      // Add product commissions from visit
-      visit.productTransactions?.forEach(pt => {
-        commission.productCommission += pt.commissionAmount || 0;
-        commission.productCount += 1;
-      });
+      const commission = capsterCommissions.get(key);
+      commission.serviceCommission += st.commissionAmount || 0;
+      commission.serviceCount += 1;
     });
 
-    // Process product transactions for kasir/capster recommender commissions
+    // Add to main commission map
+    capsterCommissions.forEach((value, key) => {
+      commissionMap.set(key, value);
+    });
+
+    // Process all product transactions for recommender commissions
     const productSaleWhere: any = {};
     if (dateFrom && dateTo) {
       productSaleWhere.createdAt = {
@@ -107,7 +113,7 @@ export async function GET(request: NextRequest) {
       
       const recommender = allStaff.find(s => s.id === pt.recommenderId);
       if (recommender) {
-        const key = `${pt.recommenderId}-${recommender.role.toLowerCase()}`;
+        const key = pt.recommenderId;
         if (!commissionMap.has(key)) {
           commissionMap.set(key, {
             staffId: pt.recommenderId,

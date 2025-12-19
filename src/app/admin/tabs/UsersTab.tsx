@@ -223,7 +223,7 @@ export default function UsersTab({ activeTab, adminData }: any) {
     );
   }
 
-  if (activeTab === 'branches') {
+  if (activeTab === 'branch-users') {
     return (
       <div>
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">

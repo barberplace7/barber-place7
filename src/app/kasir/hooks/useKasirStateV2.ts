@@ -25,6 +25,11 @@ export const useKasirStateV2 = () => {
   const [completedBy, setCompletedBy] = useState('');
   const [currentKasir, setCurrentKasir] = useState('');
   
+  // QRIS fields
+  const [qrisAmountReceived, setQrisAmountReceived] = useState<number>(0);
+  const [qrisExcessType, setQrisExcessType] = useState<string>('');
+  const [qrisExcessNote, setQrisExcessNote] = useState<string>('');
+  
   const [historyFilters, setHistoryFilters] = useState<HistoryFilters>({ dateFrom: '', dateTo: '', type: 'ALL' });
   const [currentPage, setCurrentPage] = useState(1);
   const [datePreset, setDatePreset] = useState('7days');
@@ -81,14 +86,26 @@ export const useKasirStateV2 = () => {
     }
   }, [queries.sessionInfo.data, queries.kasirList.data]);
 
+  // Reset QRIS fields when payment method changes or completing customer changes
   useEffect(() => {
-    if (showProductSale || showExpense || showAddService || showAdvance) {
+    if (paymentMethod !== 'QRIS') {
+      setQrisAmountReceived(0);
+      setQrisExcessType('');
+      setQrisExcessNote('');
+    } else if (completingCustomer) {
+      const total = completingCustomer.visitServices?.reduce((sum: number, vs: any) => sum + vs.service.basePrice, 0) || 0;
+      setQrisAmountReceived(total);
+    }
+  }, [paymentMethod, completingCustomer]);
+
+  useEffect(() => {
+    if (showProductSale || showExpense || showAddService || showAdvance || completingCustomer) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
     }
     return () => { document.body.style.overflow = 'unset'; };
-  }, [showProductSale, showExpense, showAddService, showAdvance]);
+  }, [showProductSale, showExpense, showAddService, showAdvance, completingCustomer]);
 
   return {
     activeTab, setActiveTab,
@@ -116,10 +133,17 @@ export const useKasirStateV2 = () => {
     paymentMethod, setPaymentMethod,
     completedBy, setCompletedBy,
     currentKasir,
+    
+    // QRIS fields
+    qrisAmountReceived, setQrisAmountReceived,
+    qrisExcessAmount: paymentMethod === 'QRIS' && qrisAmountReceived > 0 ? 
+      qrisAmountReceived - (completingCustomer?.visitServices?.reduce((sum: number, vs: any) => sum + vs.service.basePrice, 0) || 0) : 0,
+    qrisExcessType, setQrisExcessType,
+    qrisExcessNote, setQrisExcessNote,
     customerView, setCustomerView,
     completedToday: queries.completedToday.data?.visits || [],
     productTransactions: queries.completedToday.data?.productTransactions || [],
-    dailySummary: queries.completedToday.data?.summary || { total: 0, cash: 0, qris: 0 },
+    dailySummary: queries.completedToday.data?.summary || { total: 0, cash: 0, qris: 0, qrisReceived: 0, qrisExcess: 0, expenses: 0 },
     history: historyQuery.data || { visits: [], productSales: [], expenses: [], allStaff: [] },
     historyFilters, setHistoryFilters,
     currentPage, setCurrentPage,

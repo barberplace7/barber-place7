@@ -16,7 +16,7 @@ export const useKasirState = () => {
   const [showExpense, setShowExpense] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   
-  const [newCustomer, setNewCustomer] = useState<NewCustomerForm>({ name: '', phone: '', services: [], capsterId: '' });
+  const [newCustomer, setNewCustomer] = useState<NewCustomerForm>({ name: '', phone: '', serviceCapsterPairs: [] });
   const [productSaleData, setProductSaleData] = useState<ProductSaleForm>({ customerName: '', customerPhone: '', products: [], paymentMethod: 'CASH', completedBy: '', recommendedBy: '' });
   const [expenseData, setExpenseData] = useState<ExpenseForm>({ nominal: '', category: 'OPERASIONAL', note: '' });
   

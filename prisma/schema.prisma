@@ -24,11 +24,12 @@ model BarberBranch {
 }
 
 model CapsterMaster {
-  id        String          @id @default(uuid())
-  name      String
-  phone     String?
-  createdAt DateTime        @default(now())
-  visits    CustomerVisit[]
+  id            String         @id @default(uuid())
+  name          String
+  phone         String?
+  createdAt     DateTime       @default(now())
+  visits        CustomerVisit[]
+  visitServices VisitService[]
 
   @@map("capster_masters")
 }
@@ -80,9 +81,11 @@ model VisitService {
   id        String         @id @default(uuid())
   visitId   String
   serviceId String
+  capsterId String
   createdAt DateTime       @default(now())
   visit     CustomerVisit  @relation(fields: [visitId], references: [id], onDelete: Cascade)
   service   ServicePackage @relation(fields: [serviceId], references: [id])
+  capster   CapsterMaster  @relation(fields: [capsterId], references: [id])
 
   @@map("visit_services")
 }
@@ -99,6 +102,10 @@ model ServiceTransaction {
   closingByRole         String
   closingByNameSnapshot String
   paymentMethod         String
+  qrisAmountReceived    Int?          @default(0)
+  qrisExcessAmount      Int?          @default(0)
+  qrisExcessType        String?
+  qrisExcessNote        String?
   createdAt             DateTime      @default(now())
   cabang                BarberBranch  @relation(fields: [cabangId], references: [id])
   visit                 CustomerVisit @relation(fields: [visitId], references: [id])
@@ -137,6 +144,10 @@ model ProductTransaction {
   closingByRole             String
   closingByNameSnapshot     String
   paymentMethod             String
+  qrisAmountReceived        Int?            @default(0)
+  qrisExcessAmount          Int?            @default(0)
+  qrisExcessType            String?
+  qrisExcessNote            String?
   createdAt                 DateTime        @default(now())
   cabang                    BarberBranch    @relation(fields: [cabangId], references: [id])
   product                   BarberProduct   @relation(fields: [productId], references: [id])

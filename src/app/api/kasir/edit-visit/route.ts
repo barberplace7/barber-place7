@@ -5,26 +5,27 @@ import { requireAuth } from '@/lib/auth';
 export async function PUT(request: NextRequest) {
   try {
     const session = await requireAuth('KASIR');
-    const { visitId, services } = await request.json();
+    const { visitId, serviceCapsterPairs } = await request.json();
 
-    if (!visitId || !services || services.length === 0) {
-      return NextResponse.json({ error: 'Visit ID and services required' }, { status: 400 });
+    if (!visitId || !serviceCapsterPairs || serviceCapsterPairs.length === 0) {
+      return NextResponse.json({ error: 'Visit ID and service-capster pairs required' }, { status: 400 });
     }
 
-    // Update visit services
+    // Update visit services with capster assignments
     const result = await prisma.$transaction(async (tx) => {
       // Remove existing services
       await tx.visitService.deleteMany({
         where: { visitId }
       });
 
-      // Add new services (filter out null/invalid IDs)
-      for (const serviceId of services) {
-        if (serviceId && typeof serviceId === 'string') {
+      // Add new service-capster pairs
+      for (const pair of serviceCapsterPairs) {
+        if (pair.serviceId && pair.capsterId) {
           await tx.visitService.create({
             data: {
               visitId,
-              serviceId
+              serviceId: pair.serviceId,
+              capsterId: pair.capsterId
             }
           });
         }
@@ -37,7 +38,8 @@ export async function PUT(request: NextRequest) {
           capster: { select: { name: true } },
           visitServices: {
             include: {
-              service: { select: { name: true, basePrice: true, category: true } }
+              service: { select: { name: true, basePrice: true, category: true } },
+              capster: { select: { name: true } }
             }
           }
         }

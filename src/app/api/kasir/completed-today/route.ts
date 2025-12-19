@@ -57,6 +57,8 @@ export async function GET(request: NextRequest) {
     let totalRevenue = 0;
     let cashTotal = 0;
     let qrisTotal = 0;
+    let qrisReceived = 0;
+    let qrisExcess = 0;
 
     for (const visit of visits) {
       // Calculate service price from service transactions or visitServices
@@ -66,6 +68,14 @@ export async function GET(request: NextRequest) {
       if (visit.serviceTransactions.length > 0) {
         servicePrice = visit.serviceTransactions.reduce((sum, st) => sum + st.priceFinal, 0);
         servicePaymentMethod = visit.serviceTransactions[0].paymentMethod;
+        
+        // Add QRIS calculations for services
+        if (servicePaymentMethod === 'QRIS') {
+          const qrisAmountReceived = visit.serviceTransactions.reduce((sum, st) => sum + (st.qrisAmountReceived || 0), 0);
+          const qrisExcessAmount = visit.serviceTransactions.reduce((sum, st) => sum + (st.qrisExcessAmount || 0), 0);
+          qrisReceived += qrisAmountReceived;
+          qrisExcess += qrisExcessAmount;
+        }
       } else {
         servicePrice = visit.visitServices.reduce((sum, vs) => sum + vs.service.basePrice, 0);
       }
@@ -85,6 +95,9 @@ export async function GET(request: NextRequest) {
           cashTotal += productTx.totalPrice;
         } else {
           qrisTotal += productTx.totalPrice;
+          // Add QRIS calculations for products
+          qrisReceived += productTx.qrisAmountReceived || 0;
+          qrisExcess += productTx.qrisExcessAmount || 0;
         }
       }
     }
@@ -95,8 +108,25 @@ export async function GET(request: NextRequest) {
         cashTotal += sale.totalPrice;
       } else {
         qrisTotal += sale.totalPrice;
+        // Add QRIS calculations for standalone product sales
+        qrisReceived += sale.qrisAmountReceived || 0;
+        qrisExcess += sale.qrisExcessAmount || 0;
       }
     }
+
+    // Calculate expenses for today
+    const expenses = await prisma.branchExpense.findMany({
+      where: {
+        cabangId: branchId,
+        createdAt: {
+          gte: today,
+          lt: tomorrow
+        }
+      }
+    });
+
+    const totalExpenses = expenses.reduce((sum, expense) => sum + expense.nominal, 0);
+    const netRevenue = totalRevenue - totalExpenses;
 
     const visitsWithPayment = visits.map(visit => ({
       ...visit,
@@ -105,10 +135,14 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       visits: visitsWithPayment,
+      productTransactions: productSales,
       summary: {
-        total: totalRevenue,
+        total: netRevenue,
         cash: cashTotal,
-        qris: qrisTotal
+        qris: qrisTotal,
+        qrisReceived: qrisReceived,
+        qrisExcess: qrisExcess,
+        expenses: totalExpenses
       }
     });
   } catch (error) {

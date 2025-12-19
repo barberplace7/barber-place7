@@ -47,11 +47,15 @@ export interface Product {
   basePrice: number;
 }
 
+export interface ServiceCapsterPair {
+  serviceId: string;
+  capsterId: string;
+}
+
 export interface NewCustomerForm {
   name: string;
   phone: string;
-  services: string[];
-  capsterId: string;
+  serviceCapsterPairs: ServiceCapsterPair[];
 }
 
 export interface ProductSaleForm {

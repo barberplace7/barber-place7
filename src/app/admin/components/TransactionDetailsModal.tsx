@@ -52,19 +52,32 @@ export default function TransactionDetailsModal({ transaction, onClose }: Transa
           </div>
 
           <div>
-            <p className="text-xs text-gray-500 mb-1">Item/Service</p>
-            <p className="font-medium text-black">{transaction.itemName}</p>
+            <p className="text-xs text-gray-500 mb-1">Services</p>
+            {transaction.serviceDetails && transaction.serviceDetails.length > 0 ? (
+              <div className="space-y-2">
+                {transaction.serviceDetails.map((service: any, index: number) => (
+                  <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium text-black">{service.serviceName}</p>
+                        <p className="text-sm text-gray-600">Capster: {service.capsterName}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-green-600">Rp {service.amount.toLocaleString()}</p>
+                        <p className="text-xs text-gray-500">Komisi: Rp {service.commission.toLocaleString()}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="font-medium text-black">{transaction.itemName}</p>
+            )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs text-gray-500 mb-1">Staff</p>
-              <p className="font-medium text-black">{transaction.staffName}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500 mb-1">Branch</p>
-              <p className="font-medium text-black">{transaction.branchName}</p>
-            </div>
+          <div>
+            <p className="text-xs text-gray-500 mb-1">Branch</p>
+            <p className="font-medium text-black">{transaction.branchName}</p>
           </div>
 
           <div className="pt-4 border-t border-gray-200">

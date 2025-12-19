@@ -22,17 +22,7 @@ export async function GET(request: NextRequest) {
           capsterId,
           createdAt: { gte: startDate, lte: endDate },
         },
-        include: {
-          visit: {
-            include: {
-              visitServices: {
-                include: {
-                  service: true,
-                },
-              },
-            },
-          },
-        },
+
         orderBy: { createdAt: 'desc' },
       }),
       prisma.productTransaction.findMany({
@@ -44,70 +34,26 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
-    // Group by individual service
+    // Group by service transaction (not individual services)
     const itemMap = new Map();
 
-    for (const st of serviceTransactions) {
-      // Ambil visitServices dari visit
-      let services = st.visit?.visitServices || [];
-      
-      // Jika visitServices kosong, coba query ulang
-      if (services.length === 0 && st.visitId) {
-        const visitData = await prisma.customerVisit.findUnique({
-          where: { id: st.visitId },
-          include: {
-            visitServices: {
-              include: { service: true }
-            }
-          }
-        });
-        services = visitData?.visitServices || [];
-      }
-      
-      if (services.length === 0) {
-        // Fallback: parse dari paketName jika masih kosong
-        const serviceNames = st.paketName.split(' + ');
-        const commissionPerService = st.commissionAmount / serviceNames.length;
-        
-        serviceNames.forEach((serviceName) => {
-          const key = `SERVICE-${serviceName.trim()}`;
-          if (!itemMap.has(key)) {
-            itemMap.set(key, {
-              type: 'SERVICE',
-              itemName: serviceName.trim(),
-              count: 0,
-              totalCommission: 0,
-            });
-          }
-          const item = itemMap.get(key);
-          item.count += 1;
-          item.totalCommission += commissionPerService;
-        });
-      } else {
-        // Hitung komisi per service dari visitServices
-        const totalServices = services.length;
-        const commissionPerService = st.commissionAmount / totalServices;
-        
-        services.forEach((vs) => {
-          const serviceName = vs.service?.name || 'Unknown Service';
-          const key = `SERVICE-${serviceName}`;
-          
-          if (!itemMap.has(key)) {
-            itemMap.set(key, {
-              type: 'SERVICE',
-              itemName: serviceName,
-              count: 0,
-              totalCommission: 0,
-            });
-          }
-          
-          const item = itemMap.get(key);
-          item.count += 1;
-          item.totalCommission += commissionPerService;
+    // Process service transactions - each transaction as one item
+    serviceTransactions.forEach((st) => {
+      const key = `SERVICE-${st.paketName}`;
+      if (!itemMap.has(key)) {
+        itemMap.set(key, {
+          type: 'SERVICE',
+          itemName: st.paketName,
+          count: 0,
+          totalCommission: 0,
         });
       }
-    }
+      const item = itemMap.get(key);
+      item.count += 1;
+      item.totalCommission += st.commissionAmount;
+    });
 
+    // Process product transactions
     productTransactions.forEach((pt) => {
       const key = `PRODUCT-${pt.productNameSnapshot}`;
       if (!itemMap.has(key)) {
@@ -119,7 +65,7 @@ export async function GET(request: NextRequest) {
         });
       }
       const item = itemMap.get(key);
-      item.count += 1;
+      item.count += pt.quantity; // Use quantity for products
       item.totalCommission += pt.commissionAmount;
     });
 

@@ -15,10 +15,7 @@ export default function HistoryTab({ state }: any) {
       case '7days':
         dateFrom = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
         break;
-      case '30days':
-        dateFrom = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-        break;
-      case 'custom':
+      default:
         return;
     }
     
@@ -38,16 +35,23 @@ export default function HistoryTab({ state }: any) {
           ? visit.serviceTransactions[0].paketName
           : visit.visitServices?.map(vs => vs.service.name).join(' + ') || 'No services';
         
+        const firstServiceTransaction = visit.serviceTransactions?.[0];
+        
         transactions.push({
           ...visit,
           type: 'SERVICE',
           date: visit.jamSelesai,
           amount: serviceAmount,
-          paymentMethod: visit.serviceTransactions?.length > 0 ? visit.serviceTransactions[0].paymentMethod : 'CASH',
+          paymentMethod: firstServiceTransaction?.paymentMethod || 'CASH',
           staff: visit.capster.name,
           itemName: serviceName,
           customerName: visit.customerName,
-          customerPhone: visit.customerPhone
+          customerPhone: visit.customerPhone,
+          // QRIS excess info
+          qrisAmountReceived: firstServiceTransaction?.qrisAmountReceived || 0,
+          qrisExcessAmount: firstServiceTransaction?.qrisExcessAmount || 0,
+          qrisExcessType: firstServiceTransaction?.qrisExcessType,
+          qrisExcessNote: firstServiceTransaction?.qrisExcessNote
         });
       });
     }
@@ -61,7 +65,12 @@ export default function HistoryTab({ state }: any) {
           date: sale.createdAt,
           amount: sale.totalPrice,
           staff: responsibleStaff?.name || 'Unknown',
-          itemName: `${sale.productNameSnapshot} (x${sale.quantity})`
+          itemName: `${sale.productNameSnapshot} (x${sale.quantity})`,
+          // QRIS excess info
+          qrisAmountReceived: sale.qrisAmountReceived || 0,
+          qrisExcessAmount: sale.qrisExcessAmount || 0,
+          qrisExcessType: sale.qrisExcessType,
+          qrisExcessNote: sale.qrisExcessNote
         });
       });
     }
@@ -97,9 +106,22 @@ export default function HistoryTab({ state }: any) {
     const expenseAmount = Math.abs(allTransactions.filter(t => t.type === 'EXPENSE').reduce((sum, t) => sum + t.amount, 0));
     const netAmount = revenueAmount - expenseAmount;
     const cashAmount = allTransactions.filter(t => t.paymentMethod === 'CASH' && t.type !== 'EXPENSE').reduce((sum, t) => sum + t.amount, 0);
-    const qrisAmount = allTransactions.filter(t => t.paymentMethod === 'QRIS' && t.type !== 'EXPENSE').reduce((sum, t) => sum + t.amount, 0);
     
-    return { revenueAmount, expenseAmount, netAmount, cashAmount, qrisAmount };
+    // QRIS calculations
+    const qrisTransactions = allTransactions.filter(t => t.paymentMethod === 'QRIS' && t.type !== 'EXPENSE');
+    const qrisRevenueAmount = qrisTransactions.reduce((sum, t) => sum + t.amount, 0);
+    const qrisTotalReceived = qrisTransactions.reduce((sum, t) => sum + (t.qrisAmountReceived || t.amount), 0);
+    const qrisExcessAmount = qrisTransactions.reduce((sum, t) => sum + (t.qrisExcessAmount || 0), 0);
+    
+    return { 
+      revenueAmount: netAmount, // Use net amount as main revenue display
+      expenseAmount, 
+      netAmount, 
+      cashAmount, 
+      qrisRevenueAmount, 
+      qrisTotalReceived, 
+      qrisExcessAmount 
+    };
   }, [allTransactions]);
 
   return (
@@ -114,17 +136,15 @@ export default function HistoryTab({ state }: any) {
       <div className="bg-stone-50 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8">
         <div className="mb-4">
           <label className="block text-xs sm:text-sm font-medium text-stone-700 mb-2">Rentang Tanggal</label>
-          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+          <div className="flex gap-2">
             {[
               { id: 'today', name: 'Hari Ini' },
-              { id: '7days', name: '7 Hari Terakhir' },
-              { id: '30days', name: '30 Hari Terakhir' },
-              { id: 'custom', name: 'Rentang Kustom' }
+              { id: '7days', name: '7 Hari Terakhir' }
             ].map((preset) => (
               <button
                 key={preset.id}
                 onClick={() => handleDatePresetChange(preset.id)}
-                className={`px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium rounded-md transition-colors min-h-[44px] ${
+                className={`px-3 py-2 text-sm font-medium rounded-md transition-colors min-h-[44px] ${
                   state.datePreset === preset.id
                     ? 'bg-stone-800 text-white'
                     : 'bg-white text-stone-700 border border-stone-300 hover:bg-stone-50'
@@ -136,33 +156,7 @@ export default function HistoryTab({ state }: any) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-stone-700 mb-2">Dari Tanggal</label>
-            <input
-              type="date"
-              value={state.historyFilters.dateFrom}
-              onChange={(e) => {
-                state.setHistoryFilters({...state.historyFilters, dateFrom: e.target.value});
-                state.setDatePreset('custom');
-              }}
-              disabled={state.datePreset !== 'custom'}
-              className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:border-stone-500 focus:outline-none bg-white text-stone-800 disabled:bg-stone-100 disabled:cursor-not-allowed min-h-[44px] text-sm"
-            />
-          </div>
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-stone-700 mb-2">Sampai Tanggal</label>
-            <input
-              type="date"
-              value={state.historyFilters.dateTo}
-              onChange={(e) => {
-                state.setHistoryFilters({...state.historyFilters, dateTo: e.target.value});
-                state.setDatePreset('custom');
-              }}
-              disabled={state.datePreset !== 'custom'}
-              className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:border-stone-500 focus:outline-none bg-white text-stone-800 disabled:bg-stone-100 disabled:cursor-not-allowed min-h-[44px] text-sm"
-            />
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label className="block text-xs sm:text-sm font-medium text-stone-700 mb-2">Tipe Transaksi</label>
             <select
@@ -200,28 +194,36 @@ export default function HistoryTab({ state }: any) {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-            <div className="text-center">
-              <div className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-green-600">Rp {summary.revenueAmount.toLocaleString()}</div>
-              <div className="text-xs sm:text-sm text-stone-600">Pendapatan</div>
-            </div>
-            <div className="text-center">
-              <div className={`text-base sm:text-lg lg:text-xl xl:text-2xl font-bold ${summary.netAmount >= 0 ? 'text-purple-600' : 'text-red-600'}`}>
-                Rp {summary.netAmount.toLocaleString()}
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-green-600">Rp {summary.revenueAmount.toLocaleString()}</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Total Uang</div>
               </div>
-              <div className="text-xs sm:text-sm text-stone-600">Laba Bersih</div>
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-emerald-600">Rp {summary.cashAmount.toLocaleString()}</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Cash</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-blue-600">Rp {summary.qrisRevenueAmount.toLocaleString()}</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Pendapatan QRIS</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-red-600">Rp {summary.expenseAmount.toLocaleString()}</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Pengeluaran</div>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-emerald-600">Rp {summary.cashAmount.toLocaleString()}</div>
-              <div className="text-xs sm:text-sm text-stone-600">Cash</div>
-            </div>
-            <div className="text-center">
-              <div className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-blue-600">Rp {summary.qrisAmount.toLocaleString()}</div>
-              <div className="text-xs sm:text-sm text-stone-600">QRIS</div>
-            </div>
-            <div className="text-center">
-              <div className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-red-600">Rp {summary.expenseAmount.toLocaleString()}</div>
-              <div className="text-xs sm:text-sm text-stone-600">Pengeluaran</div>
+            <div className="border-t border-stone-200 pt-4">
+              <div className="grid grid-cols-2 gap-4 sm:gap-6">
+                <div className="text-center">
+                  <div className="text-base sm:text-lg lg:text-xl font-bold text-indigo-600">Rp {summary.qrisTotalReceived.toLocaleString()}</div>
+                  <div className="text-xs sm:text-sm text-stone-500">Total QRIS Masuk (untuk cek mutasi rekening)</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-base sm:text-lg lg:text-xl font-bold text-amber-600">Rp {summary.qrisExcessAmount.toLocaleString()}</div>
+                  <div className="text-xs sm:text-sm text-stone-500">Selisih QRIS (tips/tarik cash)</div>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -290,11 +292,25 @@ export default function HistoryTab({ state }: any) {
                     {transaction.type === 'EXPENSE' ? (
                       <span className="px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">PENGELUARAN</span>
                     ) : (
-                      <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
-                        transaction.paymentMethod === 'CASH' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                      }`}>
-                        {transaction.paymentMethod}
-                      </span>
+                      <div>
+                        <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
+                          transaction.paymentMethod === 'CASH' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {transaction.paymentMethod}
+                        </span>
+                        {transaction.paymentMethod === 'QRIS' && transaction.qrisExcessAmount > 0 && (
+                          <div className="mt-1">
+                            <div className="text-xs text-amber-600 font-medium">
+                              +Rp {transaction.qrisExcessAmount.toLocaleString()}
+                            </div>
+                            <div className="text-xs text-stone-500">
+                              {transaction.qrisExcessType === 'TIPS' ? 'Tips' : 
+                               transaction.qrisExcessType === 'CASH_WITHDRAWAL' ? 'Tarik Cash' : 
+                               transaction.qrisExcessType === 'OTHER' ? 'Lainnya' : transaction.qrisExcessType}
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </td>
                 </tr>

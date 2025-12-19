@@ -33,5 +33,9 @@ export const adminApi = {
     const searchParams = new URLSearchParams(params);
     return apiFetch(`/api/admin/staff-transactions?${searchParams}`);
   },
+  getServiceStats: (params: any) => {
+    const searchParams = new URLSearchParams(params);
+    return apiFetch(`/api/admin/service-stats?${searchParams}`);
+  },
   getGallery: () => apiFetch('/api/admin/gallery'),
 };

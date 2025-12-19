@@ -10,6 +10,7 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
   const [deleteConfirm, setDeleteConfirm] = useState<{show: boolean, type: 'service'|'product', id: string, name: string}>({show: false, type: 'service', id: '', name: ''});
   const [servicePage, setServicePage] = useState(1);
   const [productPage, setProductPage] = useState(1);
+  const [editingBranch, setEditingBranch] = useState<{id: string, name: string, address: string} | null>(null);
   const itemsPerPage = 15;
   
   const queryClient = useQueryClient();
@@ -117,6 +118,22 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'gallery'] });
+    }
+  });
+
+  const updateBranchMutation = useMutation({
+    mutationFn: async (data: {id: string, name: string, address: string}) => {
+      const res = await fetch('/api/admin/cabang', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error('Failed to update branch');
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'cabang'] });
+      setEditingBranch(null);
     }
   });
 
@@ -416,6 +433,119 @@ export default function MasterDataTab({ activeTab, adminData }: any) {
           </div>
         )}
       </>
+    );
+  }
+
+  if (activeTab === 'branches') {
+    return (
+      <div>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-black">Kelola Cabang</h2>
+          <p className="text-gray-600 text-sm">Edit nama dan alamat cabang</p>
+        </div>
+        
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Cabang</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {(adminData.cabangList || []).map((branch: any) => (
+                  <tr key={branch.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{branch.name}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">{branch.address}</td>
+                    <td className="px-6 py-4 text-sm">
+                      <button
+                        onClick={() => setEditingBranch({id: branch.id, name: branch.name, address: branch.address})}
+                        className="text-blue-600 hover:text-blue-800 font-medium"
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        {/* Edit Branch Modal */}
+        {editingBranch && (
+          <div className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
+              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-black">Edit Cabang</h2>
+                    <p className="text-gray-600 text-sm">Ubah nama dan alamat cabang</p>
+                  </div>
+                  <button 
+                    onClick={() => setEditingBranch(null)}
+                    className="text-gray-400 hover:text-gray-600 text-2xl w-8 h-8 flex items-center justify-center"
+                  >
+                    ×
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-6 space-y-6">
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <h3 className="text-lg font-semibold text-black mb-4 flex items-center">
+                    <span className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white text-xs font-bold mr-3">✎</span>
+                    Informasi Cabang
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-black mb-2">Nama Cabang *</label>
+                      <input
+                        type="text"
+                        placeholder="Masukkan nama cabang"
+                        value={editingBranch.name}
+                        onChange={(e) => setEditingBranch({...editingBranch, name: e.target.value})}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none bg-white text-black transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-black mb-2">Alamat</label>
+                      <input
+                        type="text"
+                        placeholder="Masukkan alamat cabang"
+                        value={editingBranch.address}
+                        onChange={(e) => setEditingBranch({...editingBranch, address: e.target.value})}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none bg-white text-black transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-4 rounded-b-2xl">
+                <div className="flex gap-3">
+                  <button 
+                    onClick={() => setEditingBranch(null)}
+                    className="flex-1 text-gray-600 hover:text-gray-800 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                  >
+                    Batal
+                  </button>
+                  <button 
+                    onClick={() => updateBranchMutation.mutate(editingBranch)}
+                    disabled={!editingBranch.name || updateBranchMutation.isPending}
+                    className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 font-medium"
+                  >
+                    {updateBranchMutation.isPending && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>}
+                    {updateBranchMutation.isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     );
   }
 

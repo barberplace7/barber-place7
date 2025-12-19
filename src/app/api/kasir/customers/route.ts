@@ -21,7 +21,8 @@ export async function GET() {
         cabang: { select: { name: true } },
         visitServices: {
           include: {
-            service: { select: { id: true, name: true, basePrice: true, category: true } }
+            service: { select: { id: true, name: true, basePrice: true, category: true } },
+            capster: { select: { name: true } }
           }
         },
         serviceTransactions: { select: { paketName: true, priceFinal: true } }
@@ -38,21 +39,24 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const session = await requireAuth('KASIR');
-    const { name, phone, services, capsterId } = await request.json();
+    const { name, phone, serviceCapsterPairs } = await request.json();
 
-    if (!name || !services || services.length === 0 || !capsterId) {
-      return NextResponse.json({ error: 'Name, at least one service, and capster required' }, { status: 400 });
+    if (!name || !serviceCapsterPairs || serviceCapsterPairs.length === 0) {
+      return NextResponse.json({ error: 'Name and at least one service-capster pair required' }, { status: 400 });
     }
 
-    // Create customer visit with selected services
+    // Create customer visit with service-capster pairs
     const result = await prisma.$transaction(async (tx) => {
+      // Use first capster as main capster for backward compatibility
+      const mainCapsterId = serviceCapsterPairs[0].capsterId;
+      
       // Create the main visit
       const visit = await tx.customerVisit.create({
         data: {
           cabangId: session.cabangId!,
           customerName: name,
           customerPhone: phone || null,
-          capsterId: capsterId,
+          capsterId: mainCapsterId,
           status: 'ONGOING'
         },
         include: {
@@ -60,12 +64,13 @@ export async function POST(request: NextRequest) {
         }
       });
 
-      // Add all selected services to visit
-      for (const serviceId of services) {
+      // Add all service-capster pairs to visit
+      for (const pair of serviceCapsterPairs) {
         await tx.visitService.create({
           data: {
             visitId: visit.id,
-            serviceId: serviceId
+            serviceId: pair.serviceId,
+            capsterId: pair.capsterId
           }
         });
       }
@@ -77,7 +82,8 @@ export async function POST(request: NextRequest) {
           capster: { select: { name: true } },
           visitServices: {
             include: {
-              service: { select: { id: true, name: true, basePrice: true, category: true } }
+              service: { select: { id: true, name: true, basePrice: true, category: true } },
+              capster: { select: { name: true } }
             }
           }
         }

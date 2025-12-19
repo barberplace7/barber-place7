@@ -50,7 +50,11 @@ export default function TransactionsTab({ state }: any) {
         </div>
         <div className="flex flex-wrap gap-2 items-center">
           <button 
-            onClick={() => state.setShowAddService(true)}
+            onClick={() => {
+              // Initialize with one empty service-capster pair
+              state.setNewCustomer({ name: '', phone: '', serviceCapsterPairs: [{ serviceId: '', capsterId: '' }] });
+              state.setShowAddService(true);
+            }}
             className="group relative bg-gradient-to-br from-gray-800 to-gray-900 text-white px-3 sm:px-4 py-2 rounded-xl hover:from-gray-900 hover:to-black transition-all duration-300 font-medium flex items-center gap-2 text-xs sm:text-sm shadow-lg hover:shadow-xl hover:-translate-y-0.5 border border-gray-700 hover:border-gray-600 min-h-[44px]"
           >
             <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg shadow-md group-hover:shadow-blue-500/25 transition-all duration-300 group-hover:scale-110">
@@ -109,19 +113,37 @@ export default function TransactionsTab({ state }: any) {
 
       {state.customerView === 'completed' && (
         <div className="mb-8 p-4 sm:p-6 bg-stone-50 rounded-xl border border-stone-200">
-          <h3 className="font-bold text-stone-800 mb-4 text-sm sm:text-base">Ringkasan Pendapatan Hari Ini</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-            <div className="text-center">
-              <div className="text-lg sm:text-xl lg:text-2xl font-bold text-stone-800">Rp {(state.dailySummary?.total || 0).toLocaleString()}</div>
-              <div className="text-xs sm:text-sm text-stone-600">Total Pendapatan</div>
+          <h3 className="font-bold text-stone-800 mb-4 text-sm sm:text-base">Ringkasan Transaksi Hari Ini</h3>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-green-600">Rp {(state.dailySummary?.total || 0).toLocaleString()}</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Total Uang</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-emerald-600">Rp {(state.dailySummary?.cash || 0).toLocaleString()}</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Cash</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-blue-600">Rp {(state.dailySummary?.qris || 0).toLocaleString()}</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Pendapatan QRIS</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-red-600">Rp {(state.dailySummary?.expenses || 0).toLocaleString()}</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Pengeluaran</div>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">Rp {(state.dailySummary?.cash || 0).toLocaleString()}</div>
-              <div className="text-xs sm:text-sm text-stone-600">Cash</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">Rp {(state.dailySummary?.qris || 0).toLocaleString()}</div>
-              <div className="text-xs sm:text-sm text-stone-600">QRIS</div>
+            <div className="border-t border-stone-200 pt-4">
+              <div className="grid grid-cols-2 gap-4 sm:gap-6">
+                <div className="text-center">
+                  <div className="text-base sm:text-lg lg:text-xl font-bold text-indigo-600">Rp {(state.dailySummary?.qrisReceived || 0).toLocaleString()}</div>
+                  <div className="text-xs sm:text-sm text-stone-500">Total QRIS Masuk (untuk cek mutasi rekening)</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-base sm:text-lg lg:text-xl font-bold text-amber-600">Rp {(state.dailySummary?.qrisExcess || 0).toLocaleString()}</div>
+                  <div className="text-xs sm:text-sm text-stone-500">Selisih QRIS (tips/tarik cash)</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -162,7 +184,20 @@ export default function TransactionsTab({ state }: any) {
                         {customer.visitServices?.map(vs => vs.service.name).join(' + ') || 'Tidak ada layanan'}
                       </div>
                     </td>
-                    <td className="px-3 sm:px-6 py-4 sm:py-5 text-stone-700 text-sm sm:text-base">{customer.capster.name}</td>
+                    <td className="px-3 sm:px-6 py-4 sm:py-5 text-stone-700 text-sm sm:text-base">
+                      {customer.visitServices?.length > 0 ? (
+                        <div className="space-y-1">
+                          {customer.visitServices.map((vs, index) => (
+                            <div key={index} className="text-sm">
+                              <span className="font-medium">{vs.capster?.name || customer.capster.name}</span>
+                              <span className="text-stone-500 ml-1">({vs.service.name})</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <span>{customer.capster.name}</span>
+                      )}
+                    </td>
                     <td className="px-3 sm:px-6 py-4 sm:py-5 text-stone-500 text-xs sm:text-sm">
                       {new Date(customer.jamMasuk).toLocaleTimeString()}
                     </td>
@@ -280,11 +315,25 @@ export default function TransactionsTab({ state }: any) {
                         {new Date(customer.jamSelesai).toLocaleTimeString()}
                       </td>
                       <td className="px-3 sm:px-6 py-4 sm:py-5">
-                        <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
-                          customer.paymentMethod === 'CASH' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {customer.paymentMethod}
-                        </span>
+                        <div>
+                          <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
+                            customer.paymentMethod === 'CASH' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {customer.paymentMethod}
+                          </span>
+                          {customer.paymentMethod === 'QRIS' && customer.serviceTransactions?.[0]?.qrisExcessAmount > 0 && (
+                            <div className="mt-1">
+                              <div className="text-xs text-amber-600 font-medium">
+                                +Rp {customer.serviceTransactions[0].qrisExcessAmount.toLocaleString()}
+                              </div>
+                              <div className="text-xs text-stone-500">
+                                {customer.serviceTransactions[0].qrisExcessType === 'TIPS' ? 'Tips' : 
+                                 customer.serviceTransactions[0].qrisExcessType === 'CASH_WITHDRAWAL' ? 'Tarik Cash' : 
+                                 customer.serviceTransactions[0].qrisExcessType === 'OTHER' ? 'Lainnya' : customer.serviceTransactions[0].qrisExcessType}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -313,11 +362,25 @@ export default function TransactionsTab({ state }: any) {
                         {new Date(transaction.createdAt).toLocaleTimeString()}
                       </td>
                       <td className="px-3 sm:px-6 py-4 sm:py-5">
-                        <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
-                          transaction.paymentMethod === 'CASH' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
-                        }`}>
-                          {transaction.paymentMethod}
-                        </span>
+                        <div>
+                          <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
+                            transaction.paymentMethod === 'CASH' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {transaction.paymentMethod}
+                          </span>
+                          {transaction.paymentMethod === 'QRIS' && transaction.qrisExcessAmount > 0 && (
+                            <div className="mt-1">
+                              <div className="text-xs text-amber-600 font-medium">
+                                +Rp {transaction.qrisExcessAmount.toLocaleString()}
+                              </div>
+                              <div className="text-xs text-stone-500">
+                                {transaction.qrisExcessType === 'TIPS' ? 'Tips' : 
+                                 transaction.qrisExcessType === 'CASH_WITHDRAWAL' ? 'Tarik Cash' : 
+                                 transaction.qrisExcessType === 'OTHER' ? 'Lainnya' : transaction.qrisExcessType}
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}

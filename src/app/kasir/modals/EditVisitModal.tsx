@@ -1,6 +1,16 @@
 'use client';
+import { useState } from 'react';
 
 export default function EditVisitModal({ state, onClose }: any) {
+  const [editServicePairs, setEditServicePairs] = useState(
+    state.editingVisit?.visitServices?.map((vs: any) => ({
+      serviceId: vs.service.id,
+      capsterId: vs.capsterId || state.editingVisit.capsterId
+    })) || []
+  );
+  const [showTreatments, setShowTreatments] = useState(false);
+  const [showHaircut, setShowHaircut] = useState(true);
+  
   const handleSubmit = async () => {
     if (!state.editingVisit || state.isSubmitting) return;
     
@@ -14,10 +24,9 @@ export default function EditVisitModal({ state, onClose }: any) {
         try {
           await state.mutations.editVisit.mutateAsync({
             visitId: state.editingVisit.id,
-            services: state.editServices
+            serviceCapsterPairs: editServicePairs
           });
           state.setEditingVisit(null);
-          state.setEditServices([]);
           onClose();
           state.showToast('Layanan berhasil diupdate!', 'success');
         } catch (error: any) {
@@ -31,6 +40,16 @@ export default function EditVisitModal({ state, onClose }: any) {
 
   const hairCutServices = state.services.filter((s: any) => s.category === 'HAIRCUT');
   const treatmentServices = state.services.filter((s: any) => s.category === 'TREATMENT');
+
+  const addServiceCapsterPair = (serviceId: string, capsterId: string) => {
+    setEditServicePairs([...editServicePairs, { serviceId, capsterId }]);
+  };
+
+  const removeServicePair = (index: number) => {
+    if (editServicePairs.length > 1) {
+      setEditServicePairs(editServicePairs.filter((_, i) => i !== index));
+    }
+  };
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/20 flex items-center justify-center z-50 p-4">
@@ -46,114 +65,245 @@ export default function EditVisitModal({ state, onClose }: any) {
         </div>
 
         <div className="p-6 space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold text-stone-800 mb-4">Edit Layanan</h3>
-            <div className="space-y-6">
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <label className="block text-sm font-medium text-stone-700">Paket Potong Rambut <span className="text-stone-500">(Opsional)</span></label>
-                  {state.editServices.some((id: string) => {
-                    const service = state.services.find((s: any) => s.id === id);
-                    return service?.category === 'HAIRCUT';
-                  }) && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const nonHaircutServices = state.editServices.filter((id: string) => {
-                          const service = state.services.find((s: any) => s.id === id);
-                          return service?.category !== 'HAIRCUT';
-                        });
-                        state.setEditServices(nonHaircutServices);
-                      }}
-                      className="text-xs text-red-600 hover:text-red-800 font-medium"
-                    >Hapus Potong Rambut</button>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {hairCutServices.map((service: any) => (
-                    <label key={service.id} className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-all ${state.editServices.includes(service.id) ? 'border-stone-500 bg-stone-100 ring-2 ring-stone-200' : 'border-stone-300 hover:border-stone-400 hover:bg-stone-50'}`}>
-                      <div className="flex items-center space-x-3">
-                        <input
-                          type="radio"
-                          name="editHaircut"
-                          checked={state.editServices.includes(service.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              const nonHaircutServices = state.editServices.filter((id: string) => {
-                                const existingService = state.services.find((s: any) => s.id === id);
-                                return existingService?.category !== 'HAIRCUT';
-                              });
-                              state.setEditServices([...nonHaircutServices, service.id]);
-                            } else {
-                              state.setEditServices(state.editServices.filter((id: string) => id !== service.id));
-                            }
-                          }}
-                          className="text-stone-800"
-                        />
-                        <div>
-                          <div className="font-medium text-stone-800">{service.name}</div>
-                          <div className="text-sm text-stone-500">Layanan potong rambut profesional</div>
+          <div className="bg-stone-50 rounded-xl p-6">
+            <h3 className="text-lg font-semibold text-stone-800 mb-4 flex items-center">
+              <span className="w-6 h-6 bg-stone-800 rounded-full flex items-center justify-center text-white text-xs font-bold mr-3">✂</span>
+              Edit Layanan & Capster
+            </h3>
+            
+            {/* Fixed Height Scrollable Area */}
+            <div className="h-64 overflow-y-auto space-y-2 pr-2">
+              {editServicePairs.map((pair, index) => {
+                const service = state.services.find((s: any) => s.id === pair.serviceId);
+                const capster = state.capsters.find((c: any) => c.id === pair.capsterId);
+                const isComplete = pair.serviceId && pair.capsterId;
+                
+                return (
+                  <div key={index} className={`bg-white rounded-lg border transition-all ${
+                    isComplete ? 'border-green-200 bg-green-50' : 'border-stone-200'
+                  }`}>
+                    {isComplete ? (
+                      /* Compact Summary for Completed */
+                      <div className="p-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-sm">
+                              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                            <div className="flex-1">
+                              <div className="font-semibold text-sm text-stone-800">{service?.name}</div>
+                              <div className="text-xs text-stone-500 flex items-center gap-1">
+                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                                {capster?.name}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="text-sm font-semibold text-stone-800">
+                              Rp {service?.basePrice.toLocaleString()}
+                            </div>
+                            {editServicePairs.length > 1 && (
+                              <button
+                                onClick={() => removeServicePair(index)}
+                                className="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-sm"
+                              >
+                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                                </svg>
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="font-bold text-stone-800">Rp {service.basePrice.toLocaleString()}</div>
+                    ) : (
+                      /* Full Form for Incomplete */
+                      <div className="p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-sm font-semibold text-stone-700">Layanan #{index + 1}</span>
+                          {editServicePairs.length > 1 && (
+                            <button
+                              onClick={() => removeServicePair(index)}
+                              className="w-7 h-7 bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                            >
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+                        
+                        {/* Haircut Services */}
+                        <div className="mb-3">
+                          <button
+                            onClick={() => setShowHaircut(!showHaircut)}
+                            className="w-full flex items-center justify-between p-2 rounded-lg bg-blue-50 hover:bg-blue-100 transition-colors mb-2"
+                          >
+                            <div className="flex items-center gap-2">
+                              <svg className="w-4 h-4 text-blue-700" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                              </svg>
+                              <span className="text-sm font-semibold text-blue-700">Potong Rambut</span>
+                            </div>
+                            <svg className={`w-4 h-4 text-blue-700 transition-transform ${showHaircut ? 'rotate-180' : ''}`} fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                            </svg>
+                          </button>
+                          {showHaircut && (
+                            <div className="grid grid-cols-2 gap-2">
+                              {hairCutServices.map(serviceOption => {
+                                const isSelected = pair.serviceId === serviceOption.id;
+                                return (
+                                  <button
+                                    key={serviceOption.id}
+                                    onClick={() => {
+                                      const newPairs = [...editServicePairs];
+                                      newPairs[index].serviceId = serviceOption.id;
+                                      setEditServicePairs(newPairs);
+                                    }}
+                                    className={`p-2 rounded-lg border text-left text-xs transition-all ${
+                                      isSelected 
+                                        ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-300' 
+                                        : 'border-stone-200 hover:border-blue-300 hover:bg-blue-50'
+                                    }`}
+                                  >
+                                    <div className="font-semibold text-stone-800">{serviceOption.name}</div>
+                                    <div className="text-stone-500 mt-1">
+                                      Rp {serviceOption.basePrice.toLocaleString()}
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Treatment Services */}
+                        <div className="mb-3">
+                          <button
+                            onClick={() => setShowTreatments(!showTreatments)}
+                            className="w-full flex items-center justify-between p-2 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors mb-2"
+                          >
+                            <div className="flex items-center gap-2">
+                              <svg className="w-4 h-4 text-purple-700" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                              </svg>
+                              <span className="text-sm font-semibold text-purple-700">Treatment</span>
+                            </div>
+                            <svg className={`w-4 h-4 text-purple-700 transition-transform ${showTreatments ? 'rotate-180' : ''}`} fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                            </svg>
+                          </button>
+                          {showTreatments && (
+                            <div className="grid grid-cols-2 gap-2">
+                              {treatmentServices.map(serviceOption => {
+                                const isSelected = pair.serviceId === serviceOption.id;
+                                return (
+                                  <button
+                                    key={serviceOption.id}
+                                    onClick={() => {
+                                      const newPairs = [...editServicePairs];
+                                      newPairs[index].serviceId = serviceOption.id;
+                                      setEditServicePairs(newPairs);
+                                    }}
+                                    className={`p-2 rounded-lg border text-left text-xs transition-all ${
+                                      isSelected 
+                                        ? 'border-purple-500 bg-purple-50 ring-1 ring-purple-300' 
+                                        : 'border-stone-200 hover:border-purple-300 hover:bg-purple-50'
+                                    }`}
+                                  >
+                                    <div className="font-semibold text-stone-800">{serviceOption.name}</div>
+                                    <div className="text-stone-500 mt-1">
+                                      Rp {serviceOption.basePrice.toLocaleString()}
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Capster Selection */}
+                        {pair.serviceId && (
+                          <div>
+                            <label className="block text-xs font-semibold text-stone-700 mb-2">Pilih Capster</label>
+                            <div className="grid grid-cols-2 gap-2">
+                              {state.capsters.map(capsterOption => {
+                                const isSelected = pair.capsterId === capsterOption.id;
+                                return (
+                                  <button
+                                    key={capsterOption.id}
+                                    onClick={() => {
+                                      const newPairs = [...editServicePairs];
+                                      newPairs[index].capsterId = capsterOption.id;
+                                      setEditServicePairs(newPairs);
+                                    }}
+                                    className={`p-2 rounded-lg border text-left text-xs transition-all ${
+                                      isSelected 
+                                        ? 'border-stone-500 bg-stone-100 ring-1 ring-stone-300' 
+                                        : 'border-stone-200 hover:border-stone-300 hover:bg-stone-50'
+                                    }`}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-6 h-6 bg-stone-600 rounded-full flex items-center justify-center">
+                                        <span className="text-white text-xs font-bold">
+                                          {capsterOption.name.charAt(0).toUpperCase()}
+                                        </span>
+                                      </div>
+                                      <span className="font-semibold text-stone-800">{capsterOption.name}</span>
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
+                    )}
+                  </div>
+                );
+              })}
               
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-3">Perawatan Tambahan <span className="text-stone-500">(Opsional)</span></label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {treatmentServices.map((service: any) => (
-                    <label key={service.id} className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-all ${state.editServices.includes(service.id) ? 'border-stone-500 bg-stone-100 ring-2 ring-stone-200' : 'border-stone-300 hover:border-stone-400 hover:bg-stone-50'}`}>
-                      <div className="flex items-center space-x-3">
-                        <input
-                          type="checkbox"
-                          checked={state.editServices.includes(service.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              state.setEditServices([...state.editServices, service.id]);
-                            } else {
-                              state.setEditServices(state.editServices.filter((id: string) => id !== service.id));
-                            }
-                          }}
-                          className="rounded border-stone-300 text-stone-800"
-                        />
-                        <div>
-                          <div className="font-medium text-stone-800">{service.name}</div>
-                          <div className="text-sm text-stone-500">Perawatan premium</div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-bold text-stone-800">+Rp {service.basePrice.toLocaleString()}</div>
-                      </div>
-                    </label>
-                  ))}
-                </div>
+              {/* Add Service Button */}
+              <div className="mt-3 pt-3 border-t border-stone-200">
+                <button
+                  onClick={() => {
+                    setEditServicePairs([...editServicePairs, { serviceId: '', capsterId: '' }]);
+                  }}
+                  className="w-full bg-gradient-to-r from-stone-700 to-stone-800 text-white py-3 px-4 rounded-lg hover:from-stone-800 hover:to-stone-900 transition-all duration-200 flex items-center justify-center gap-2 font-medium shadow-lg hover:shadow-xl"
+                >
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                  </svg>
+                  <span className="font-semibold">Tambah Layanan Lagi</span>
+                </button>
               </div>
             </div>
           </div>
 
-          {state.editServices.length > 0 && (
-            <div className="bg-stone-800 rounded-xl p-4 text-white">
-              <h4 className="font-medium mb-2">Layanan yang Diperbarui</h4>
-              <div className="space-y-1">
-                {state.editServices.map((serviceId: string) => {
-                  const service = state.services.find((s: any) => s.id === serviceId);
-                  return service ? (
-                    <div key={serviceId} className="flex justify-between text-sm">
-                      <span>{service.name}</span>
-                      <span>Rp {service.basePrice.toLocaleString()}</span>
+          {/* Summary */}
+          {editServicePairs.length > 0 && (
+            <div className="bg-stone-900 rounded-xl p-4 text-white">
+              <h4 className="font-semibold text-white mb-3">Ringkasan Total</h4>
+              <div className="space-y-2">
+                {editServicePairs.map((pair, index) => {
+                  const service = state.services.find((s: any) => s.id === pair.serviceId);
+                  const capster = state.capsters.find((c: any) => c.id === pair.capsterId);
+                  return service && capster ? (
+                    <div key={index} className="flex justify-between text-sm">
+                      <span className="text-stone-200">{service.name} <span className="text-stone-400">({capster.name})</span></span>
+                      <span className="text-white font-medium">Rp {service.basePrice.toLocaleString()}</span>
                     </div>
                   ) : null;
                 })}
-                <div className="border-t border-stone-600 pt-2 mt-2">
-                  <div className="flex justify-between font-bold">
-                    <span>Total</span>
-                    <span>Rp {state.editServices.reduce((total: number, serviceId: string) => {
-                      const service = state.services.find((s: any) => s.id === serviceId);
+                <div className="border-t border-stone-700 pt-2 mt-3">
+                  <div className="flex justify-between font-bold text-lg">
+                    <span className="text-white">Total</span>
+                    <span className="text-white">Rp {editServicePairs.reduce((total: number, pair) => {
+                      const service = state.services.find((s: any) => s.id === pair.serviceId);
                       return total + (service?.basePrice || 0);
                     }, 0).toLocaleString()}</span>
                   </div>
@@ -163,12 +313,30 @@ export default function EditVisitModal({ state, onClose }: any) {
           )}
         </div>
 
-        <div className="sticky bottom-0 bg-white border-t border-stone-200 px-6 py-4 rounded-b-2xl">
-          <div className="flex gap-3">
-            <button onClick={onClose} className="flex-1 text-stone-600 hover:text-stone-800 px-4 py-2 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors">Batal</button>
-            <button onClick={handleSubmit} disabled={state.editServices.length === 0 || state.isSubmitting} className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-              {state.isSubmitting && <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>}
-              {state.isSubmitting ? 'Memperbarui...' : 'Perbarui Layanan'}
+        <div className="sticky bottom-0 bg-white border-t border-stone-200 px-8 py-6 rounded-b-2xl">
+          <div className="flex gap-4">
+            <button 
+              onClick={onClose}
+              className="flex-1 text-stone-600 hover:text-stone-800 px-6 py-3 border border-stone-300 rounded-lg hover:bg-stone-50 transition-colors font-medium"
+            >
+              Batal
+            </button>
+            <button 
+              onClick={handleSubmit}
+              disabled={editServicePairs.length === 0 || state.isSubmitting}
+              className="flex-1 bg-stone-800 text-white px-6 py-3 rounded-lg hover:bg-stone-900 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            >
+              {state.isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  <span>Memperbarui...</span>
+                </>
+              ) : (
+                <>
+                  <span>✂</span>
+                  <span>Perbarui Layanan</span>
+                </>
+              )}
             </button>
           </div>
         </div>

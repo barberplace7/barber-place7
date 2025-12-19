@@ -3,16 +3,27 @@ import { prisma } from '@/lib/prismaClient';
 
 export async function POST(request: NextRequest) {
   try {
-    const { visitId, products, paymentMethod, completedBy } = await request.json();
+    const { 
+      visitId, 
+      products, 
+      paymentMethod, 
+      completedBy,
+      qrisAmountReceived,
+      qrisExcessAmount,
+      qrisExcessType,
+      qrisExcessNote
+    } = await request.json();
 
     // Get customer visit data with services
     const visit = await prisma.customerVisit.findUnique({
       where: { id: visitId },
       include: { 
         cabang: true,
+        capster: true,
         visitServices: {
           include: {
-            service: true
+            service: true,
+            capster: true
           }
         }
       }
@@ -31,26 +42,46 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Create service transaction for all services
-    const services = visit.visitServices.map(vs => vs.service);
-    const totalServicePrice = services.reduce((sum, service) => sum + service.basePrice, 0);
-    const serviceNames = services.map(s => s.name).join(' + ');
-    const totalCommission = services.reduce((sum, service) => sum + service.commissionAmount, 0);
-
-    await prisma.serviceTransaction.create({
-      data: {
-        visitId,
-        cabangId: visit.cabangId,
-        capsterId: visit.capsterId,
-        paketName: serviceNames,
-        priceFinal: totalServicePrice,
-        commissionAmount: totalCommission,
-        closingById: completedBy,
-        closingByRole: 'KASIR',
-        closingByNameSnapshot: 'Kasir',
-        paymentMethod
+    // Group services by capster and create separate transactions
+    const servicesByCapster = new Map();
+    
+    for (const vs of visit.visitServices) {
+      const capsterId = vs.capsterId || visit.capsterId; // Fallback to visit capster if not set
+      if (!servicesByCapster.has(capsterId)) {
+        servicesByCapster.set(capsterId, []);
       }
-    });
+      servicesByCapster.get(capsterId).push(vs);
+    }
+
+    // Create service transaction for each capster
+    for (const [capsterId, visitServices] of servicesByCapster) {
+      const services = visitServices.map(vs => vs.service);
+      const serviceNames = services.map(s => s.name).join(' + ');
+      const totalPrice = services.reduce((sum, service) => sum + service.basePrice, 0);
+      const totalCommission = services.reduce((sum, service) => sum + service.commissionAmount, 0);
+
+      await prisma.serviceTransaction.create({
+        data: {
+          visitId,
+          cabangId: visit.cabangId,
+          capsterId: capsterId,
+          paketName: serviceNames,
+          priceFinal: totalPrice,
+          commissionAmount: totalCommission,
+          closingById: completedBy,
+          closingByRole: 'KASIR',
+          closingByNameSnapshot: 'Kasir',
+          paymentMethod,
+          // QRIS fields (only for first transaction to avoid duplication)
+          ...(paymentMethod === 'QRIS' && capsterId === Array.from(servicesByCapster.keys())[0] && {
+            qrisAmountReceived: qrisAmountReceived || totalPrice,
+            qrisExcessAmount: qrisExcessAmount || 0,
+            qrisExcessType: qrisExcessType || null,
+            qrisExcessNote: qrisExcessNote || null
+          })
+        }
+      });
+    }
 
     // Create product transactions if any
     if (products && products.length > 0) {
@@ -77,7 +108,14 @@ export async function POST(request: NextRequest) {
             closingById: completedBy,
             closingByRole: 'KASIR',
             closingByNameSnapshot: 'Kasir',
-            paymentMethod
+            paymentMethod,
+            // QRIS fields for product transactions
+            ...(paymentMethod === 'QRIS' && {
+              qrisAmountReceived: qrisAmountReceived || (productData!.basePrice * product.quantity),
+              qrisExcessAmount: qrisExcessAmount || 0,
+              qrisExcessType: qrisExcessType || null,
+              qrisExcessNote: qrisExcessNote || null
+            })
           }
         });
       }

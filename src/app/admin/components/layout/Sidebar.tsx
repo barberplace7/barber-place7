@@ -70,6 +70,7 @@ export default function Sidebar({
       submenu: [
         { id: 'services', name: 'Data Layanan' },
         { id: 'products', name: 'Data Produk' },
+        { id: 'branches', name: 'Data Cabang' },
         { id: 'gallery', name: 'Data Galeri' }
       ]
     },
@@ -84,7 +85,7 @@ export default function Sidebar({
       submenu: [
         { id: 'capster', name: 'Data Capster' },
         { id: 'kasir', name: 'Data Kasir' },
-        { id: 'branches', name: 'Data Pengguna Cabang' }
+        { id: 'branch-users', name: 'Login Cabang' }
       ]
     },
     {

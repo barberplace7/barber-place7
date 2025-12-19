@@ -22,9 +22,9 @@ export default function AdminDashboard() {
 
   // Auto-expand menus based on active tab - MOVED BEFORE CONDITIONAL RETURNS
   useEffect(() => {
-    if (['services', 'products', 'gallery'].includes(activeTab)) {
+    if (['services', 'products', 'branches', 'gallery'].includes(activeTab)) {
       setExpandedMenus(prev => ({ ...prev, 'data-master': true }));
-    } else if (['capster', 'kasir', 'branches'].includes(activeTab)) {
+    } else if (['capster', 'kasir', 'branch-users'].includes(activeTab)) {
       setExpandedMenus(prev => ({ ...prev, 'data-user': true }));
     } else if (['transactions', 'commission'].includes(activeTab)) {
       setExpandedMenus(prev => ({ ...prev, 'data-transaksi': true }));
@@ -71,8 +71,8 @@ export default function AdminDashboard() {
             {activeTab === 'transactions' && <TransactionsTab cabangList={adminData.cabangList} />}
             {activeTab === 'commission' && <CommissionTab adminData={adminData} />}
             {activeTab === 'kasbon' && <KasbonTab adminData={adminData} />}
-            {['capster', 'kasir', 'branches'].includes(activeTab) && <UsersTab activeTab={activeTab} adminData={adminData} />}
-            {['services', 'products', 'gallery'].includes(activeTab) && <MasterDataTab activeTab={activeTab} adminData={adminData} />}
+            {['capster', 'kasir', 'branch-users'].includes(activeTab) && <UsersTab activeTab={activeTab} adminData={adminData} />}
+            {['services', 'products', 'branches', 'gallery'].includes(activeTab) && <MasterDataTab activeTab={activeTab} adminData={adminData} />}
           </div>
         </div>
       </div>

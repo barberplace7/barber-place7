@@ -45,21 +45,39 @@ export async function GET(request: NextRequest) {
       });
 
       visits.forEach(visit => {
-        visit.serviceTransactions.forEach(st => {
-          const responsibleStaff = allStaff.find(s => s.id === st.closingById);
-          transactions.push({
-            id: st.id,
-            visitId: visit.id,
-            date: visit.jamSelesai,
-            type: 'SERVICE',
-            customerName: visit.customerName,
-            customerPhone: visit.customerPhone,
-            itemName: st.paketName,
-            staffName: responsibleStaff?.name || 'Unknown',
-            branchName: visit.cabang.name,
+        const serviceDetails = visit.serviceTransactions.map(st => {
+          const capster = allCapsters.find(c => c.id === st.capsterId) || visit.capster;
+          return {
+            serviceName: st.paketName,
+            capsterName: capster.name,
             amount: st.priceFinal,
-            paymentMethod: st.paymentMethod
-          });
+            commission: st.commissionAmount
+          };
+        });
+        
+        const totalAmount = visit.serviceTransactions.reduce((sum, st) => sum + st.priceFinal, 0);
+        const paymentMethod = visit.serviceTransactions[0]?.paymentMethod || 'CASH';
+        const qrisExcessAmount = visit.serviceTransactions.reduce((sum, st) => sum + (st.qrisExcessAmount || 0), 0);
+        const qrisExcessType = visit.serviceTransactions[0]?.qrisExcessType;
+        
+        const responsibleStaff = allStaff.find(s => s.id === visit.serviceTransactions[0]?.closingById);
+        
+        transactions.push({
+          id: visit.id,
+          visitId: visit.id,
+          date: visit.jamSelesai,
+          type: 'SERVICE',
+          customerName: visit.customerName,
+          customerPhone: visit.customerPhone,
+          itemName: serviceDetails.map(s => s.serviceName).join(' + '),
+          serviceDetails: serviceDetails,
+          staffName: responsibleStaff?.name || 'Unknown',
+          branchName: visit.cabang.name,
+          amount: totalAmount,
+          paymentMethod: paymentMethod,
+          qrisExcessAmount: qrisExcessAmount,
+          qrisExcessType: qrisExcessType,
+          serviceCount: visit.serviceTransactions.length
         });
       });
     }
@@ -89,7 +107,9 @@ export async function GET(request: NextRequest) {
           staffName: responsibleStaff?.name || 'Unknown',
           branchName: pt.cabang.name,
           amount: pt.totalPrice,
-          paymentMethod: pt.paymentMethod
+          paymentMethod: pt.paymentMethod,
+          qrisExcessAmount: pt.qrisExcessAmount || 0,
+          qrisExcessType: pt.qrisExcessType
         });
       });
     }
@@ -163,6 +183,35 @@ export async function GET(request: NextRequest) {
       .filter(t => t.type !== 'EXPENSE' && t.paymentMethod === 'QRIS')
       .reduce((sum, t) => sum + t.amount, 0);
 
+    // Calculate QRIS totals - need to get actual qrisAmountReceived from database
+    const qrisServiceTransactions = await prisma.serviceTransaction.findMany({
+      where: {
+        ...(dateFilter && { createdAt: dateFilter }),
+        ...(branchId && { cabangId: branchId }),
+        paymentMethod: 'QRIS'
+      },
+      select: { qrisAmountReceived: true, qrisExcessAmount: true }
+    });
+    
+    const qrisProductTransactions = await prisma.productTransaction.findMany({
+      where: {
+        ...(dateFilter && { createdAt: dateFilter }),
+        ...(branchId && { cabangId: branchId }),
+        paymentMethod: 'QRIS'
+      },
+      select: { qrisAmountReceived: true, qrisExcessAmount: true }
+    });
+    
+    const qrisReceived = [
+      ...qrisServiceTransactions.map(st => st.qrisAmountReceived || 0),
+      ...qrisProductTransactions.map(pt => pt.qrisAmountReceived || 0)
+    ].reduce((sum, amount) => sum + amount, 0);
+    
+    const qrisExcess = [
+      ...qrisServiceTransactions.map(st => st.qrisExcessAmount || 0),
+      ...qrisProductTransactions.map(pt => pt.qrisExcessAmount || 0)
+    ].reduce((sum, amount) => sum + amount, 0);
+
     const netIncome = totalRevenue - totalCommissions - totalExpenses;
 
     return NextResponse.json({
@@ -173,6 +222,8 @@ export async function GET(request: NextRequest) {
         totalCommissions,
         cashRevenue,
         qrisRevenue,
+        qrisReceived,
+        qrisExcess,
         netIncome
       }
     });
