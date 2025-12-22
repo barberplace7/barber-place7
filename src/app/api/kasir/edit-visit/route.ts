@@ -7,8 +7,19 @@ export async function PUT(request: NextRequest) {
     const session = await requireAuth('KASIR');
     const { visitId, serviceCapsterPairs } = await request.json();
 
+    console.log('Edit visit request:', { visitId, serviceCapsterPairs });
+
     if (!visitId || !serviceCapsterPairs || serviceCapsterPairs.length === 0) {
+      console.log('Validation failed:', { visitId, serviceCapsterPairs });
       return NextResponse.json({ error: 'Visit ID and service-capster pairs required' }, { status: 400 });
+    }
+
+    // Validate each pair has required fields
+    for (const pair of serviceCapsterPairs) {
+      if (!pair.serviceId || !pair.capsterId) {
+        console.log('Invalid pair:', pair);
+        return NextResponse.json({ error: 'Each service must have serviceId and capsterId' }, { status: 400 });
+      }
     }
 
     // Update visit services with capster assignments

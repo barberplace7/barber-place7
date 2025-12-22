@@ -2,17 +2,31 @@
 import { useState } from 'react';
 
 export default function EditVisitModal({ state, onClose }: any) {
-  const [editServicePairs, setEditServicePairs] = useState(
-    state.editingVisit?.visitServices?.map((vs: any) => ({
+  const [editServicePairs, setEditServicePairs] = useState(() => {
+    const pairs = state.editingVisit?.visitServices?.map((vs: any) => ({
       serviceId: vs.service.id,
       capsterId: vs.capsterId || state.editingVisit.capsterId
-    })) || []
-  );
+    })) || [];
+    
+    console.log('Initial editServicePairs:', pairs);
+    return pairs;
+  });
   const [showTreatments, setShowTreatments] = useState(false);
   const [showHaircut, setShowHaircut] = useState(true);
   
   const handleSubmit = async () => {
     if (!state.editingVisit || state.isSubmitting) return;
+    
+    // Validate all pairs have both serviceId and capsterId
+    const validPairs = editServicePairs.filter(pair => pair.serviceId && pair.capsterId);
+    
+    if (validPairs.length === 0) {
+      state.showToast('Pilih minimal satu layanan dan capster', 'error');
+      return;
+    }
+    
+    console.log('Current editServicePairs before submit:', editServicePairs);
+    console.log('Valid pairs:', validPairs);
     
     state.setConfirmModal({
       show: true,
@@ -24,12 +38,13 @@ export default function EditVisitModal({ state, onClose }: any) {
         try {
           await state.mutations.editVisit.mutateAsync({
             visitId: state.editingVisit.id,
-            serviceCapsterPairs: editServicePairs
+            serviceCapsterPairs: validPairs
           });
           state.setEditingVisit(null);
           onClose();
           state.showToast('Layanan berhasil diupdate!', 'success');
         } catch (error: any) {
+          console.error('Edit visit error:', error);
           state.showToast(error?.message || 'Gagal mengupdate layanan', 'error');
         } finally {
           state.setIsSubmitting(false);
@@ -46,8 +61,12 @@ export default function EditVisitModal({ state, onClose }: any) {
   };
 
   const removeServicePair = (index: number) => {
-    if (editServicePairs.length > 1) {
-      setEditServicePairs(editServicePairs.filter((_, i) => i !== index));
+    // Always allow removal, but ensure at least one empty pair remains
+    const newPairs = editServicePairs.filter((_, i) => i !== index);
+    if (newPairs.length === 0) {
+      setEditServicePairs([{ serviceId: '', capsterId: '' }]);
+    } else {
+      setEditServicePairs(newPairs);
     }
   };
 
@@ -106,16 +125,15 @@ export default function EditVisitModal({ state, onClose }: any) {
                             <div className="text-sm font-semibold text-stone-800">
                               Rp {service?.basePrice.toLocaleString()}
                             </div>
-                            {editServicePairs.length > 1 && (
-                              <button
-                                onClick={() => removeServicePair(index)}
-                                className="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-sm"
-                              >
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                                </svg>
-                              </button>
-                            )}
+                            {/* Always show delete button, but ensure at least one service remains */}
+                            <button
+                              onClick={() => removeServicePair(index)}
+                              className="w-8 h-8 bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-sm"
+                            >
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                              </svg>
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -124,16 +142,15 @@ export default function EditVisitModal({ state, onClose }: any) {
                       <div className="p-4">
                         <div className="flex items-center justify-between mb-3">
                           <span className="text-sm font-semibold text-stone-700">Layanan #{index + 1}</span>
-                          {editServicePairs.length > 1 && (
-                            <button
-                              onClick={() => removeServicePair(index)}
-                              className="w-7 h-7 bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
-                            >
-                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                              </svg>
-                            </button>
-                          )}
+                          {/* Always show delete button for incomplete pairs */}
+                          <button
+                            onClick={() => removeServicePair(index)}
+                            className="w-7 h-7 bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-600 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                          >
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                            </svg>
+                          </button>
                         </div>
                         
                         {/* Haircut Services */}

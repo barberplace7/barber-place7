@@ -28,10 +28,10 @@ export const kasirApi = {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   }),
-  editVisit: (visitId: string, services: string[]) => apiFetch('/api/kasir/edit-visit', {
+  editVisit: (data: { visitId: string; serviceCapsterPairs: any[] }) => apiFetch('/api/kasir/edit-visit', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ visitId, services }),
+    body: JSON.stringify(data),
   }),
   completeVisit: (data: any) => apiFetch('/api/kasir/complete', {
     method: 'POST',

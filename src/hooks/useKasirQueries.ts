@@ -57,8 +57,7 @@ export const useKasirQueries = () => {
   });
 
   const editVisitMutation = useMutation({
-    mutationFn: ({ visitId, services }: { visitId: string; services: string[] }) =>
-      kasirApi.editVisit(visitId, services),
+    mutationFn: kasirApi.editVisit,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['kasir', 'customers'] });
     },
