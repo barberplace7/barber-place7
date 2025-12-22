@@ -81,7 +81,7 @@ export default function LocationMaps() {
         {currentIndex > 0 && (
           <button
             onClick={() => scrollContainer('left')}
-            className="absolute -left-1 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg text-gray-800 p-3 rounded-full hover:bg-gray-100 transition-all active:scale-95"
+            className="absolute -left-1 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all active:scale-95"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -91,7 +91,7 @@ export default function LocationMaps() {
         {currentIndex < LOCATIONS.length - 1 && (
           <button
             onClick={() => scrollContainer('right')}
-            className="absolute -right-1 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg text-gray-800 p-3 rounded-full hover:bg-gray-100 transition-all active:scale-95"
+            className="absolute -right-1 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all active:scale-95"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

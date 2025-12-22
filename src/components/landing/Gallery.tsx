@@ -70,7 +70,7 @@ export default function Gallery() {
             </div>
             
             <p className={`text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed ${montserrat.className}`}>
-              Check out our Legendary styles that would best suite you.
+              Check out our Barberplace styles that would best suite you.
             </p>
             
             <div className="flex items-center gap-2 text-white hover:text-gray-300 transition-colors cursor-pointer">
@@ -81,7 +81,7 @@ export default function Gallery() {
             {/* Navigation Buttons */}
             <div className="flex gap-2 pt-2 sm:pt-4">
               <button 
-                className="bg-gray-800/50 border-2 border-gray-600 rounded-full p-2 sm:p-3 hover:bg-gray-700 transition-all duration-200"
+                className="bg-white/20 backdrop-blur-sm rounded-full p-2 sm:p-3 hover:bg-white/30 transition-all duration-200 flex items-center justify-center"
                 onClick={handlePrev}
               >
                 <svg className="w-4 sm:w-5 h-4 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -90,7 +90,7 @@ export default function Gallery() {
               </button>
               
               <button 
-                className="bg-gray-800/50 border-2 border-gray-600 rounded-full p-2 sm:p-3 hover:bg-gray-700 transition-all duration-200"
+                className="bg-white/20 backdrop-blur-sm rounded-full p-2 sm:p-3 hover:bg-white/30 transition-all duration-200 flex items-center justify-center"
                 onClick={handleNext}
               >
                 <svg className="w-4 sm:w-5 h-4 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

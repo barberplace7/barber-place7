@@ -111,10 +111,10 @@ export default function Services() {
           
           {((isMobile && currentIndex > 0) || (!isMobile && desktopPosition < 0)) && (
             <button 
-              className="absolute left-0 sm:left-2 top-1/2 transform -translate-y-1/2 bg-gray-800/50 border border-gray-600/50 rounded-full p-2 sm:p-3 text-gray-300 hover:bg-gray-700 hover:border-gray-500 active:bg-gray-700 active:border-gray-500 transition-all duration-200 z-10 backdrop-blur-sm"
+              className="absolute -left-1 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm shadow-lg text-white p-3 rounded-full hover:bg-white/30 transition-all active:scale-95"
               onClick={() => handleSliderNavigation('prev')}
             >
-              <svg className="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </button>
@@ -122,43 +122,16 @@ export default function Services() {
           
           {((isMobile && currentIndex < SERVICE_CARDS.length - 1) || (!isMobile && desktopPosition > maxScroll)) && (
             <button 
-              className="absolute right-0 sm:right-2 top-1/2 transform -translate-y-1/2 bg-gray-800/50 border border-gray-600/50 rounded-full p-2 sm:p-3 text-gray-300 hover:bg-gray-700 hover:border-gray-500 active:bg-gray-700 active:border-gray-500 transition-all duration-200 z-10 backdrop-blur-sm"
+              className="absolute -right-1 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm shadow-lg text-white p-3 rounded-full hover:bg-white/30 transition-all active:scale-95"
               onClick={() => handleSliderNavigation('next')}
             >
-              <svg className="w-4 sm:w-5 h-4 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
           )}
         </div>
-        
-        {/* Dot Navigation */}
-        <div className="flex justify-center gap-1.5 mt-3 mb-8 md:hidden">
-          {SERVICE_CARDS.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                const mobile = window.innerWidth < 640;
-                if (mobile) {
-                  const container = document.getElementById('serviceSlider')?.parentElement;
-                  if (!container) return;
-                  const cardWidth = window.innerWidth * 0.85 + 16;
-                  container.scrollTo({ left: cardWidth * index, behavior: 'smooth' });
-                } else {
-                  const slider = document.getElementById('serviceSlider');
-                  if (!slider) return;
-                  const newX = -(cardWidth * index);
-                  slider.style.transform = `translateX(${newX}px)`;
-                  setDesktopPosition(newX);
-                }
-                setCurrentIndex(index);
-              }}
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                currentIndex === index ? 'bg-white w-4' : 'bg-gray-600'
-              }`}
-            />
-          ))}
-        </div>
+
       </div>
     </div>
   );
