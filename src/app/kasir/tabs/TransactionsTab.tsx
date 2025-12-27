@@ -1,13 +1,15 @@
 'use client';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import AddServiceModal from '../modals/AddServiceModal';
 import ProductSaleModal from '../modals/ProductSaleModal';
 import ExpenseModal from '../modals/ExpenseModal';
 import EditVisitModal from '../modals/EditVisitModal';
 import CompleteVisitModal from '../modals/CompleteVisitModal';
 import AddAdvanceModal from '../modals/AddAdvanceModal';
+import TransactionDetailsModal from '../modals/TransactionDetailsModal';
 
 export default function TransactionsTab({ state }: any) {
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
   const hairCutServices = useMemo(() => state.services.filter(s => s.category === 'HAIRCUT'), [state.services]);
   const treatmentServices = useMemo(() => state.services.filter(s => s.category === 'TREATMENT'), [state.services]);
 
@@ -134,15 +136,9 @@ export default function TransactionsTab({ state }: any) {
               </div>
             </div>
             <div className="border-t border-stone-200 pt-4">
-              <div className="grid grid-cols-2 gap-4 sm:gap-6">
-                <div className="text-center">
-                  <div className="text-base sm:text-lg lg:text-xl font-bold text-indigo-600">Rp {(state.dailySummary?.qrisReceived || 0).toLocaleString()}</div>
-                  <div className="text-xs sm:text-sm text-stone-500">Total QRIS Masuk (untuk cek mutasi rekening)</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-base sm:text-lg lg:text-xl font-bold text-amber-600">Rp {(state.dailySummary?.qrisExcess || 0).toLocaleString()}</div>
-                  <div className="text-xs sm:text-sm text-stone-500">Selisih QRIS (tips/tarik cash)</div>
-                </div>
+              <div className="text-center">
+                <div className="text-base sm:text-lg lg:text-xl font-bold text-indigo-600">Rp {(state.dailySummary?.qrisReceived || 0).toLocaleString()}</div>
+                <div className="text-xs sm:text-sm text-stone-500">Total QRIS Masuk (untuk cek mutasi rekening)</div>
               </div>
             </div>
           </div>
@@ -155,18 +151,18 @@ export default function TransactionsTab({ state }: any) {
             <tr>
               <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">Pelanggan</th>
               <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">Layanan/Produk</th>
-              <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">{state.customerView === 'completed' ? 'Capster/Direkomendasi Oleh' : 'Capster'}</th>
+              <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">{state.customerView === 'completed' ? 'Diinput Oleh' : 'Capster'}</th>
               {state.customerView === 'completed' && <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">Jumlah</th>}
               <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">{state.customerView === 'ongoing' ? 'Waktu Mulai' : 'Selesai'}</th>
               <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">{state.customerView === 'ongoing' ? 'Status' : 'Pembayaran'}</th>
-              {state.customerView === 'ongoing' && <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">Aksi</th>}
+              <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">Aksi</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-stone-100">
             {state.customerView === 'ongoing' ? (
               state.customers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-3 sm:px-6 py-12 sm:py-16 text-center text-stone-500">
+                  <td colSpan={7} className="px-3 sm:px-6 py-12 sm:py-16 text-center text-stone-500">
                     <div className="text-3xl sm:text-4xl mb-4">✂</div>
                     <div className="text-sm sm:text-base">Tidak ada pelanggan aktif</div>
                     <div className="text-xs sm:text-sm mt-1">Tambahkan pelanggan baru untuk memulai</div>
@@ -277,7 +273,7 @@ export default function TransactionsTab({ state }: any) {
             ) : (
               (state.completedToday.length === 0 && state.productTransactions.length === 0) ? (
                 <tr>
-                  <td colSpan={6} className="px-3 sm:px-6 py-12 sm:py-16 text-center text-stone-500">
+                  <td colSpan={7} className="px-3 sm:px-6 py-12 sm:py-16 text-center text-stone-500">
                     <div className="text-3xl sm:text-4xl mb-4">✂</div>
                     <div className="text-sm sm:text-base">Tidak ada transaksi selesai hari ini</div>
                     <div className="text-xs sm:text-sm mt-1">Transaksi yang selesai akan muncul di sini</div>
@@ -302,7 +298,9 @@ export default function TransactionsTab({ state }: any) {
                         </div>
                         <div className="text-xs text-blue-600 font-medium">SERVICE</div>
                       </td>
-                      <td className="px-3 sm:px-6 py-4 sm:py-5 text-stone-700 text-sm sm:text-base">{customer.capster.name}</td>
+                      <td className="px-3 sm:px-6 py-4 sm:py-5 text-stone-700 text-sm sm:text-base">
+                        {customer.completedByName || customer.capster.name}
+                      </td>
                       <td className="px-3 sm:px-6 py-4 sm:py-5 text-stone-700 font-medium text-sm sm:text-base">
                         Rp {(() => {
                           if (customer.serviceTransactions?.length > 0) {
@@ -321,19 +319,19 @@ export default function TransactionsTab({ state }: any) {
                           }`}>
                             {customer.paymentMethod}
                           </span>
-                          {customer.paymentMethod === 'QRIS' && customer.serviceTransactions?.[0]?.qrisExcessAmount > 0 && (
-                            <div className="mt-1">
-                              <div className="text-xs text-amber-600 font-medium">
-                                +Rp {customer.serviceTransactions[0].qrisExcessAmount.toLocaleString()}
-                              </div>
-                              <div className="text-xs text-stone-500">
-                                {customer.serviceTransactions[0].qrisExcessType === 'TIPS' ? 'Tips' : 
-                                 customer.serviceTransactions[0].qrisExcessType === 'CASH_WITHDRAWAL' ? 'Tarik Cash' : 
-                                 customer.serviceTransactions[0].qrisExcessType === 'OTHER' ? 'Lainnya' : customer.serviceTransactions[0].qrisExcessType}
-                              </div>
-                            </div>
-                          )}
                         </div>
+                      </td>
+                      <td className="px-3 sm:px-6 py-4 sm:py-5">
+                        <button
+                          onClick={() => setSelectedTransaction(customer)}
+                          className="px-3 py-2 border border-blue-400 text-blue-600 rounded-lg hover:bg-blue-50 text-xs font-medium transition-colors flex items-center gap-2 min-h-[44px] justify-center"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          <span className="hidden sm:inline">Detail</span>
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -352,7 +350,7 @@ export default function TransactionsTab({ state }: any) {
                         <div className="text-xs text-orange-600 font-medium">PRODUCT</div>
                       </td>
                       <td className="px-3 sm:px-6 py-4 sm:py-5 text-stone-700 text-sm sm:text-base">
-                        {(() => {
+                        {transaction.closingByNameSnapshot || (() => {
                           const recommender = [...state.kasirList, ...state.capsters].find(p => p.id === transaction.recommenderId);
                           return recommender ? recommender.name : 'Tidak Diketahui';
                         })()}
@@ -368,19 +366,19 @@ export default function TransactionsTab({ state }: any) {
                           }`}>
                             {transaction.paymentMethod}
                           </span>
-                          {transaction.paymentMethod === 'QRIS' && transaction.qrisExcessAmount > 0 && (
-                            <div className="mt-1">
-                              <div className="text-xs text-amber-600 font-medium">
-                                +Rp {transaction.qrisExcessAmount.toLocaleString()}
-                              </div>
-                              <div className="text-xs text-stone-500">
-                                {transaction.qrisExcessType === 'TIPS' ? 'Tips' : 
-                                 transaction.qrisExcessType === 'CASH_WITHDRAWAL' ? 'Tarik Cash' : 
-                                 transaction.qrisExcessType === 'OTHER' ? 'Lainnya' : transaction.qrisExcessType}
-                              </div>
-                            </div>
-                          )}
                         </div>
+                      </td>
+                      <td className="px-3 sm:px-6 py-4 sm:py-5">
+                        <button
+                          onClick={() => setSelectedTransaction(transaction)}
+                          className="px-3 py-2 border border-blue-400 text-blue-600 rounded-lg hover:bg-blue-50 text-xs font-medium transition-colors flex items-center gap-2 min-h-[44px] justify-center"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                          <span className="hidden sm:inline">Detail</span>
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -416,6 +414,12 @@ export default function TransactionsTab({ state }: any) {
       )}
       {state.editingVisit && <EditVisitModal state={state} onClose={() => { state.setEditingVisit(null); state.setEditServices([]); }} />}
       {state.completingCustomer && <CompleteVisitModal state={state} onClose={() => state.setCompletingCustomer(null)} />}
+      {selectedTransaction && (
+        <TransactionDetailsModal
+          transaction={selectedTransaction}
+          onClose={() => setSelectedTransaction(null)}
+        />
+      )}
     </div>
   );
 }

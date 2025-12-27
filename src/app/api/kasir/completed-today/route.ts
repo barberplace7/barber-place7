@@ -128,14 +128,38 @@ export async function GET(request: NextRequest) {
     const totalExpenses = expenses.reduce((sum, expense) => sum + expense.nominal, 0);
     const netRevenue = totalRevenue - totalExpenses;
 
-    const visitsWithPayment = visits.map(visit => ({
-      ...visit,
-      paymentMethod: visit.serviceTransactions.length > 0 ? visit.serviceTransactions[0].paymentMethod : 'CASH'
-    }));
+    // Get all staff for lookup (same approach as admin)
+    const allCapsters = await prisma.capsterMaster.findMany();
+    const allKasirs = await prisma.cashierMaster.findMany();
+    const allStaff = [...allCapsters, ...allKasirs];
+
+    const visitsWithPayment = visits.map(visit => {
+      let completedByName = null;
+      
+      if (visit.serviceTransactions.length > 0) {
+        const closingById = visit.serviceTransactions[0].closingById;
+        const responsibleStaff = allStaff.find(s => s.id === closingById);
+        completedByName = responsibleStaff?.name || visit.serviceTransactions[0].closingByNameSnapshot || 'Tidak Diketahui';
+      }
+      
+      return {
+        ...visit,
+        paymentMethod: visit.serviceTransactions.length > 0 ? visit.serviceTransactions[0].paymentMethod : 'CASH',
+        completedByName
+      };
+    });
+
+    const productSalesWithNames = productSales.map(sale => {
+      const responsibleStaff = allStaff.find(s => s.id === sale.closingById);
+      return {
+        ...sale,
+        closingByNameSnapshot: responsibleStaff?.name || sale.closingByNameSnapshot || 'Tidak Diketahui'
+      };
+    });
 
     return NextResponse.json({
       visits: visitsWithPayment,
-      productTransactions: productSales,
+      productTransactions: productSalesWithNames,
       summary: {
         total: netRevenue,
         cash: cashTotal,

@@ -1,7 +1,9 @@
 'use client';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import TransactionDetailsModal from '../modals/TransactionDetailsModal';
 
 export default function HistoryTab({ state }: any) {
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
   const handleDatePresetChange = (preset: string) => {
     state.setDatePreset(preset);
     const now = new Date();
@@ -22,6 +24,14 @@ export default function HistoryTab({ state }: any) {
     state.setHistoryFilters(prev => ({ ...prev, dateFrom, dateTo: today }));
   };
 
+  const getResponsibleStaffName = (transaction: any, allStaff: any[]) => {
+    if (transaction) {
+      const staff = allStaff?.find(s => s.id === transaction.closingById);
+      return staff?.name || transaction.closingByNameSnapshot || 'Tidak Diketahui';
+    }
+    return null;
+  };
+
   const allTransactions = useMemo(() => {
     const transactions = [];
     
@@ -37,13 +47,18 @@ export default function HistoryTab({ state }: any) {
         
         const firstServiceTransaction = visit.serviceTransactions?.[0];
         
+        const staffName = firstServiceTransaction 
+          ? getResponsibleStaffName(firstServiceTransaction, state.history.allStaff)
+          : visit.capster.name;
+        
         transactions.push({
           ...visit,
           type: 'SERVICE',
           date: visit.jamSelesai,
           amount: serviceAmount,
           paymentMethod: firstServiceTransaction?.paymentMethod || 'CASH',
-          staff: visit.capster.name,
+          staff: staffName,
+          completedByName: staffName, // Add this for modal
           itemName: serviceName,
           customerName: visit.customerName,
           customerPhone: visit.customerPhone,
@@ -58,13 +73,14 @@ export default function HistoryTab({ state }: any) {
     
     if (state.historyFilters.type === 'ALL' || state.historyFilters.type === 'REVENUE' || state.historyFilters.type === 'PRODUCT') {
       state.history.productSales.forEach(sale => {
-        const responsibleStaff = state.history.allStaff?.find(s => s.id === sale.closingById);
+        const staffName = getResponsibleStaffName(sale, state.history.allStaff);
         transactions.push({
           ...sale,
           type: 'PRODUCT',
           date: sale.createdAt,
           amount: sale.totalPrice,
-          staff: responsibleStaff?.name || 'Unknown',
+          staff: staffName,
+          closingByNameSnapshot: staffName, // Add this for modal
           itemName: `${sale.productNameSnapshot} (x${sale.quantity})`,
           // QRIS excess info
           qrisAmountReceived: sale.qrisAmountReceived || 0,
@@ -136,14 +152,20 @@ export default function HistoryTab({ state }: any) {
       <div className="bg-stone-50 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8">
         <div className="mb-4">
           <label className="block text-xs sm:text-sm font-medium text-stone-700 mb-2">Rentang Tanggal</label>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 mb-3">
             {[
               { id: 'today', name: 'Hari Ini' },
-              { id: '7days', name: '7 Hari Terakhir' }
+              { id: '7days', name: '7 Hari Terakhir' },
+              { id: 'custom', name: 'Custom' }
             ].map((preset) => (
               <button
                 key={preset.id}
-                onClick={() => handleDatePresetChange(preset.id)}
+                onClick={() => {
+                  if (preset.id !== 'custom') {
+                    handleDatePresetChange(preset.id);
+                  }
+                  state.setDatePreset(preset.id);
+                }}
                 className={`px-3 py-2 text-sm font-medium rounded-md transition-colors min-h-[44px] ${
                   state.datePreset === preset.id
                     ? 'bg-stone-800 text-white'
@@ -154,6 +176,37 @@ export default function HistoryTab({ state }: any) {
               </button>
             ))}
           </div>
+          
+          {state.datePreset === 'custom' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-stone-700 mb-1">Dari Tanggal</label>
+                <input
+                  type="date"
+                  value={state.historyFilters.dateFrom}
+                  onChange={(e) => {
+                    state.setHistoryFilters(prev => ({ ...prev, dateFrom: e.target.value }));
+                  }}
+                  min={new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                  max={new Date().toISOString().split('T')[0]}
+                  className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:border-stone-500 focus:outline-none bg-white text-stone-800 min-h-[44px] text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-stone-700 mb-1">Sampai Tanggal</label>
+                <input
+                  type="date"
+                  value={state.historyFilters.dateTo}
+                  onChange={(e) => {
+                    state.setHistoryFilters(prev => ({ ...prev, dateTo: e.target.value }));
+                  }}
+                  min={state.historyFilters.dateFrom}
+                  max={new Date().toISOString().split('T')[0]}
+                  className="w-full border border-stone-300 rounded-lg px-3 py-2 focus:border-stone-500 focus:outline-none bg-white text-stone-800 min-h-[44px] text-sm"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -214,15 +267,9 @@ export default function HistoryTab({ state }: any) {
               </div>
             </div>
             <div className="border-t border-stone-200 pt-4">
-              <div className="grid grid-cols-2 gap-4 sm:gap-6">
-                <div className="text-center">
-                  <div className="text-base sm:text-lg lg:text-xl font-bold text-indigo-600">Rp {summary.qrisTotalReceived.toLocaleString()}</div>
-                  <div className="text-xs sm:text-sm text-stone-500">Total QRIS Masuk (untuk cek mutasi rekening)</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-base sm:text-lg lg:text-xl font-bold text-amber-600">Rp {summary.qrisExcessAmount.toLocaleString()}</div>
-                  <div className="text-xs sm:text-sm text-stone-500">Selisih QRIS (tips/tarik cash)</div>
-                </div>
+              <div className="text-center">
+                <div className="text-base sm:text-lg lg:text-xl font-bold text-indigo-600">Rp {summary.qrisTotalReceived.toLocaleString()}</div>
+                <div className="text-xs sm:text-sm text-stone-500">Total QRIS Masuk (untuk cek mutasi rekening)</div>
               </div>
             </div>
           </div>
@@ -247,12 +294,13 @@ export default function HistoryTab({ state }: any) {
                 <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">Diinput Oleh</th>
                 <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">Jumlah</th>
                 <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">Pembayaran</th>
+                <th className="px-3 sm:px-6 py-4 text-left text-xs sm:text-sm font-medium text-stone-700 whitespace-nowrap">Aksi</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-stone-100">
               {paginatedTransactions.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-3 sm:px-6 py-12 sm:py-16 text-center text-stone-500">
+                <td colSpan={7} className="px-3 sm:px-6 py-12 sm:py-16 text-center text-stone-500">
                   <div className="text-3xl sm:text-4xl mb-4">📊</div>
                   <div className="text-sm sm:text-base">Tidak ada transaksi ditemukan</div>
                   <div className="text-xs sm:text-sm mt-1">Coba sesuaikan filter Anda</div>
@@ -298,20 +346,20 @@ export default function HistoryTab({ state }: any) {
                         }`}>
                           {transaction.paymentMethod}
                         </span>
-                        {transaction.paymentMethod === 'QRIS' && transaction.qrisExcessAmount > 0 && (
-                          <div className="mt-1">
-                            <div className="text-xs text-amber-600 font-medium">
-                              +Rp {transaction.qrisExcessAmount.toLocaleString()}
-                            </div>
-                            <div className="text-xs text-stone-500">
-                              {transaction.qrisExcessType === 'TIPS' ? 'Tips' : 
-                               transaction.qrisExcessType === 'CASH_WITHDRAWAL' ? 'Tarik Cash' : 
-                               transaction.qrisExcessType === 'OTHER' ? 'Lainnya' : transaction.qrisExcessType}
-                            </div>
-                          </div>
-                        )}
                       </div>
                     )}
+                  </td>
+                  <td className="px-3 sm:px-6 py-4 sm:py-5">
+                    <button
+                      onClick={() => setSelectedTransaction(transaction)}
+                      className="px-3 py-2 border border-blue-400 text-blue-600 rounded-lg hover:bg-blue-50 text-xs font-medium transition-colors flex items-center gap-2 min-h-[44px] justify-center"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                      <span className="hidden sm:inline">Detail</span>
+                    </button>
                   </td>
                 </tr>
               ))
@@ -372,6 +420,13 @@ export default function HistoryTab({ state }: any) {
             </button>
           </div>
         </div>
+      )}
+      
+      {selectedTransaction && (
+        <TransactionDetailsModal
+          transaction={selectedTransaction}
+          onClose={() => setSelectedTransaction(null)}
+        />
       )}
     </div>
   );

@@ -53,6 +53,15 @@ export async function POST(request: NextRequest) {
       servicesByCapster.get(capsterId).push(vs);
     }
 
+    // Get the person who completed the transaction
+    const completedByPerson = await prisma.$queryRaw`
+      SELECT name FROM capster_masters WHERE id = ${completedBy}
+      UNION
+      SELECT name FROM cashier_masters WHERE id = ${completedBy}
+    ` as Array<{name: string}>;
+    
+    const completedByName = completedByPerson.length > 0 ? completedByPerson[0].name : 'Tidak Diketahui';
+
     // Create service transaction for each capster
     for (const [capsterId, visitServices] of servicesByCapster) {
       const services = visitServices.map(vs => vs.service);
@@ -70,7 +79,7 @@ export async function POST(request: NextRequest) {
           commissionAmount: totalCommission,
           closingById: completedBy,
           closingByRole: 'KASIR',
-          closingByNameSnapshot: 'Kasir',
+          closingByNameSnapshot: completedByName,
           paymentMethod,
           // QRIS fields (only for first transaction to avoid duplication)
           ...(paymentMethod === 'QRIS' && capsterId === Array.from(servicesByCapster.keys())[0] && {
@@ -107,7 +116,7 @@ export async function POST(request: NextRequest) {
             commissionAmount: productData!.commissionPerUnit * product.quantity,
             closingById: completedBy,
             closingByRole: 'KASIR',
-            closingByNameSnapshot: 'Kasir',
+            closingByNameSnapshot: completedByName,
             paymentMethod,
             // QRIS fields for product transactions
             ...(paymentMethod === 'QRIS' && {
