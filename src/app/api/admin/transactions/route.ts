@@ -114,33 +114,64 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Get expenses
-    const expenses = await prisma.branchExpense.findMany({
-      where: {
-        ...(dateFilter && { createdAt: dateFilter }),
-        ...(branchId && { cabangId: branchId })
-      },
-      include: {
-        cabang: true,
-        kasir: true
-      }
-    });
-
-    expenses.forEach(expense => {
-      transactions.push({
-        id: expense.id,
-        visitId: null,
-        date: expense.createdAt,
-        type: 'EXPENSE',
-        customerName: 'Business Expense',
-        customerPhone: '',
-        itemName: `${expense.category}${expense.note ? ` - ${expense.note}` : ''}`,
-        staffName: expense.kasir?.name || 'Unknown',
-        branchName: expense.cabang.name,
-        amount: expense.nominal,
-        paymentMethod: 'CASH'
+    // Get kasbon/advances
+    if (type === 'ALL' || type === 'KASBON') {
+      const advances = await prisma.staffAdvance.findMany({
+        where: {
+          ...(dateFilter && { createdAt: dateFilter }),
+          ...(branchId && { cabangId: branchId })
+        },
+        include: {
+          cabang: true
+        }
       });
-    });
+
+      advances.forEach(advance => {
+        transactions.push({
+          id: advance.id,
+          visitId: null,
+          date: advance.createdAt,
+          type: 'KASBON',
+          customerName: advance.staffName,
+          customerPhone: advance.staffRole,
+          itemName: `Kasbon Staff - ${advance.note || 'Tidak ada catatan'}`,
+          staffName: advance.givenByName,
+          branchName: advance.cabang.name,
+          amount: advance.amount,
+          paymentMethod: 'CASH'
+        });
+      });
+    }
+
+    // Get expenses
+    if (type === 'ALL' || type === 'EXPENSE') {
+      const expenses = await prisma.branchExpense.findMany({
+        where: {
+          ...(dateFilter && { createdAt: dateFilter }),
+          ...(branchId && { cabangId: branchId })
+        },
+        include: {
+          cabang: true,
+          kasir: true
+        }
+      });
+
+      expenses.forEach(expense => {
+        transactions.push({
+          id: expense.id,
+          visitId: null,
+          date: expense.createdAt,
+          type: 'EXPENSE',
+          customerName: 'Business Expense',
+          customerPhone: '',
+          itemName: `${expense.category}${expense.note ? ` - ${expense.note}` : ''}`,
+          staffName: expense.kasir?.name || 'Unknown',
+          branchName: expense.cabang.name,
+          amount: expense.nominal,
+          paymentMethod: 'CASH'
+        });
+      });
+    }
 
     // Sort by date (newest first)
     transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -168,23 +199,27 @@ export async function GET(request: NextRequest) {
 
     // Calculate summary
     const totalRevenue = transactions
-      .filter(t => t.type !== 'EXPENSE')
+      .filter(t => t.type !== 'EXPENSE' && t.type !== 'KASBON')
       .reduce((sum, t) => sum + t.amount, 0);
     
     const totalExpenses = transactions
       .filter(t => t.type === 'EXPENSE')
       .reduce((sum, t) => sum + t.amount, 0);
     
+    const totalKasbon = transactions
+      .filter(t => t.type === 'KASBON')
+      .reduce((sum, t) => sum + t.amount, 0);
+    
     const cashRevenue = transactions
-      .filter(t => t.type !== 'EXPENSE' && t.paymentMethod === 'CASH')
+      .filter(t => t.type !== 'EXPENSE' && t.type !== 'KASBON' && t.paymentMethod === 'CASH')
       .reduce((sum, t) => sum + t.amount, 0);
     
     const qrisRevenue = transactions
-      .filter(t => t.type !== 'EXPENSE' && t.paymentMethod === 'QRIS')
+      .filter(t => t.type !== 'EXPENSE' && t.type !== 'KASBON' && t.paymentMethod === 'QRIS')
       .reduce((sum, t) => sum + t.amount, 0);
 
     const netIncome = totalRevenue; // Don't subtract expenses from total revenue
-    const netCashRevenue = cashRevenue - totalExpenses; // Expenses reduce cash only
+    const netCashRevenue = cashRevenue - totalExpenses - totalKasbon; // Expenses and kasbon reduce cash
 
     // Calculate QRIS totals - use jamSelesai filter to match visits
     const qrisServiceTransactions = await prisma.serviceTransaction.findMany({
@@ -226,6 +261,7 @@ export async function GET(request: NextRequest) {
       summary: {
         totalRevenue: netIncome, // Use net income as main revenue display
         totalExpenses,
+        totalKasbon,
         totalCommissions,
         cashRevenue: netCashRevenue,
         qrisRevenue,

@@ -107,6 +107,22 @@ export default function HistoryTab({ state }: any) {
       });
     }
     
+    if (state.historyFilters.type === 'ALL' || state.historyFilters.type === 'KASBON') {
+      state.history.kasbon?.forEach(advance => {
+        transactions.push({
+          ...advance,
+          type: 'KASBON',
+          date: advance.createdAt,
+          amount: advance.amount,
+          paymentMethod: 'CASH',
+          staff: advance.givenByName,
+          itemName: `Kasbon Staff - ${advance.note || 'Tidak ada catatan'}`,
+          customerName: advance.staffName,
+          customerPhone: advance.staffRole
+        });
+      });
+    }
+    
     return transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [state.history, state.historyFilters.type]);
 
@@ -118,14 +134,16 @@ export default function HistoryTab({ state }: any) {
   const totalPages = Math.ceil(allTransactions.length / 15);
 
   const summary = useMemo(() => {
-    const revenueAmount = allTransactions.filter(t => t.amount > 0 && t.type !== 'EXPENSE').reduce((sum, t) => sum + t.amount, 0);
+    const revenueAmount = allTransactions.filter(t => t.amount > 0 && t.type !== 'EXPENSE' && t.type !== 'KASBON').reduce((sum, t) => sum + t.amount, 0);
     const expenseAmount = Math.abs(allTransactions.filter(t => t.type === 'EXPENSE').reduce((sum, t) => sum + t.amount, 0));
+    const kasbonAmount = Math.abs(allTransactions.filter(t => t.type === 'KASBON').reduce((sum, t) => sum + t.amount, 0));
     const netAmount = revenueAmount; // Don't subtract expenses from total revenue
-    const cashAmount = allTransactions.filter(t => t.paymentMethod === 'CASH' && t.type !== 'EXPENSE').reduce((sum, t) => sum + t.amount, 0);
-    const netCashAmount = cashAmount - expenseAmount; // Expenses reduce cash only
+    const cashAmount = allTransactions.filter(t => t.paymentMethod === 'CASH' && t.type !== 'EXPENSE' && t.type !== 'KASBON').reduce((sum, t) => sum + t.amount, 0);
+    const netCashAmount = cashAmount - expenseAmount - kasbonAmount; // Expenses and kasbon reduce cash
+    const productSalesAmount = allTransactions.filter(t => t.type === 'PRODUCT').reduce((sum, t) => sum + t.amount, 0);
     
     // QRIS calculations
-    const qrisTransactions = allTransactions.filter(t => t.paymentMethod === 'QRIS' && t.type !== 'EXPENSE');
+    const qrisTransactions = allTransactions.filter(t => t.paymentMethod === 'QRIS' && t.type !== 'EXPENSE' && t.type !== 'KASBON');
     const qrisRevenueAmount = qrisTransactions.reduce((sum, t) => sum + t.amount, 0);
     const qrisTotalReceived = qrisTransactions.reduce((sum, t) => sum + (t.qrisAmountReceived || t.amount), 0);
     const qrisExcessAmount = qrisTransactions.reduce((sum, t) => sum + (t.qrisExcessAmount || 0), 0);
@@ -133,6 +151,8 @@ export default function HistoryTab({ state }: any) {
     return { 
       revenueAmount: netAmount, // Use net amount as main revenue display
       expenseAmount, 
+      kasbonAmount,
+      productSalesAmount,
       netAmount, 
       cashAmount: netCashAmount, 
       qrisRevenueAmount
@@ -221,6 +241,7 @@ export default function HistoryTab({ state }: any) {
               <option value="SERVICE">Layanan Saja</option>
               <option value="PRODUCT">Produk Saja</option>
               <option value="EXPENSES">Pengeluaran Saja</option>
+              <option value="KASBON">Kasbon Saja</option>
             </select>
           </div>
           <div className="flex items-end">
@@ -237,8 +258,8 @@ export default function HistoryTab({ state }: any) {
       <div className="mb-6 p-4 sm:p-6 bg-stone-50 rounded-xl border border-stone-200">
         <h3 className="font-bold text-stone-800 mb-4 text-sm sm:text-base">Ringkasan ({state.historyFilters.dateFrom} sampai {state.historyFilters.dateTo})</h3>
         {state.isHistoryLoading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-            {[1, 2, 3, 4, 5].map((i) => (
+          <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="text-center animate-pulse">
                 <div className="h-6 sm:h-8 bg-stone-300 rounded mb-2 mx-auto w-20 sm:w-24"></div>
                 <div className="h-3 sm:h-4 bg-stone-200 rounded mx-auto w-12 sm:w-16"></div>
@@ -247,7 +268,7 @@ export default function HistoryTab({ state }: any) {
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-6">
               <div className="text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-green-600">Rp {summary.revenueAmount.toLocaleString()}</div>
                 <div className="text-sm sm:text-base text-stone-600 font-medium">Total Uang Masuk</div>
@@ -263,6 +284,14 @@ export default function HistoryTab({ state }: any) {
               <div className="text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-red-600">Rp {summary.expenseAmount.toLocaleString()}</div>
                 <div className="text-sm sm:text-base text-stone-600 font-medium">Pengeluaran</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-yellow-600">Rp {summary.kasbonAmount.toLocaleString()}</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Total Kasbon</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-purple-600">Rp {summary.productSalesAmount.toLocaleString()}</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Penjualan Produk</div>
               </div>
             </div>
           </div>
@@ -318,20 +347,23 @@ export default function HistoryTab({ state }: any) {
                     </div>
                     <div className={`text-xs font-medium ${
                       transaction.type === 'SERVICE' ? 'text-blue-600' : 
-                      transaction.type === 'PRODUCT' ? 'text-orange-600' : 'text-red-600'
+                      transaction.type === 'PRODUCT' ? 'text-orange-600' : 
+                      transaction.type === 'KASBON' ? 'text-yellow-600' : 'text-red-600'
                     }`}>
                       {transaction.type}
                     </div>
                   </td>
                   <td className="px-3 sm:px-6 py-4 sm:py-5 text-stone-700 text-sm sm:text-base">{transaction.staff}</td>
                   <td className="px-3 sm:px-6 py-4 sm:py-5 font-medium text-sm sm:text-base">
-                    <span className={transaction.type === 'EXPENSE' ? 'text-red-600' : 'text-stone-700'}>
-                      {transaction.type === 'EXPENSE' ? '-' : ''}Rp {Math.abs(transaction.amount).toLocaleString()}
+                    <span className={transaction.type === 'EXPENSE' || transaction.type === 'KASBON' ? 'text-red-600' : 'text-stone-700'}>
+                      {transaction.type === 'EXPENSE' || transaction.type === 'KASBON' ? '-' : ''}Rp {Math.abs(transaction.amount).toLocaleString()}
                     </span>
                   </td>
                   <td className="px-3 sm:px-6 py-4 sm:py-5">
                     {transaction.type === 'EXPENSE' ? (
                       <span className="px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">PENGELUARAN</span>
+                    ) : transaction.type === 'KASBON' ? (
+                      <span className="px-2 sm:px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">KASBON</span>
                     ) : (
                       <div>
                         <span className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${

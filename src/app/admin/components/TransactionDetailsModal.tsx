@@ -28,6 +28,7 @@ export default function TransactionDetailsModal({ transaction, onClose }: Transa
               <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
                 transaction.type === 'SERVICE' ? 'bg-blue-100 text-blue-800' : 
                 transaction.type === 'PRODUCT' ? 'bg-orange-100 text-orange-800' : 
+                transaction.type === 'KASBON' ? 'bg-yellow-100 text-yellow-800' : 
                 'bg-red-100 text-red-800'
               }`}>
                 {transaction.type}
@@ -52,8 +53,24 @@ export default function TransactionDetailsModal({ transaction, onClose }: Transa
           </div>
 
           <div>
-            <p className="text-xs text-gray-500 mb-1">Services</p>
-            {transaction.serviceDetails && transaction.serviceDetails.length > 0 ? (
+            <p className="text-xs text-gray-500 mb-1">
+              {transaction.type === 'KASBON' ? 'Staff' : 'Services'}
+            </p>
+            {transaction.type === 'KASBON' ? (
+              <div className="bg-yellow-50 p-3 rounded-lg">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-medium text-black">{transaction.customerName}</p>
+                    <p className="text-sm text-gray-600">Role: {transaction.customerPhone}</p>
+                    <p className="text-sm text-gray-600 mt-1">{transaction.itemName}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-yellow-600">Rp {transaction.amount?.toLocaleString()}</p>
+                    <p className="text-xs text-gray-500">Staff Advance</p>
+                  </div>
+                </div>
+              </div>
+            ) : transaction.serviceDetails && transaction.serviceDetails.length > 0 ? (
               <div className="space-y-2">
                 {transaction.serviceDetails.map((service: any, index: number) => (
                   <div key={index} className="bg-gray-50 p-3 rounded-lg">
@@ -83,7 +100,8 @@ export default function TransactionDetailsModal({ transaction, onClose }: Transa
           <div className="pt-4 border-t border-gray-200">
             <p className="text-xs text-gray-500 mb-1">Amount</p>
             <p className={`text-2xl font-bold ${
-              transaction.type === 'EXPENSE' ? 'text-red-600' : 'text-green-600'
+              transaction.type === 'EXPENSE' ? 'text-red-600' : 
+              transaction.type === 'KASBON' ? 'text-yellow-600' : 'text-green-600'
             }`}>
               {transaction.type === 'EXPENSE' ? '-' : ''}Rp {Math.abs(transaction.amount).toLocaleString()}
             </p>

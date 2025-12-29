@@ -86,7 +86,19 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' }
     });
 
-    return NextResponse.json({ visits, productSales, expenses, allStaff });
+    // Get kasbon
+    const kasbon = await prisma.staffAdvance.findMany({
+      where: {
+        cabangId: branchId,
+        createdAt: {
+          gte: startDate,
+          lte: endDate
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    return NextResponse.json({ visits, productSales, expenses, kasbon, allStaff });
   } catch (error) {
     console.error('History fetch error:', error);
     return NextResponse.json({ error: 'Failed to fetch history' }, { status: 500 });

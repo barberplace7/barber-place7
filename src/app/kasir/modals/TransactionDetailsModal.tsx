@@ -23,9 +23,11 @@ export default function TransactionDetailsModal({ transaction, onClose }: any) {
             <div>
               <p className="text-xs text-gray-500 mb-1">Tipe</p>
               <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
-                transaction.visitServices ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800'
+                transaction.type === 'SERVICE' || transaction.visitServices ? 'bg-blue-100 text-blue-800' : 
+                transaction.type === 'PRODUCT' ? 'bg-orange-100 text-orange-800' :
+                transaction.type === 'KASBON' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
               }`}>
-                {transaction.visitServices ? 'SERVICE' : 'PRODUCT'}
+                {transaction.type || (transaction.visitServices ? 'SERVICE' : 'PRODUCT')}
               </span>
             </div>
             <div>
@@ -47,8 +49,25 @@ export default function TransactionDetailsModal({ transaction, onClose }: any) {
           </div>
 
           <div>
-            <p className="text-xs text-gray-500 mb-1">{transaction.visitServices ? 'Layanan' : 'Produk'}</p>
-            {transaction.visitServices && transaction.visitServices.length > 0 ? (
+            <p className="text-xs text-gray-500 mb-1">
+              {transaction.type === 'KASBON' ? 'Staff' : 
+               transaction.visitServices ? 'Layanan' : 'Produk'}
+            </p>
+            {transaction.type === 'KASBON' ? (
+              <div className="bg-yellow-50 p-3 rounded-lg">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-medium text-black">{transaction.customerName}</p>
+                    <p className="text-sm text-gray-600">Role: {transaction.customerPhone}</p>
+                    <p className="text-sm text-gray-600 mt-1">{transaction.itemName}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-yellow-600">Rp {transaction.amount?.toLocaleString()}</p>
+                    <p className="text-xs text-gray-500">Kasbon Staff</p>
+                  </div>
+                </div>
+              </div>
+            ) : transaction.visitServices && transaction.visitServices.length > 0 ? (
               <div className="space-y-2">
                 {transaction.visitServices.map((vs: any, index: number) => (
                   <div key={index} className="bg-gray-50 p-3 rounded-lg">
@@ -82,9 +101,12 @@ export default function TransactionDetailsModal({ transaction, onClose }: any) {
           </div>
 
           <div>
-            <p className="text-xs text-gray-500 mb-1">Diinput Oleh</p>
+            <p className="text-xs text-gray-500 mb-1">
+              {transaction.type === 'KASBON' ? 'Diberikan Oleh' : 'Diinput Oleh'}
+            </p>
             <p className="font-medium text-black">
-              {transaction.completedByName || transaction.closingByNameSnapshot || 'Tidak Diketahui'}
+              {transaction.type === 'KASBON' ? transaction.staff : 
+               transaction.completedByName || transaction.closingByNameSnapshot || 'Tidak Diketahui'}
             </p>
           </div>
 
@@ -117,8 +139,13 @@ export default function TransactionDetailsModal({ transaction, onClose }: any) {
 
           <div className="pt-4 border-t border-gray-200">
             <p className="text-xs text-gray-500 mb-1">Total</p>
-            <p className="text-2xl font-bold text-green-600">
+            <p className={`text-2xl font-bold ${
+              transaction.type === 'KASBON' ? 'text-yellow-600' : 'text-green-600'
+            }`}>
               Rp {(() => {
+                if (transaction.type === 'KASBON') {
+                  return (transaction.amount || 0).toLocaleString();
+                }
                 if (transaction.visitServices) {
                   return transaction.visitServices.reduce((sum: number, vs: any) => sum + vs.service.basePrice, 0).toLocaleString();
                 }

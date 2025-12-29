@@ -125,9 +125,21 @@ export async function GET(request: NextRequest) {
       }
     });
 
+    // Calculate kasbon for today
+    const kasbon = await prisma.staffAdvance.findMany({
+      where: {
+        cabangId: branchId,
+        createdAt: {
+          gte: today,
+          lt: tomorrow
+        }
+      }
+    });
+
     const totalExpenses = expenses.reduce((sum, expense) => sum + expense.nominal, 0);
+    const totalKasbon = kasbon.reduce((sum, advance) => sum + advance.amount, 0);
     const netRevenue = totalRevenue; // Don't subtract expenses from total revenue
-    const netCash = cashTotal - totalExpenses; // Expenses reduce cash only
+    const netCash = cashTotal - totalExpenses - totalKasbon; // Expenses and kasbon reduce cash
 
     // Get all staff for lookup (same approach as admin)
     const allCapsters = await prisma.capsterMaster.findMany();
@@ -167,7 +179,9 @@ export async function GET(request: NextRequest) {
         qris: qrisTotal,
         qrisReceived: qrisReceived,
         qrisExcess: qrisExcess,
-        expenses: totalExpenses
+        expenses: totalExpenses,
+        kasbon: totalKasbon,
+        productSales: productSales.reduce((sum, sale) => sum + sale.totalPrice, 0)
       }
     });
   } catch (error) {

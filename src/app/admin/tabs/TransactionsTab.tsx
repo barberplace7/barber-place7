@@ -29,6 +29,7 @@ export default function TransactionsTab({ cabangList }: any) {
   const transactionSummary = data?.summary || { 
     totalRevenue: 0, 
     totalExpenses: 0, 
+    totalKasbon: 0,
     totalCommissions: 0, 
     cashRevenue: 0, 
     qrisRevenue: 0, 
@@ -82,6 +83,8 @@ export default function TransactionsTab({ cabangList }: any) {
               <option value="ALL">Semua Transaksi</option>
               <option value="SERVICE">Layanan Saja</option>
               <option value="PRODUCT">Produk Saja</option>
+              <option value="KASBON">Kasbon Saja</option>
+              <option value="EXPENSE">Pengeluaran Saja</option>
             </select>
           </div>
         </div>
@@ -90,8 +93,8 @@ export default function TransactionsTab({ cabangList }: any) {
       <div className="mb-6 p-6 bg-blue-50 rounded-lg border border-blue-200">
         <h3 className="font-bold text-black mb-4">Ringkasan Keuangan</h3>
         {isLoading ? (
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {[1, 2, 3, 4, 5].map((i) => (
+          <div className="grid grid-cols-2 md:grid-cols-7 gap-4">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
               <div key={i} className="text-center animate-pulse">
                 <div className="h-8 bg-gray-300 rounded mb-2 mx-auto w-32"></div>
                 <div className="h-4 bg-gray-200 rounded mx-auto w-24"></div>
@@ -101,7 +104,7 @@ export default function TransactionsTab({ cabangList }: any) {
         ) : transactionHistory.length > 0 ? (
           <>
             <div className="space-y-4">
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 sm:gap-4">
                 <div className="text-center">
                   <div className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">Rp {transactionSummary.totalRevenue.toLocaleString()}</div>
                   <div className="text-xs sm:text-sm text-gray-600">Total Uang Masuk</div>
@@ -115,12 +118,20 @@ export default function TransactionsTab({ cabangList }: any) {
                   <div className="text-xs sm:text-sm text-gray-600">Pengeluaran</div>
                 </div>
                 <div className="text-center">
+                  <div className="text-lg sm:text-xl lg:text-2xl font-bold text-yellow-600">Rp {(transactionSummary.totalKasbon || 0).toLocaleString()}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Total Kasbon</div>
+                </div>
+                <div className="text-center">
                   <div className="text-lg sm:text-xl lg:text-2xl font-bold text-green-700">Rp {transactionSummary.cashRevenue.toLocaleString()}</div>
                   <div className="text-xs sm:text-sm text-gray-600">Tunai</div>
                 </div>
                 <div className="text-center">
                   <div className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">Rp {transactionSummary.qrisRevenue.toLocaleString()}</div>
                   <div className="text-xs sm:text-sm text-gray-600">Pendapatan QRIS</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-lg sm:text-xl lg:text-2xl font-bold text-purple-600">Rp {transactionHistory.filter(t => t.type === 'PRODUCT').reduce((sum, t) => sum + t.amount, 0).toLocaleString()}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Penjualan Produk</div>
                 </div>
               </div>
             </div>
@@ -195,7 +206,8 @@ export default function TransactionsTab({ cabangList }: any) {
                           )}
                           <div className={`text-xs font-medium ${
                             transaction.type === 'SERVICE' ? 'text-blue-600' : 
-                            transaction.type === 'PRODUCT' ? 'text-orange-600' : 'text-red-600'
+                            transaction.type === 'PRODUCT' ? 'text-orange-600' : 
+                            transaction.type === 'KASBON' ? 'text-yellow-600' : 'text-red-600'
                           }`}>
                             {transaction.type}
                           </div>
@@ -226,7 +238,8 @@ export default function TransactionsTab({ cabangList }: any) {
                       )}
                       <div className={`text-xs font-medium mt-1 ${
                         transaction.type === 'SERVICE' ? 'text-blue-600' : 
-                        transaction.type === 'PRODUCT' ? 'text-orange-600' : 'text-red-600'
+                        transaction.type === 'PRODUCT' ? 'text-orange-600' : 
+                        transaction.type === 'KASBON' ? 'text-yellow-600' : 'text-red-600'
                       }`}>
                         {transaction.type}
                       </div>
@@ -234,13 +247,17 @@ export default function TransactionsTab({ cabangList }: any) {
                     <td className="px-3 sm:px-6 py-4 text-sm text-gray-700 hidden lg:table-cell">{transaction.staffName}</td>
                     <td className="px-3 sm:px-6 py-4 text-sm">
                       <div className={`font-medium ${
-                        transaction.type === 'EXPENSE' ? 'text-red-600' : 'text-gray-900'
+                        transaction.type === 'EXPENSE' ? 'text-red-600' : 
+                        transaction.type === 'KASBON' ? 'text-yellow-600' : 'text-gray-900'
                       }`}>
-                        {transaction.type === 'EXPENSE' ? '-' : ''}Rp {Math.abs(transaction.amount).toLocaleString()}
+                        {transaction.type === 'EXPENSE' ? '-' : 
+                         transaction.type === 'KASBON' ? 'Kasbon: ' : ''}Rp {Math.abs(transaction.amount).toLocaleString()}
                       </div>
                       <div className="mt-1">
                         {transaction.type === 'EXPENSE' ? (
                           <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">PENGELUARAN</span>
+                        ) : transaction.type === 'KASBON' ? (
+                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">KASBON</span>
                         ) : (
                           <div>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${

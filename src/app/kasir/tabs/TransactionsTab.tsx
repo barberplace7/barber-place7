@@ -117,7 +117,7 @@ export default function TransactionsTab({ state }: any) {
         <div className="mb-8 p-4 sm:p-6 bg-stone-50 rounded-xl border border-stone-200">
           <h3 className="font-bold text-stone-800 mb-4 text-sm sm:text-base">Ringkasan Transaksi Hari Ini</h3>
           <div className="space-y-4">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 sm:gap-6">
               <div className="text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-green-600">Rp {(state.dailySummary?.total || 0).toLocaleString()}</div>
                 <div className="text-sm sm:text-base text-stone-600 font-medium">Total Uang Masuk</div>
@@ -133,6 +133,14 @@ export default function TransactionsTab({ state }: any) {
               <div className="text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-red-600">Rp {(state.dailySummary?.expenses || 0).toLocaleString()}</div>
                 <div className="text-sm sm:text-base text-stone-600 font-medium">Pengeluaran</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-yellow-600">Rp {(state.dailySummary?.kasbon || 0).toLocaleString()}</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Total Kasbon</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-purple-600">Rp {(state.dailySummary?.productSales || 0).toLocaleString()}</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Penjualan Produk</div>
               </div>
             </div>
           </div>
