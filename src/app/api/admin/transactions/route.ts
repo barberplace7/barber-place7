@@ -183,10 +183,17 @@ export async function GET(request: NextRequest) {
       .filter(t => t.type !== 'EXPENSE' && t.paymentMethod === 'QRIS')
       .reduce((sum, t) => sum + t.amount, 0);
 
-    // Calculate QRIS totals - need to get actual qrisAmountReceived from database
+    const netIncome = totalRevenue; // Don't subtract expenses from total revenue
+    const netCashRevenue = cashRevenue - totalExpenses; // Expenses reduce cash only
+
+    // Calculate QRIS totals - use jamSelesai filter to match visits
     const qrisServiceTransactions = await prisma.serviceTransaction.findMany({
       where: {
-        ...(dateFilter && { createdAt: dateFilter }),
+        ...(dateFilter && { 
+          visit: {
+            jamSelesai: dateFilter
+          }
+        }),
         ...(branchId && { cabangId: branchId }),
         paymentMethod: 'QRIS'
       },
@@ -212,19 +219,19 @@ export async function GET(request: NextRequest) {
       ...qrisProductTransactions.map(pt => pt.qrisExcessAmount || 0)
     ].reduce((sum, amount) => sum + amount, 0);
 
-    const netIncome = totalRevenue - totalCommissions - totalExpenses;
+    const finalNetIncome = totalRevenue - totalCommissions - totalExpenses;
 
     return NextResponse.json({
       transactions,
       summary: {
-        totalRevenue,
+        totalRevenue: netIncome, // Use net income as main revenue display
         totalExpenses,
         totalCommissions,
-        cashRevenue,
+        cashRevenue: netCashRevenue,
         qrisRevenue,
         qrisReceived,
         qrisExcess,
-        netIncome
+        netIncome: finalNetIncome
       }
     });
   } catch (error) {

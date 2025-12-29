@@ -104,7 +104,7 @@ export default function TransactionsTab({ cabangList }: any) {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                 <div className="text-center">
                   <div className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600">Rp {transactionSummary.totalRevenue.toLocaleString()}</div>
-                  <div className="text-xs sm:text-sm text-gray-600">Total Pendapatan</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Total Uang Masuk</div>
                 </div>
                 <div className="text-center">
                   <div className="text-lg sm:text-xl lg:text-2xl font-bold text-orange-600">Rp {(transactionSummary.totalCommissions || 0).toLocaleString()}</div>
@@ -121,18 +121,6 @@ export default function TransactionsTab({ cabangList }: any) {
                 <div className="text-center">
                   <div className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-600">Rp {transactionSummary.qrisRevenue.toLocaleString()}</div>
                   <div className="text-xs sm:text-sm text-gray-600">Pendapatan QRIS</div>
-                </div>
-              </div>
-              <div className="border-t-2 border-blue-300 pt-3">
-                <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-3">
-                  <div className="text-center">
-                    <div className="text-base sm:text-lg lg:text-xl font-bold text-indigo-600">Rp {(transactionSummary.qrisReceived || 0).toLocaleString()}</div>
-                    <div className="text-xs text-gray-500">Total QRIS Masuk</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-base sm:text-lg lg:text-xl font-bold text-amber-600">Rp {(transactionSummary.qrisExcess || 0).toLocaleString()}</div>
-                    <div className="text-xs text-gray-500">Selisih QRIS</div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -347,10 +335,8 @@ function ServiceStatsSection({ dateFrom, dateTo, branchId, type }: any) {
   const { data: serviceStats = [], isLoading } = useQuery({
     queryKey: ['service-stats', dateFrom, dateTo, branchId],
     queryFn: () => adminApi.getServiceStats({ dateFrom, dateTo, branchId }),
-    enabled: type === 'ALL' || type === 'SERVICE'
+    enabled: type === 'ALL' || type === 'SERVICE' || type === 'PRODUCT'
   });
-
-  if (type === 'PRODUCT') return null;
 
   return (
     <div className="mb-6 p-6 bg-green-50 rounded-lg border border-green-200">
@@ -358,7 +344,7 @@ function ServiceStatsSection({ dateFrom, dateTo, branchId, type }: any) {
         <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
-        Statistik Layanan
+        Statistik Layanan & Produk
       </h3>
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -378,6 +364,11 @@ function ServiceStatsSection({ dateFrom, dateTo, branchId, type }: any) {
               <div className="text-2xl font-bold text-green-600 mb-1">{stat.count}x</div>
               <div className="text-xs text-gray-500">
                 Rp {stat.revenue.toLocaleString()} • Komisi: Rp {stat.commission.toLocaleString()}
+              </div>
+              <div className={`text-xs font-medium mt-1 ${
+                stat.type === 'SERVICE' ? 'text-blue-600' : 'text-orange-600'
+              }`}>
+                {stat.type === 'SERVICE' ? 'LAYANAN' : 'PRODUK'}
               </div>
             </div>
           ))}

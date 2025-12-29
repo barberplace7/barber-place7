@@ -32,7 +32,14 @@ export async function POST(request: NextRequest) {
           closingById: completedBy,
           closingByRole: 'KASIR',
           closingByNameSnapshot: 'Kasir',
-          paymentMethod: paymentMethod
+          paymentMethod: paymentMethod,
+          // QRIS fields (auto-set to product price, no excess)
+          ...(paymentMethod === 'QRIS' && {
+            qrisAmountReceived: productData!.basePrice * product.quantity,
+            qrisExcessAmount: 0,
+            qrisExcessType: null,
+            qrisExcessNote: null
+          })
         }
       });
     }

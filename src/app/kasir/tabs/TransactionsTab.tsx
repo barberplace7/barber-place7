@@ -120,7 +120,7 @@ export default function TransactionsTab({ state }: any) {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <div className="text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-green-600">Rp {(state.dailySummary?.total || 0).toLocaleString()}</div>
-                <div className="text-sm sm:text-base text-stone-600 font-medium">Total Uang</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Total Uang Masuk</div>
               </div>
               <div className="text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-emerald-600">Rp {(state.dailySummary?.cash || 0).toLocaleString()}</div>
@@ -133,12 +133,6 @@ export default function TransactionsTab({ state }: any) {
               <div className="text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-red-600">Rp {(state.dailySummary?.expenses || 0).toLocaleString()}</div>
                 <div className="text-sm sm:text-base text-stone-600 font-medium">Pengeluaran</div>
-              </div>
-            </div>
-            <div className="border-t border-stone-200 pt-4">
-              <div className="text-center">
-                <div className="text-base sm:text-lg lg:text-xl font-bold text-indigo-600">Rp {(state.dailySummary?.qrisReceived || 0).toLocaleString()}</div>
-                <div className="text-xs sm:text-sm text-stone-500">Total QRIS Masuk (untuk cek mutasi rekening)</div>
               </div>
             </div>
           </div>

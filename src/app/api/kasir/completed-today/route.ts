@@ -126,7 +126,8 @@ export async function GET(request: NextRequest) {
     });
 
     const totalExpenses = expenses.reduce((sum, expense) => sum + expense.nominal, 0);
-    const netRevenue = totalRevenue - totalExpenses;
+    const netRevenue = totalRevenue; // Don't subtract expenses from total revenue
+    const netCash = cashTotal - totalExpenses; // Expenses reduce cash only
 
     // Get all staff for lookup (same approach as admin)
     const allCapsters = await prisma.capsterMaster.findMany();
@@ -162,7 +163,7 @@ export async function GET(request: NextRequest) {
       productTransactions: productSalesWithNames,
       summary: {
         total: netRevenue,
-        cash: cashTotal,
+        cash: netCash,
         qris: qrisTotal,
         qrisReceived: qrisReceived,
         qrisExcess: qrisExcess,

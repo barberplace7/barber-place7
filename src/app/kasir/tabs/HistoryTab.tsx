@@ -120,8 +120,9 @@ export default function HistoryTab({ state }: any) {
   const summary = useMemo(() => {
     const revenueAmount = allTransactions.filter(t => t.amount > 0 && t.type !== 'EXPENSE').reduce((sum, t) => sum + t.amount, 0);
     const expenseAmount = Math.abs(allTransactions.filter(t => t.type === 'EXPENSE').reduce((sum, t) => sum + t.amount, 0));
-    const netAmount = revenueAmount - expenseAmount;
+    const netAmount = revenueAmount; // Don't subtract expenses from total revenue
     const cashAmount = allTransactions.filter(t => t.paymentMethod === 'CASH' && t.type !== 'EXPENSE').reduce((sum, t) => sum + t.amount, 0);
+    const netCashAmount = cashAmount - expenseAmount; // Expenses reduce cash only
     
     // QRIS calculations
     const qrisTransactions = allTransactions.filter(t => t.paymentMethod === 'QRIS' && t.type !== 'EXPENSE');
@@ -133,10 +134,8 @@ export default function HistoryTab({ state }: any) {
       revenueAmount: netAmount, // Use net amount as main revenue display
       expenseAmount, 
       netAmount, 
-      cashAmount, 
-      qrisRevenueAmount, 
-      qrisTotalReceived, 
-      qrisExcessAmount 
+      cashAmount: netCashAmount, 
+      qrisRevenueAmount
     };
   }, [allTransactions]);
 
@@ -251,7 +250,7 @@ export default function HistoryTab({ state }: any) {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               <div className="text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-green-600">Rp {summary.revenueAmount.toLocaleString()}</div>
-                <div className="text-sm sm:text-base text-stone-600 font-medium">Total Uang</div>
+                <div className="text-sm sm:text-base text-stone-600 font-medium">Total Uang Masuk</div>
               </div>
               <div className="text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-emerald-600">Rp {summary.cashAmount.toLocaleString()}</div>
@@ -264,12 +263,6 @@ export default function HistoryTab({ state }: any) {
               <div className="text-center">
                 <div className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-bold text-red-600">Rp {summary.expenseAmount.toLocaleString()}</div>
                 <div className="text-sm sm:text-base text-stone-600 font-medium">Pengeluaran</div>
-              </div>
-            </div>
-            <div className="border-t border-stone-200 pt-4">
-              <div className="text-center">
-                <div className="text-base sm:text-lg lg:text-xl font-bold text-indigo-600">Rp {summary.qrisTotalReceived.toLocaleString()}</div>
-                <div className="text-xs sm:text-sm text-stone-500">Total QRIS Masuk (untuk cek mutasi rekening)</div>
               </div>
             </div>
           </div>

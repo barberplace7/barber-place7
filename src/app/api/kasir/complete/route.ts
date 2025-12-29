@@ -81,12 +81,12 @@ export async function POST(request: NextRequest) {
           closingByRole: 'KASIR',
           closingByNameSnapshot: completedByName,
           paymentMethod,
-          // QRIS fields (only for first transaction to avoid duplication)
+          // QRIS fields (auto-set to service price, no excess)
           ...(paymentMethod === 'QRIS' && capsterId === Array.from(servicesByCapster.keys())[0] && {
-            qrisAmountReceived: qrisAmountReceived || totalPrice,
-            qrisExcessAmount: qrisExcessAmount || 0,
-            qrisExcessType: qrisExcessType || null,
-            qrisExcessNote: qrisExcessNote || null
+            qrisAmountReceived: totalPrice,
+            qrisExcessAmount: 0,
+            qrisExcessType: null,
+            qrisExcessNote: null
           })
         }
       });
@@ -118,12 +118,12 @@ export async function POST(request: NextRequest) {
             closingByRole: 'KASIR',
             closingByNameSnapshot: completedByName,
             paymentMethod,
-            // QRIS fields for product transactions
+            // QRIS fields (auto-set to product price, no excess)
             ...(paymentMethod === 'QRIS' && {
-              qrisAmountReceived: qrisAmountReceived || (productData!.basePrice * product.quantity),
-              qrisExcessAmount: qrisExcessAmount || 0,
-              qrisExcessType: qrisExcessType || null,
-              qrisExcessNote: qrisExcessNote || null
+              qrisAmountReceived: productData!.basePrice * product.quantity,
+              qrisExcessAmount: 0,
+              qrisExcessType: null,
+              qrisExcessNote: null
             })
           }
         });
