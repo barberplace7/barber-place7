@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       lte: new Date(dateTo + 'T23:59:59.999Z')
     } : undefined;
 
-    // Get service transactions
+    // Get service transactions with service details
     const serviceTransactions = await prisma.serviceTransaction.findMany({
       where: {
         ...(dateFilter && { 
@@ -22,6 +22,17 @@ export async function GET(request: NextRequest) {
           }
         }),
         ...(branchId && { cabangId: branchId })
+      },
+      include: {
+        visit: {
+          include: {
+            visitServices: {
+              include: {
+                service: true
+              }
+            }
+          }
+        }
       }
     });
 
@@ -37,25 +48,47 @@ export async function GET(request: NextRequest) {
     
     // Process service transactions
     serviceTransactions.forEach(st => {
-      const serviceNames = st.paketName.split(' + ');
-      
-      serviceNames.forEach(serviceName => {
-        const trimmedName = serviceName.trim();
-        if (!itemStats.has(trimmedName)) {
-          itemStats.set(trimmedName, {
-            serviceName: trimmedName,
-            count: 0,
-            revenue: 0,
-            commission: 0,
-            type: 'SERVICE'
-          });
-        }
+      // Use visitServices for accurate per-service data
+      if (st.visit?.visitServices) {
+        st.visit.visitServices.forEach(vs => {
+          const serviceName = vs.service.name;
+          if (!itemStats.has(serviceName)) {
+            itemStats.set(serviceName, {
+              serviceName: serviceName,
+              count: 0,
+              revenue: 0,
+              commission: 0,
+              type: 'SERVICE'
+            });
+          }
+          
+          const stat = itemStats.get(serviceName);
+          stat.count += 1;
+          stat.revenue += vs.service.basePrice;
+          stat.commission += vs.service.commissionAmount;
+        });
+      } else {
+        // Fallback to paket name splitting if visitServices not available
+        const serviceNames = st.paketName.split(' + ');
         
-        const stat = itemStats.get(trimmedName);
-        stat.count += 1;
-        stat.revenue += st.priceFinal / serviceNames.length;
-        stat.commission += st.commissionAmount / serviceNames.length;
-      });
+        serviceNames.forEach(serviceName => {
+          const trimmedName = serviceName.trim();
+          if (!itemStats.has(trimmedName)) {
+            itemStats.set(trimmedName, {
+              serviceName: trimmedName,
+              count: 0,
+              revenue: 0,
+              commission: 0,
+              type: 'SERVICE'
+            });
+          }
+          
+          const stat = itemStats.get(trimmedName);
+          stat.count += 1;
+          stat.revenue += st.priceFinal / serviceNames.length;
+          stat.commission += st.commissionAmount / serviceNames.length;
+        });
+      }
     });
 
     // Process product transactions
