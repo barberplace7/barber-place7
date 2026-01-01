@@ -11,18 +11,15 @@ export async function GET(request: NextRequest) {
 
     const transactions: any[] = [];
 
-    // Build date filter
     const dateFilter = dateFrom && dateTo ? {
       gte: new Date(dateFrom + 'T00:00:00.000Z'),
       lte: new Date(dateTo + 'T23:59:59.999Z')
     } : undefined;
 
-    // Build where conditions
     const whereConditions: any = {};
     if (dateFilter) whereConditions.jamSelesai = dateFilter;
     if (branchId) whereConditions.cabangId = branchId;
 
-    // Get all staff for lookup
     const allCapsters = await prisma.capsterMaster.findMany();
     const allKasirs = await prisma.cashierMaster.findMany();
     const allStaff = [...allCapsters, ...allKasirs];
@@ -33,19 +30,26 @@ export async function GET(request: NextRequest) {
         where: {
           ...whereConditions,
           status: 'DONE',
-          serviceTransactions: {
-            some: {}
-          }
+          serviceTransactions: { some: {} }
         },
         include: {
           capster: true,
           cabang: true,
-          serviceTransactions: true
+          serviceTransactions: true,
+          visitServices: { include: { service: true } }
         }
       });
 
       visits.forEach(visit => {
-        const serviceDetails = visit.serviceTransactions.map(st => {
+        const serviceDetails = visit.visitServices?.map(vs => {
+          const capster = allCapsters.find(c => c.id === vs.capsterId) || visit.capster;
+          return {
+            serviceName: vs.service.name,
+            capsterName: capster.name,
+            amount: vs.service.basePrice,
+            commission: vs.service.commissionAmount
+          };
+        }) || visit.serviceTransactions.map(st => {
           const capster = allCapsters.find(c => c.id === st.capsterId) || visit.capster;
           return {
             serviceName: st.paketName,
@@ -59,7 +63,6 @@ export async function GET(request: NextRequest) {
         const paymentMethod = visit.serviceTransactions[0]?.paymentMethod || 'CASH';
         const qrisExcessAmount = visit.serviceTransactions.reduce((sum, st) => sum + (st.qrisExcessAmount || 0), 0);
         const qrisExcessType = visit.serviceTransactions[0]?.qrisExcessType;
-        
         const responsibleStaff = allStaff.find(s => s.id === visit.serviceTransactions[0]?.closingById);
         
         transactions.push({
@@ -77,7 +80,7 @@ export async function GET(request: NextRequest) {
           paymentMethod: paymentMethod,
           qrisExcessAmount: qrisExcessAmount,
           qrisExcessType: qrisExcessType,
-          serviceCount: visit.serviceTransactions.length
+          serviceCount: visit.visitServices?.length || visit.serviceTransactions.length
         });
       });
     }
@@ -89,9 +92,7 @@ export async function GET(request: NextRequest) {
           ...(dateFilter && { createdAt: dateFilter }),
           ...(branchId && { cabangId: branchId })
         },
-        include: {
-          cabang: true
-        }
+        include: { cabang: true }
       });
 
       productTransactions.forEach(pt => {
@@ -121,9 +122,7 @@ export async function GET(request: NextRequest) {
           ...(dateFilter && { createdAt: dateFilter }),
           ...(branchId && { cabangId: branchId })
         },
-        include: {
-          cabang: true
-        }
+        include: { cabang: true }
       });
 
       advances.forEach(advance => {
@@ -150,10 +149,7 @@ export async function GET(request: NextRequest) {
           ...(dateFilter && { createdAt: dateFilter }),
           ...(branchId && { cabangId: branchId })
         },
-        include: {
-          cabang: true,
-          kasir: true
-        }
+        include: { cabang: true, kasir: true }
       });
 
       expenses.forEach(expense => {
@@ -173,68 +169,35 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Sort by date (newest first)
     transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    // Calculate summary
+    const totalRevenue = transactions.filter(t => t.type !== 'EXPENSE' && t.type !== 'KASBON').reduce((sum, t) => sum + t.amount, 0);
+    const totalExpenses = transactions.filter(t => t.type === 'EXPENSE').reduce((sum, t) => sum + t.amount, 0);
+    const totalKasbon = transactions.filter(t => t.type === 'KASBON').reduce((sum, t) => sum + t.amount, 0);
+    const cashRevenue = transactions.filter(t => t.type !== 'EXPENSE' && t.type !== 'KASBON' && t.paymentMethod === 'CASH').reduce((sum, t) => sum + t.amount, 0);
+    const qrisRevenue = transactions.filter(t => t.type !== 'EXPENSE' && t.type !== 'KASBON' && t.paymentMethod === 'QRIS').reduce((sum, t) => sum + t.amount, 0);
 
     // Calculate commissions
     const serviceCommissions = await prisma.serviceTransaction.findMany({
-      where: {
-        ...(dateFilter && { createdAt: dateFilter }),
-        ...(branchId && { cabangId: branchId })
-      },
+      where: { ...(dateFilter && { createdAt: dateFilter }), ...(branchId && { cabangId: branchId }) },
       select: { commissionAmount: true }
     });
-
     const productCommissions = await prisma.productTransaction.findMany({
-      where: {
-        ...(dateFilter && { createdAt: dateFilter }),
-        ...(branchId && { cabangId: branchId })
-      },
+      where: { ...(dateFilter && { createdAt: dateFilter }), ...(branchId && { cabangId: branchId }) },
       select: { commissionAmount: true }
     });
+    const totalCommissions = serviceCommissions.reduce((sum, sc) => sum + sc.commissionAmount, 0) + productCommissions.reduce((sum, pc) => sum + pc.commissionAmount, 0);
 
-    const totalServiceCommission = serviceCommissions.reduce((sum, sc) => sum + sc.commissionAmount, 0);
-    const totalProductCommission = productCommissions.reduce((sum, pc) => sum + pc.commissionAmount, 0);
-    const totalCommissions = totalServiceCommission + totalProductCommission;
-
-    // Calculate summary
-    const totalRevenue = transactions
-      .filter(t => t.type !== 'EXPENSE' && t.type !== 'KASBON')
-      .reduce((sum, t) => sum + t.amount, 0);
-    
-    const totalExpenses = transactions
-      .filter(t => t.type === 'EXPENSE')
-      .reduce((sum, t) => sum + t.amount, 0);
-    
-    const totalKasbon = transactions
-      .filter(t => t.type === 'KASBON')
-      .reduce((sum, t) => sum + t.amount, 0);
-    
-    const cashRevenue = transactions
-      .filter(t => t.type !== 'EXPENSE' && t.type !== 'KASBON' && t.paymentMethod === 'CASH')
-      .reduce((sum, t) => sum + t.amount, 0);
-    
-    const qrisRevenue = transactions
-      .filter(t => t.type !== 'EXPENSE' && t.type !== 'KASBON' && t.paymentMethod === 'QRIS')
-      .reduce((sum, t) => sum + t.amount, 0);
-
-    const netIncome = totalRevenue; // Don't subtract expenses from total revenue
-    const netCashRevenue = cashRevenue - totalExpenses - totalKasbon; // Expenses and kasbon reduce cash
-
-    // Calculate QRIS totals - use jamSelesai filter to match visits
+    // Calculate QRIS totals
     const qrisServiceTransactions = await prisma.serviceTransaction.findMany({
       where: {
-        ...(dateFilter && { 
-          visit: {
-            jamSelesai: dateFilter
-          }
-        }),
+        ...(dateFilter && { visit: { jamSelesai: dateFilter } }),
         ...(branchId && { cabangId: branchId }),
         paymentMethod: 'QRIS'
       },
       select: { qrisAmountReceived: true, qrisExcessAmount: true }
     });
-    
     const qrisProductTransactions = await prisma.productTransaction.findMany({
       where: {
         ...(dateFilter && { createdAt: dateFilter }),
@@ -244,30 +207,21 @@ export async function GET(request: NextRequest) {
       select: { qrisAmountReceived: true, qrisExcessAmount: true }
     });
     
-    const qrisReceived = [
-      ...qrisServiceTransactions.map(st => st.qrisAmountReceived || 0),
-      ...qrisProductTransactions.map(pt => pt.qrisAmountReceived || 0)
-    ].reduce((sum, amount) => sum + amount, 0);
-    
-    const qrisExcess = [
-      ...qrisServiceTransactions.map(st => st.qrisExcessAmount || 0),
-      ...qrisProductTransactions.map(pt => pt.qrisExcessAmount || 0)
-    ].reduce((sum, amount) => sum + amount, 0);
-
-    const finalNetIncome = totalRevenue - totalCommissions - totalExpenses;
+    const qrisReceived = [...qrisServiceTransactions, ...qrisProductTransactions].reduce((sum, t) => sum + (t.qrisAmountReceived || 0), 0);
+    const qrisExcess = [...qrisServiceTransactions, ...qrisProductTransactions].reduce((sum, t) => sum + (t.qrisExcessAmount || 0), 0);
 
     return NextResponse.json({
       transactions,
       summary: {
-        totalRevenue: netIncome, // Use net income as main revenue display
+        totalRevenue,
         totalExpenses,
         totalKasbon,
         totalCommissions,
-        cashRevenue: netCashRevenue,
+        cashRevenue: cashRevenue - totalExpenses - totalKasbon,
         qrisRevenue,
         qrisReceived,
         qrisExcess,
-        netIncome: finalNetIncome
+        netIncome: totalRevenue - totalCommissions - totalExpenses
       }
     });
   } catch (error) {

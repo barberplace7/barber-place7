@@ -13,48 +13,35 @@ export async function GET(request: NextRequest) {
       lte: new Date(dateTo + 'T23:59:59.999Z')
     } : undefined;
 
-    // Get service transactions with service details
-    const serviceTransactions = await prisma.serviceTransaction.findMany({
+    const visits = await prisma.customerVisit.findMany({
       where: {
-        ...(dateFilter && { 
-          visit: {
-            jamSelesai: dateFilter
-          }
-        }),
-        ...(branchId && { cabangId: branchId })
+        status: 'DONE',
+        ...(branchId && { cabangId: branchId }),
+        ...(dateFilter && { jamSelesai: dateFilter })
       },
       include: {
-        visit: {
-          include: {
-            visitServices: {
-              include: {
-                service: true
-              }
-            }
-          }
-        }
+        visitServices: { include: { service: true } },
+        productTransactions: true
       }
     });
 
-    // Get product transactions
     const productTransactions = await prisma.productTransaction.findMany({
       where: {
-        ...(dateFilter && { createdAt: dateFilter }),
-        ...(branchId && { cabangId: branchId })
+        visitId: null,
+        ...(branchId && { cabangId: branchId }),
+        ...(dateFilter && { createdAt: dateFilter })
       }
     });
 
     const itemStats = new Map();
     
-    // Process service transactions
-    serviceTransactions.forEach(st => {
-      // Use visitServices for accurate per-service data
-      if (st.visit?.visitServices) {
-        st.visit.visitServices.forEach(vs => {
+    visits.forEach(visit => {
+      if (visit.visitServices?.length > 0) {
+        visit.visitServices.forEach(vs => {
           const serviceName = vs.service.name;
           if (!itemStats.has(serviceName)) {
             itemStats.set(serviceName, {
-              serviceName: serviceName,
+              serviceName,
               count: 0,
               revenue: 0,
               commission: 0,
@@ -67,31 +54,29 @@ export async function GET(request: NextRequest) {
           stat.revenue += vs.service.basePrice;
           stat.commission += vs.service.commissionAmount;
         });
-      } else {
-        // Fallback to paket name splitting if visitServices not available
-        const serviceNames = st.paketName.split(' + ');
-        
-        serviceNames.forEach(serviceName => {
-          const trimmedName = serviceName.trim();
-          if (!itemStats.has(trimmedName)) {
-            itemStats.set(trimmedName, {
-              serviceName: trimmedName,
+      }
+      
+      if (visit.productTransactions) {
+        visit.productTransactions.forEach(pt => {
+          const productName = pt.productNameSnapshot;
+          if (!itemStats.has(productName)) {
+            itemStats.set(productName, {
+              serviceName: productName,
               count: 0,
               revenue: 0,
               commission: 0,
-              type: 'SERVICE'
+              type: 'PRODUCT'
             });
           }
           
-          const stat = itemStats.get(trimmedName);
-          stat.count += 1;
-          stat.revenue += st.priceFinal / serviceNames.length;
-          stat.commission += st.commissionAmount / serviceNames.length;
+          const stat = itemStats.get(productName);
+          stat.count += pt.quantity;
+          stat.revenue += pt.totalPrice;
+          stat.commission += pt.commissionAmount;
         });
       }
     });
 
-    // Process product transactions
     productTransactions.forEach(pt => {
       const productName = pt.productNameSnapshot;
       if (!itemStats.has(productName)) {
