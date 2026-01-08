@@ -22,29 +22,55 @@ export async function GET(request: NextRequest) {
       lte: new Date(dateTo + 'T23:59:59.999Z')
     } : undefined;
 
-    // Get service transactions
+    // Get service transactions with visit services for individual service breakdown
     const serviceTransactions = await prisma.serviceTransaction.findMany({
       where: {
         capsterId: staffId,
-        ...(dateFilter && { createdAt: dateFilter })
+        ...(dateFilter && { createdAt: dateFilter }),
+        visit: {
+          status: 'DONE'
+        }
       },
       include: {
         visit: {
           include: {
-            cabang: true
+            cabang: true,
+            visitServices: {
+              where: {
+                capsterId: staffId
+              },
+              include: {
+                service: true
+              }
+            }
           }
         }
       }
     });
 
+    // Process individual services from visitServices
     serviceTransactions.forEach(st => {
-      transactions.push({
-        date: st.createdAt,
-        type: 'SERVICE',
-        description: `${st.paketName} - ${st.visit?.customerName || 'Unknown'}`,
-        amount: st.priceFinal,
-        commission: st.commissionAmount
-      });
+      if (st.visit?.visitServices && st.visit.visitServices.length > 0) {
+        // Add individual services
+        st.visit.visitServices.forEach(vs => {
+          transactions.push({
+            date: st.createdAt,
+            type: 'SERVICE',
+            description: `${vs.service.name} - ${st.visit?.customerName || 'Unknown'}`,
+            amount: vs.service.basePrice,
+            commission: vs.service.commissionAmount
+          });
+        });
+      } else {
+        // Fallback to paket name if visitServices not available
+        transactions.push({
+          date: st.createdAt,
+          type: 'SERVICE',
+          description: `${st.paketName} - ${st.visit?.customerName || 'Unknown'}`,
+          amount: st.priceFinal,
+          commission: st.commissionAmount
+        });
+      }
     });
 
     // Get product transactions where this person is the recommender

@@ -31,62 +31,7 @@ export async function GET(request: NextRequest) {
     // Group by person and calculate commissions
     const commissionMap = new Map();
 
-    // Get service transactions with proper date filtering
-    const serviceTransactionWhere: any = {};
-    if (dateFrom && dateTo) {
-      serviceTransactionWhere.createdAt = {
-        gte: new Date(dateFrom + 'T00:00:00.000Z'),
-        lte: new Date(dateTo + 'T23:59:59.999Z')
-      };
-    }
-    if (capsterId) {
-      serviceTransactionWhere.capsterId = capsterId;
-    }
-    if (branchId) {
-      serviceTransactionWhere.cabangId = branchId;
-    }
-
-    const serviceTransactions = await prisma.serviceTransaction.findMany({
-      where: serviceTransactionWhere,
-      include: {
-        cabang: true
-      }
-    }).catch(() => []);
-
-    // Process service transactions and group by capster
-    const capsterCommissions = new Map();
-    serviceTransactions.forEach(st => {
-      if (!st.cabang) return;
-      
-      const capster = allCapsters.find(c => c.id === st.capsterId);
-      if (!capster) return;
-      
-      const key = st.capsterId;
-      if (!capsterCommissions.has(key)) {
-        capsterCommissions.set(key, {
-          staffId: st.capsterId,
-          capsterId: st.capsterId,
-          capsterName: capster.name,
-          branchName: st.cabang.name,
-          role: 'CAPSTER',
-          serviceCommission: 0,
-          productCommission: 0,
-          serviceCount: 0,
-          productCount: 0
-        });
-      }
-      
-      const commission = capsterCommissions.get(key);
-      commission.serviceCommission += st.commissionAmount || 0;
-      commission.serviceCount += 1;
-    });
-
-    // Add to main commission map
-    capsterCommissions.forEach((value, key) => {
-      commissionMap.set(key, value);
-    });
-
-    // Process all product transactions for recommender commissions
+    // Get all product transactions first
     const productSaleWhere: any = {};
     if (dateFrom && dateTo) {
       productSaleWhere.createdAt = {
@@ -108,6 +53,64 @@ export async function GET(request: NextRequest) {
       }
     }).catch(() => []);
 
+    // Get visits with individual services for accurate commission calculation
+    const visits = await prisma.customerVisit.findMany({
+      where: {
+        ...visitWhere,
+        ...(capsterId && {
+          visitServices: {
+            some: {
+              capsterId: capsterId
+            }
+          }
+        })
+      },
+      include: {
+        cabang: true,
+        visitServices: {
+          include: {
+            service: true,
+            capster: true
+          }
+        }
+      }
+    }).catch(() => []);
+
+    // Process visits and group by capster
+    const capsterCommissions = new Map();
+    visits.forEach(visit => {
+      if (!visit.cabang || !visit.visitServices) return;
+      
+      visit.visitServices.forEach(vs => {
+        if (!vs.capster) return;
+        
+        const key = vs.capsterId;
+        if (!capsterCommissions.has(key)) {
+          capsterCommissions.set(key, {
+            staffId: vs.capsterId,
+            capsterId: vs.capsterId,
+            capsterName: vs.capster.name,
+            branchName: visit.cabang.name,
+            role: 'CAPSTER',
+            serviceCommission: 0,
+            productCommission: 0,
+            serviceCount: 0,
+            productCount: 0
+          });
+        }
+        
+        const commission = capsterCommissions.get(key);
+        commission.serviceCommission += vs.service.commissionAmount || 0;
+        commission.serviceCount += 1;
+      });
+    });
+
+    // Add to main commission map
+    capsterCommissions.forEach((value, key) => {
+      commissionMap.set(key, value);
+    });
+
+    // Process product transactions for recommender commissions
     allProductTransactions.forEach(pt => {
       if (!pt.recommenderId || !pt.cabang) return;
       
@@ -130,7 +133,7 @@ export async function GET(request: NextRequest) {
         
         const commission = commissionMap.get(key);
         commission.productCommission += pt.commissionAmount || 0;
-        commission.productCount += 1;
+        commission.productCount += pt.quantity;
       }
     });
 

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '@/lib/api/admin';
 
@@ -19,8 +19,12 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
   if (!staff) return null;
 
   const { data: transactions = [], isLoading } = useQuery({
-    queryKey: ['staff-transactions', staff.capsterId || staff.staffId, dateFrom, dateTo],
-    queryFn: () => adminApi.getStaffTransactionDetails({ capsterId: staff.capsterId || staff.staffId, dateFrom, dateTo }),
+    queryKey: ['staff-service-breakdown', staff.capsterId || staff.staffId, dateFrom, dateTo],
+    queryFn: async () => {
+      const res = await fetch(`/api/admin/staff-service-breakdown?staffId=${staff.capsterId || staff.staffId}&dateFrom=${dateFrom}&dateTo=${dateTo}`);
+      if (!res.ok) return [];
+      return res.json();
+    },
     enabled: !!(staff.capsterId || staff.staffId),
   });
 
@@ -68,7 +72,13 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
     }
   });
 
-  const totalCommission = (staff.serviceCommission || 0) + (staff.productCommission || 0);
+  const totalCommission = useMemo(() => {
+    if (!transactions.length) return (staff.serviceCommission || 0) + (staff.productCommission || 0);
+    
+    const serviceTotal = transactions.filter(t => t.type === 'SERVICE').reduce((sum, t) => sum + t.commission, 0);
+    const productTotal = transactions.filter(t => t.type === 'PRODUCT').reduce((sum, t) => sum + t.commission, 0);
+    return serviceTotal + productTotal;
+  }, [transactions, staff]);
   const totalKasbon = advances.reduce((sum: number, adv: any) => sum + adv.remainingAmount, 0);
   const maxDeduct = Math.min(totalCommission, totalKasbon);
   
@@ -146,19 +156,19 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
             ) : transactions.length === 0 ? (
               <div className="text-center py-8 text-gray-500 border border-t-0 border-gray-300 rounded-b-lg">Tidak ada transaksi ditemukan</div>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 p-3 border border-t-0 border-gray-300 rounded-b-lg">
+              <div className="p-3 border border-t-0 border-gray-300 rounded-b-lg">
                 {/* Services Section */}
-                <div className="border border-gray-300 rounded-lg">
-                  <div className="bg-blue-50 px-2 py-1 border-b border-gray-300">
+                <div className="mb-4">
+                  <div className="bg-blue-50 px-2 py-1 border border-gray-300 rounded-t-lg">
                     <p className="font-bold text-blue-700 text-xs">LAYANAN</p>
                   </div>
-                  <div className="max-h-32 overflow-y-auto">
+                  <div className="border border-t-0 border-gray-300 rounded-b-lg">
                     <table className="w-full text-xs">
-                      <thead className="bg-gray-50 sticky top-0">
+                      <thead className="bg-gray-50">
                         <tr className="border-b border-gray-200">
-                          <th className="py-1 px-1 text-left text-gray-600 font-semibold">Layanan</th>
-                          <th className="py-1 px-1 text-center text-gray-600 font-semibold">Jml</th>
-                          <th className="py-1 px-1 text-right text-gray-600 font-semibold">Komisi</th>
+                          <th className="py-1 px-2 text-left text-gray-600 font-semibold">Layanan</th>
+                          <th className="py-1 px-2 text-center text-gray-600 font-semibold">Jml</th>
+                          <th className="py-1 px-2 text-right text-gray-600 font-semibold">Komisi</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -169,9 +179,9 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
                         ) : (
                           transactions.filter((item: any) => item.type === 'SERVICE').map((item: any, idx: number) => (
                             <tr key={idx} className="border-b border-gray-100">
-                              <td className="py-1 px-1 text-gray-700 text-xs truncate">{item.itemName}</td>
-                              <td className="py-1 px-1 text-center text-gray-700">{item.count}x</td>
-                              <td className="py-1 px-1 text-right font-bold text-blue-600">Rp {item.totalCommission.toLocaleString()}</td>
+                              <td className="py-1 px-2 text-gray-700 text-xs">{item.serviceName}</td>
+                              <td className="py-1 px-2 text-center text-gray-700">{item.count}x</td>
+                              <td className="py-1 px-2 text-right font-bold text-blue-600">Rp {item.commission.toLocaleString()}</td>
                             </tr>
                           ))
                         )}
@@ -181,17 +191,17 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
                 </div>
 
                 {/* Products Section */}
-                <div className="border border-gray-300 rounded-lg">
-                  <div className="bg-orange-50 px-2 py-1 border-b border-gray-300">
+                <div className="mb-4">
+                  <div className="bg-orange-50 px-2 py-1 border border-gray-300 rounded-t-lg">
                     <p className="font-bold text-orange-700 text-xs">PRODUK</p>
                   </div>
-                  <div className="max-h-32 overflow-y-auto">
+                  <div className="border border-t-0 border-gray-300 rounded-b-lg">
                     <table className="w-full text-xs">
-                      <thead className="bg-gray-50 sticky top-0">
+                      <thead className="bg-gray-50">
                         <tr className="border-b border-gray-200">
-                          <th className="py-1 px-1 text-left text-gray-600 font-semibold">Produk</th>
-                          <th className="py-1 px-1 text-center text-gray-600 font-semibold">Jml</th>
-                          <th className="py-1 px-1 text-right text-gray-600 font-semibold">Komisi</th>
+                          <th className="py-1 px-2 text-left text-gray-600 font-semibold">Produk</th>
+                          <th className="py-1 px-2 text-center text-gray-600 font-semibold">Jml</th>
+                          <th className="py-1 px-2 text-right text-gray-600 font-semibold">Komisi</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -202,9 +212,9 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
                         ) : (
                           transactions.filter((item: any) => item.type === 'PRODUCT').map((item: any, idx: number) => (
                             <tr key={idx} className="border-b border-gray-100">
-                              <td className="py-1 px-1 text-gray-700 text-xs truncate">{item.itemName}</td>
-                              <td className="py-1 px-1 text-center text-gray-700">{item.count}x</td>
-                              <td className="py-1 px-1 text-right font-bold text-orange-600">Rp {item.totalCommission.toLocaleString()}</td>
+                              <td className="py-1 px-2 text-gray-700 text-xs">{item.serviceName}</td>
+                              <td className="py-1 px-2 text-center text-gray-700">{item.count}x</td>
+                              <td className="py-1 px-2 text-right font-bold text-orange-600">Rp {item.commission.toLocaleString()}</td>
                             </tr>
                           ))
                         )}
@@ -223,18 +233,30 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
             </div>
             <div className="p-3">
               <div className="space-y-2 text-xs">
-                <div className="flex justify-between items-center border-b border-gray-200 pb-1">
-                  <span className="text-gray-700">Komisi Layanan <span className="text-gray-500">({staff.serviceCount || 0}x)</span></span>
-                  <span className="font-bold text-black">Rp {(staff.serviceCommission || 0).toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-gray-200 pb-1">
-                  <span className="text-gray-700">Komisi Produk <span className="text-gray-500">({staff.productCount || 0}x)</span></span>
-                  <span className="font-bold text-black">Rp {(staff.productCommission || 0).toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between items-center border-b-2 border-gray-300 pb-1 pt-1">
-                  <span className="text-gray-700 font-bold">Gaji Kotor</span>
-                  <span className="font-bold text-black">Rp {totalCommission.toLocaleString()}</span>
-                </div>
+                {/* Calculate totals from breakdown data */}
+                {(() => {
+                  const serviceTotal = transactions.filter(t => t.type === 'SERVICE').reduce((sum, t) => sum + t.commission, 0);
+                  const productTotal = transactions.filter(t => t.type === 'PRODUCT').reduce((sum, t) => sum + t.commission, 0);
+                  const serviceCount = transactions.filter(t => t.type === 'SERVICE').reduce((sum, t) => sum + t.count, 0);
+                  const productCount = transactions.filter(t => t.type === 'PRODUCT').reduce((sum, t) => sum + t.count, 0);
+                  
+                  return (
+                    <>
+                      <div className="flex justify-between items-center border-b border-gray-200 pb-1">
+                        <span className="text-gray-700">Komisi Layanan <span className="text-gray-500">({serviceCount}x)</span></span>
+                        <span className="font-bold text-black">Rp {serviceTotal.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center border-b border-gray-200 pb-1">
+                        <span className="text-gray-700">Komisi Produk <span className="text-gray-500">({productCount}x)</span></span>
+                        <span className="font-bold text-black">Rp {productTotal.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center border-b-2 border-gray-300 pb-1 pt-1">
+                        <span className="text-gray-700 font-bold">Gaji Kotor</span>
+                        <span className="font-bold text-black">Rp {(serviceTotal + productTotal).toLocaleString()}</span>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -419,97 +441,179 @@ export default function StaffPayrollModal({ staff, dateFrom, dateTo, onClose }: 
           @page {
             size: A4;
             margin: 0.5in;
-            @bottom-center {
-              content: "Halaman " counter(page) " dari " counter(pages);
-              font-size: 8px;
-              color: #666;
-            }
           }
+          
+          * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          
           html, body {
             height: auto !important;
             overflow: visible !important;
+            font-size: 12px;
+            line-height: 1.3;
           }
+          
           body * {
             visibility: hidden;
           }
+          
           #payroll-content, #payroll-content * {
             visibility: visible;
           }
+          
           #payroll-content {
             position: static !important;
-            width: 100%;
-            font-size: 10px;
-            line-height: 1.2;
+            width: 100% !important;
             height: auto !important;
             overflow: visible !important;
-          }
-          /* Remove all page-break restrictions to allow natural flow */
-          #payroll-content * {
+            font-size: 10px;
+            line-height: 1.2;
             page-break-inside: auto;
-            page-break-before: auto;
-            page-break-after: auto;
           }
-          /* Only keep header together */
-          #payroll-content > div:first-child {
-            page-break-inside: avoid;
-          }
-          /* Remove height restrictions */
-          #payroll-content .max-h-32,
-          #payroll-content .max-h-\\[95vh\\],
-          #payroll-content .h-screen,
-          #payroll-content .min-h-screen {
+          
+          /* Remove all height and overflow restrictions */
+          .max-h-32,
+          .max-h-\\[95vh\\],
+          .h-screen,
+          .min-h-screen {
             max-height: none !important;
             height: auto !important;
             min-height: auto !important;
           }
-          #payroll-content .overflow-y-auto,
-          #payroll-content .overflow-hidden,
-          #payroll-content .overflow-auto {
+          
+          .overflow-y-auto,
+          .overflow-hidden,
+          .overflow-auto {
             overflow: visible !important;
           }
-          /* Table styling */
-          #payroll-content table {
-            font-size: 9px;
-            width: 100%;
-            border-collapse: collapse;
+          
+          /* Table styling for better print */
+          table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            font-size: 9px !important;
+            page-break-inside: auto;
           }
-          #payroll-content table thead {
-            display: table-header-group;
+          
+          thead {
+            display: table-header-group !important;
           }
-          #payroll-content table tbody {
-            display: table-row-group;
+          
+          tbody {
+            display: table-row-group !important;
           }
-          /* Text size adjustments */
-          #payroll-content .text-xl {
-            font-size: 14px !important;
+          
+          tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
           }
-          #payroll-content .text-2xl {
-            font-size: 16px !important;
+          
+          th, td {
+            padding: 2px 4px !important;
+            border: 1px solid #ddd !important;
           }
-          #payroll-content .text-lg {
-            font-size: 12px !important;
+          
+          /* Header should stay together */
+          #payroll-content > div:first-child {
+            page-break-inside: avoid;
+            page-break-after: avoid;
           }
-          /* Grid layout for print */
-          #payroll-content .grid-cols-1.lg\\:grid-cols-2 {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 0.5rem !important;
+          
+          /* Staff info should stay together */
+          #payroll-content > div:nth-child(2) {
+            page-break-inside: avoid;
           }
-          /* Ensure sections have proper spacing */
-          #payroll-content > div {
-            margin-bottom: 6px;
+          
+          /* Allow transaction details to break naturally */
+          #payroll-content > div:nth-child(3) {
+            page-break-inside: auto;
           }
-          /* Footer positioning */
-          #payroll-content > div:last-child {
-            margin-top: 12px;
-            padding-top: 8px;
-            border-top: 1px solid #ccc;
+          
+          /* Keep commission summary together */
+          #payroll-content > div:nth-child(4) {
+            page-break-inside: avoid;
           }
+          
+          /* Text size adjustments - professional slip gaji */
+          .text-xl { font-size: 10pt !important; }
+          .text-2xl { font-size: 11pt !important; }
+          .text-lg { font-size: 9pt !important; }
+          .text-base { font-size: 9pt !important; }
+          .text-sm { font-size: 8pt !important; }
+          .text-xs { font-size: 7pt !important; }
+          
+          /* Logo compact size */
+          img {
+            max-height: 30pt !important;
+            width: auto !important;
+          }
+          
+          /* Table compact */
+          table {
+            font-size: 7pt !important;
+          }
+          
+          th, td {
+            padding: 1pt 2pt !important;
+            font-size: 7pt !important;
+          }
+          
+          /* Compact spacing */
+          .mb-3, .mb-4, .mb-6 {
+            margin-bottom: 6pt !important;
+          }
+          
+          .p-3, .p-4 {
+            padding: 4pt !important;
+          }
+          
+          .px-2, .px-3 {
+            padding-left: 4px !important;
+            padding-right: 4px !important;
+          }
+          
+          .py-1, .py-2 {
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+          }
+          
+          /* Hide print button and modal controls */
           .print\\:hidden {
             display: none !important;
           }
-          .print\\:p-4 {
-            padding: 0.25rem !important;
+          
+          /* Responsive adjustments for mobile browsers */
+          @media (max-width: 768px) {
+            #payroll-content {
+              font-size: 8px !important;
+            }
+            
+            table {
+              font-size: 7px !important;
+            }
+            
+            .text-xl { font-size: 12px !important; }
+            .text-2xl { font-size: 14px !important; }
+            .text-lg { font-size: 10px !important; }
+          }
+        }
+        
+        /* Mobile print support */
+        @media print and (max-width: 480px) {
+          @page {
+            size: A4 portrait;
+            margin: 0.3in;
+          }
+          
+          #payroll-content {
+            font-size: 7px !important;
+          }
+          
+          table {
+            font-size: 6px !important;
           }
         }
       `}</style>
